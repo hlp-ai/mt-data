@@ -82,7 +82,7 @@ if __name__ == "__main__":
     u1 = "http://www.baidu.com"
     print(get_domain(u1))
 
-    u1 = "http://www.baidu.com/"
+    u1 = "http://www.baidu.com:8888/"
     print(get_domain(u1))
 
     u1 = "http://www.hust.edu.cn"
@@ -91,6 +91,6 @@ if __name__ == "__main__":
     u1 = "http://sse.hust.edu.cn"
     print(get_domain(u1))
 
-    u1 = "https://192.168.1.1"
+    u1 = "https://192.168.1.1:5555"
     print(get_domain(u1))
 

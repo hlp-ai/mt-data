@@ -1,6 +1,24 @@
+from urllib.parse import urlparse
+
 from bs4 import BeautifulSoup
 
 from html.parser import HTMLParser
+
+from tld import get_fld
+from tld.exceptions import TldDomainNotFound
+
+
+def get_host(url):
+    u = urlparse(url)
+    host = u.netloc
+    return host
+
+
+def get_domain(url):
+    try:
+        return get_fld(url)
+    except TldDomainNotFound:
+        return get_host(url)
 
 
 class PageCollector(HTMLParser):
@@ -58,3 +76,21 @@ def get_text(html_txt):
 def get_text_bs4(html_txt):
     soup = BeautifulSoup(html_txt, 'html.parser')
     return soup.body.get_text()
+
+
+if __name__ == "__main__":
+    u1 = "http://www.baidu.com"
+    print(get_domain(u1))
+
+    u1 = "http://www.baidu.com/"
+    print(get_domain(u1))
+
+    u1 = "http://www.hust.edu.cn"
+    print(get_domain(u1))
+
+    u1 = "http://sse.hust.edu.cn"
+    print(get_domain(u1))
+
+    u1 = "https://192.168.1.1"
+    print(get_domain(u1))
+

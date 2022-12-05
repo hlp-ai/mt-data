@@ -1,9 +1,12 @@
 import gzip
 import time
+from urllib.parse import urlparse
 
 import requests
 
 # cc_archive_id = "CC-MAIN-2022-40"
+from warcio import ArchiveIterator
+
 cc_base_url = "https://data.commoncrawl.org/"
 cc_data_url = "https://data.commoncrawl.org/crawl-data/"
 cc_wet_paths_gz = "wet.paths.gz"
@@ -18,7 +21,7 @@ def download(url, local_fn):
     open(local_fn, 'wb').write(response.content)
 
 
-def download_bar(url, filepath):
+def download_progress(url, filepath):
     start = time.time()
     response = requests.get(url, stream=True)
     size = 0
@@ -57,8 +60,54 @@ def get_wet_paths(cc_archive_id):
     return wet_paths
 
 
-wp = get_wet_paths("CC-MAIN-2022-40")
-for p in wp:
-    print(p)
+def get_wet_name(wet_url):
+    parts = wet_url.split("/")
+    gz_path = parts[-1]
+    idx = gz_path.find(".gz")
+    return gz_path, gz_path[:idx]
 
-download_bar(wp[4], "4.gz")
+
+def count_lang(wet_path, host2lang2len):
+    new_hosts = 0
+    with open(wet_path, 'rb') as stream:
+        i = 0
+        for record in ArchiveIterator(stream):
+            if record.rec_type == 'conversion':
+                langs = record.rec_headers.get_header("WARC-Identified-Content-Language")
+                url = record.rec_headers.get_header("WARC-Target-URI")
+                content_len = int(record.rec_headers.get_header("Content-Length"))
+                if langs is not None:
+                    langs = langs.split(",")
+                else:
+                    langs = []
+
+                u = urlparse(url)
+                host = u.netloc
+
+                if host not in host2lang2len:
+                    host2lang2len[host] = {}
+                    new_hosts += 1
+
+                lang2len = host2lang2len[host]
+
+                for lang in langs:
+                    if lang in lang2len:
+                        lang2len[lang] += content_len
+                    else:
+                        lang2len[lang] = content_len
+
+            i += 1
+
+            if i % 10000 == 0:
+                print(i)
+
+    return new_hosts
+
+
+# wp = get_wet_paths("CC-MAIN-2022-40")
+#
+# wet_gz_path, wet_path = get_wet_name(wp[4])
+#
+# download_progress(wp[4], wet_gz_path)
+#
+# ungzip(wet_gz_path, wet_path)

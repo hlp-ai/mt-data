@@ -24,11 +24,12 @@ if __name__ == "__main__":
     print("# hosts: ", len(host2lang2len))
 
     with open(wet_paths, encoding="utf-8") as f:
-        for url in f:
-            url = cc_base_url + url.strip()
-            print("Counting from ", url)
-            wet_gz_path, wet_path = get_wet_name(url)
-            download_progress(url, wet_gz_path)
+        for wet_url in f:  # for each wet file in cc archive
+            wet_url = cc_base_url + wet_url.strip()
+            print("Counting from ", wet_url)
+            wet_gz_path, wet_path = get_wet_name(wet_url)
+            # download WET file
+            download_progress(wet_url, wet_gz_path)
             ungzip(wet_gz_path, wet_path)
 
             new_hosts = count_lang(wet_path, host2lang2len)

@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from html.parser import HTMLParser
 
 from tld import get_fld
-from tld.exceptions import TldDomainNotFound
+from tld.exceptions import TldDomainNotFound, TldBadUrl
 
 
 def get_host(url):
@@ -18,6 +18,8 @@ def get_domain(url):
     try:
         return get_fld(url)
     except TldDomainNotFound:
+        return get_host(url)
+    except TldBadUrl:
         return get_host(url)
 
 

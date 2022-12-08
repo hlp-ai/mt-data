@@ -7,6 +7,8 @@ import requests
 # cc_archive_id = "CC-MAIN-2022-40"
 from warcio import ArchiveIterator
 
+from yimt_bitext.web import get_domain
+
 cc_base_url = "https://data.commoncrawl.org/"
 cc_data_url = "https://data.commoncrawl.org/crawl-data/"
 cc_wet_paths_gz = "wet.paths.gz"
@@ -43,7 +45,7 @@ def download_progress(url, filepath):
 
 
 def ungzip(zip_fn, unzip_fn):
-    print("Unziping ", zip_fn)
+    print("Unziping ", zip_fn, " into ", unzip_fn)
     g = gzip.GzipFile(mode="rb", fileobj=open(zip_fn, 'rb'))
     open(unzip_fn, "wb").write(g.read())
 
@@ -83,6 +85,7 @@ def count_lang(wet_path, host2lang2len):
 
                 u = urlparse(url)
                 host = u.netloc
+                # host = get_domain(u)
 
                 if host not in host2lang2len:
                     host2lang2len[host] = {}
@@ -98,8 +101,10 @@ def count_lang(wet_path, host2lang2len):
 
             i += 1
 
-            if i % 10000 == 0:
+            if i % 2000 == 0:
                 print(i)
+
+        print(i)
 
     return new_hosts
 

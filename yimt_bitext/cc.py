@@ -1,4 +1,5 @@
 import gzip
+import os
 import time
 from urllib.parse import urlparse
 
@@ -43,18 +44,25 @@ def download_progress(url, filepath):
 
 
 def ungzip(zip_fn, unzip_fn):
-    print("Unziping ", zip_fn)
+    print("Unziping ", zip_fn, " into ", unzip_fn)
     g = gzip.GzipFile(mode="rb", fileobj=open(zip_fn, 'rb'))
     open(unzip_fn, "wb").write(g.read())
 
 
-def get_wet_paths(cc_archive_id):
+def get_wet_paths(cc_archive_id, out_dir=None):
     wet_paths_url = cc_data_url + cc_archive_id + "/" + cc_wet_paths_gz
-    download(wet_paths_url, cc_wet_paths_gz)
+    if out_dir is None:
+        out_dir = "./" + cc_archive_id + "/"
+    if not os.path.exists(out_dir):
+        print("Making directory ", out_dir)
+        os.makedirs(out_dir, exist_ok=True)
+    cc_wet_paths_gz_path = os.path.join(out_dir, cc_wet_paths_gz)
+    download(wet_paths_url, cc_wet_paths_gz_path)
 
-    ungzip(cc_wet_paths_gz, cc_wet_paths)
+    cc_wet_paths_path = os.path.join(out_dir, cc_wet_paths)
+    ungzip(cc_wet_paths_gz_path, cc_wet_paths_path)
 
-    wetf = open(cc_wet_paths, encoding="utf-8")
+    wetf = open(cc_wet_paths_path, encoding="utf-8")
     wet_paths = [cc_base_url+line.strip() for line in wetf]
 
     return wet_paths
@@ -67,8 +75,13 @@ def get_wet_name(wet_url):
     return gz_path, gz_path[:idx]
 
 
-def count_lang(wet_path, host2lang2len):
+def count_lang(wet_path, host2lang2len, urls_file="urls.txt"):
     new_hosts = 0
+    if urls_file is not None:
+        urlf = open(urls_file, "a", encoding="utf-8")
+    else:
+        urlf = None
+
     with open(wet_path, 'rb') as stream:
         i = 0
         for record in ArchiveIterator(stream):
@@ -80,6 +93,9 @@ def count_lang(wet_path, host2lang2len):
                     langs = langs.split(",")
                 else:
                     langs = []
+
+                if  urlf is not None:
+                    urlf.write(url + "\n")
 
                 u = urlparse(url)
                 host = u.netloc
@@ -100,6 +116,9 @@ def count_lang(wet_path, host2lang2len):
 
             if i % 10000 == 0:
                 print(i)
+
+    if urlf is not None:
+        urlf.close()
 
     return new_hosts
 

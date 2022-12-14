@@ -5,8 +5,9 @@ import os
 
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser()
-    argparser.add_argument("--out_path", type=str, default="./biling_hosts.txt", help="output file path")
     argparser.add_argument("--stat_path", type=str, default="./stat_host.json", help="stat file")
+    argparser.add_argument("--langs", type=str, nargs=2, help="two three-letter language codes")
+    argparser.add_argument("--out_path", type=str, default="./biling_hosts.txt", help="output file path")
     args = argparser.parse_args()
 
     stat_path = args.stat_path
@@ -25,8 +26,7 @@ if __name__ == "__main__":
     print("# of candidate bilingual hosts: ", len(biling_hosts))
     print("# hosts for analysis: ", len(host2lang2len))
 
-    lang1 = "zho"
-    lang2 = "kor"
+    lang1, lang2 = args.langs
 
     new_biling_hosts = 0
 

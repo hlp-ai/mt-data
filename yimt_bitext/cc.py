@@ -102,7 +102,7 @@ def count_lang(wet_path, host2lang2len, urls_file=None):
                     urlf.write(url + "\n")
 
                 u = urlparse(url)
-                host = u.netloc
+                host = u.scheme + "://" + u.netloc + "/"
                 # host = get_domain(u)
 
                 if host not in host2lang2len:

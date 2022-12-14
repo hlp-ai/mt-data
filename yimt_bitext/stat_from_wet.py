@@ -23,7 +23,7 @@ if __name__ == "__main__":
 
     print("# hosts: ", len(host2lang2len))
 
-    new_hosts = count_lang(wet_path, host2lang2len)
+    new_hosts = count_lang(wet_path, host2lang2len, urls_file="urls.txt")
 
     print("# new hosts: ", new_hosts)
     print("# hosts: ", len(host2lang2len))

@@ -14,6 +14,8 @@ cc_base_url = "https://data.commoncrawl.org/"
 cc_data_url = "https://data.commoncrawl.org/crawl-data/"
 cc_wet_paths_gz = "wet.paths.gz"
 cc_wet_paths = "wet.paths"
+cc_wet_paths_done = cc_wet_paths + ".done"
+cc_stat_host_file = "stat_host.json"
 
 
 def download(url, local_fn):
@@ -77,7 +79,7 @@ def get_wet_name(wet_url):
     return gz_path, gz_path[:idx]
 
 
-def count_lang(wet_path, host2lang2len, urls_file="urls.txt"):
+def count_lang(wet_path, host2lang2len, urls_file=None):
     new_hosts = 0
     if urls_file is not None:
         urlf = open(urls_file, "a", encoding="utf-8")
@@ -96,7 +98,7 @@ def count_lang(wet_path, host2lang2len, urls_file="urls.txt"):
                 else:
                     langs = []
 
-                if  urlf is not None:
+                if urlf is not None:
                     urlf.write(url + "\n")
 
                 u = urlparse(url)
@@ -118,20 +120,11 @@ def count_lang(wet_path, host2lang2len, urls_file="urls.txt"):
             i += 1
 
             if i % 2000 == 0:
-                print(i)
+                print(i, " URLs")
+
+    print(i, " URLs")
 
     if urlf is not None:
         urlf.close()
 
-    print(i)
-
     return new_hosts
-
-
-# wp = get_wet_paths("CC-MAIN-2022-40")
-#
-# wet_gz_path, wet_path = get_wet_name(wp[4])
-#
-# download_progress(wp[4], wet_gz_path)
-#
-# ungzip(wet_gz_path, wet_path)

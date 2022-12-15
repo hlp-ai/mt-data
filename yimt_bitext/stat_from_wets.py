@@ -9,6 +9,7 @@ from yimt_bitext.cc import count_lang, get_wet_name, download_progress, ungzip, 
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser()
     argparser.add_argument("--wet_paths_dir", help="Directory of wet.paths file")
+    argparser.add_argument("--dump_url", action="store_true", help="Dump urls in WET file")
     args = argparser.parse_args()
 
     wet_paths = os.path.join(args.wet_paths_dir, cc_wet_paths)
@@ -39,10 +40,10 @@ if __name__ == "__main__":
                 print(wet_url, " has been processed before")
                 continue
             print("Counting WET file ", wet_url)
-            wet_gz_path, wet_path = get_wet_name(wet_url)
+            wet_gz_name, wet_name = get_wet_name(wet_url)
 
-            wet_gz_path = os.path.join(args.wet_paths_dir, wet_gz_path)
-            wet_path = os.path.join(args.wet_paths_dir, wet_path)
+            wet_gz_path = os.path.join(args.wet_paths_dir, wet_gz_name)
+            wet_path = os.path.join(args.wet_paths_dir, wet_name)
 
             # download WET file
             download_progress(wet_url, wet_gz_path)
@@ -51,7 +52,10 @@ if __name__ == "__main__":
             ungzip(wet_gz_path, wet_path)
 
             # counting
-            new_hosts = count_lang(wet_path, host2lang2len)
+            url_file = None
+            if args.dump_url:
+                url_file = os.path.join(args.wet_paths_dir, wet_name + ".urls")
+            new_hosts = count_lang(wet_path, host2lang2len, url_file)
 
             print("# new hosts: ", new_hosts)
             print("# hosts: ", len(host2lang2len))

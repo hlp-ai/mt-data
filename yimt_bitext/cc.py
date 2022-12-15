@@ -32,12 +32,12 @@ def download_progress(url, filepath):
     content_size = int(response.headers['content-length'])
     try:
         if response.status_code == 200:
-            print('Start downloading,[File Size]:{size:.2f} MB'.format(size=content_size / 1024 / 1024))
+            print('Start downloading, [File Size]: {size:.2f} MB'.format(size=content_size / 1024 / 1024))
             with open(filepath, 'wb') as file:
                 for data in response.iter_content(chunk_size=chunk_size):
                     file.write(data)
                     size += len(data)
-                    print('\r' + '[Progress]:%s%.2f%%' % (
+                    print('\r' + '[Progress]: %s%.2f%%' % (
                         '>' * int(size * 50 / content_size), float(size / content_size * 100)), end=' ')
         end = time.time()
         print('Done！Time: %.2f secs' % (end - start))
@@ -48,7 +48,8 @@ def download_progress(url, filepath):
 def ungzip(zip_fn, unzip_fn):
     print("Unziping ", zip_fn, " into ", unzip_fn)
     g = gzip.GzipFile(mode="rb", fileobj=open(zip_fn, 'rb'))
-    open(unzip_fn, "wb").write(g.read())
+    with open(unzip_fn, "wb") as f:
+        f.write(g.read())
 
 
 def get_wet_paths(cc_archive_id, out_dir=None):
@@ -78,6 +79,7 @@ def get_wet_name(wet_url):
 
 
 def count_lang(wet_path, host2lang2len, urls_file=None):
+    print("Scanning ", wet_path)
     new_hosts = 0
     if urls_file is not None:
         urlf = open(urls_file, "a", encoding="utf-8")

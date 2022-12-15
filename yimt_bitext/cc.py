@@ -112,6 +112,7 @@ def count_lang(wet_path, host2lang2len, urls_file=None):
 
                 lang2len = host2lang2len[host]
 
+                # TODO: More precise lengths of text of different languages
                 for lang in langs:
                     if lang in lang2len:
                         lang2len[lang] += content_len

@@ -34,6 +34,7 @@ if __name__ == "__main__":
         for host, lang2len in host2lang2len.items():
             if host in biling_hosts:
                 continue
+            # TODO: judgement by ratio of lengths of text of different languages
             if lang1 in lang2len and lang2 in lang2len:
                 f.write(host + "\n")
                 new_biling_hosts += 1

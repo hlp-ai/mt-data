@@ -8,8 +8,6 @@ import requests
 # cc_archive_id = "CC-MAIN-2022-40"
 from warcio import ArchiveIterator
 
-from yimt_bitext.web import get_domain
-
 cc_base_url = "https://data.commoncrawl.org/"
 cc_data_url = "https://data.commoncrawl.org/crawl-data/"
 cc_wet_paths_gz = "wet.paths.gz"
@@ -34,15 +32,15 @@ def download_progress(url, filepath):
     content_size = int(response.headers['content-length'])
     try:
         if response.status_code == 200:
-            print('开始下载,[文件大小]:{size:.2f} MB'.format(size=content_size / 1024 / 1024))
+            print('Start downloading,[File Size]:{size:.2f} MB'.format(size=content_size / 1024 / 1024))
             with open(filepath, 'wb') as file:
                 for data in response.iter_content(chunk_size=chunk_size):
                     file.write(data)
                     size += len(data)
-                    print('\r' + '[下载进度]:%s%.2f%%' % (
+                    print('\r' + '[Progress]:%s%.2f%%' % (
                         '>' * int(size * 50 / content_size), float(size / content_size * 100)), end=' ')
         end = time.time()
-        print('完成！用时: %.2f秒' % (end - start))
+        print('Done！Time: %.2f secs' % (end - start))
     except Exception:
         pass
 
@@ -90,6 +88,7 @@ def count_lang(wet_path, host2lang2len, urls_file=None):
         i = 0
         for record in ArchiveIterator(stream):
             if record.rec_type == 'conversion':
+                # TODO: When WARC-Identified-Content-Language is not available, language identification is needed.
                 langs = record.rec_headers.get_header("WARC-Identified-Content-Language")
                 url = record.rec_headers.get_header("WARC-Target-URI")
                 content_len = int(record.rec_headers.get_header("Content-Length"))

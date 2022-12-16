@@ -8,6 +8,8 @@ import requests
 # cc_archive_id = "CC-MAIN-2022-40"
 from warcio import ArchiveIterator
 
+from yimt_bitext.web import URL
+
 cc_base_url = "https://data.commoncrawl.org/"
 cc_data_url = "https://data.commoncrawl.org/crawl-data/"
 cc_wet_paths_gz = "wet.paths.gz"
@@ -137,3 +139,32 @@ def count_lang(wet_path, host2lang2len, urls_file=None):
         urlf.close()
 
     return new_hosts
+
+
+def iter_metadata_wet(wet_path):
+    with open(wet_path, 'rb') as stream:
+        for record in ArchiveIterator(stream):
+            if record.rec_type == 'conversion':
+                # TODO: When WARC-Identified-Content-Language is not available, language identification is needed.
+                langs = record.rec_headers.get_header("WARC-Identified-Content-Language")
+                url = record.rec_headers.get_header("WARC-Target-URI")
+                content_len = int(record.rec_headers.get_header("Content-Length"))
+                if langs is not None:
+                    langs = langs.split(",")
+                else:
+                    langs = []
+
+                u = URL(url)
+                site = u.scheme + "://" + u.netloc + "/"
+                domain = u.fld
+
+                # TODO: More precise lengths of text of different languages
+                if len(langs) > 0:
+                    most_prob_lang = langs[0]
+                    yield url, site, domain, most_prob_lang, content_len
+
+
+if __name__ == "__main__":
+    wet_path = r"D:\dataset\text\cc22-40\CC-MAIN-20220924151538-20220924181538-00000.warc.wet"
+    for url, site, domain, lang, content_len in iter_metadata_wet(wet_path):
+        print(url, site, domain, lang, content_len)

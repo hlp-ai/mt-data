@@ -164,7 +164,24 @@ def iter_metadata_wet(wet_path):
                     yield url, site, domain, most_prob_lang, content_len
 
 
+def dump_metadata_wet(wet_path, out_fn=None):
+    if out_fn is None:
+        out_fn = os.path.join(os.path.dirname(wet_path), os.path.basename(wet_path) + ".meta")
+
+    report_interval = 10000
+    total = 0
+    with open(out_fn, "w", encoding="utf-8") as stream:
+        for url, site, domain, lang, content_len in iter_metadata_wet(wet_path):
+            print(url, site, domain, lang, content_len, file=stream)
+            total += 1
+            if total % report_interval == 0:
+                print(total)
+    print(total)
+
+
 if __name__ == "__main__":
     wet_path = r"D:\dataset\text\cc22-40\CC-MAIN-20220924151538-20220924181538-00000.warc.wet"
-    for url, site, domain, lang, content_len in iter_metadata_wet(wet_path):
-        print(url, site, domain, lang, content_len)
+    # for url, site, domain, lang, content_len in iter_metadata_wet(wet_path):
+    #     print(url, site, domain, lang, content_len)
+
+    dump_metadata_wet(wet_path)

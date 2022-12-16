@@ -31,7 +31,8 @@ class URL:
             self.fld = get_fld(url)
             self.tld = get_tld(url)
         except Exception:
-            return self.netloc
+            self.fld = self.netloc
+            self.tld = self.netloc
 
 def get_netloc(url):
     u = urlparse(url)

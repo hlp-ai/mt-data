@@ -1,5 +1,6 @@
 import argparse
 import glob
+import json
 import os
 
 from yimt_bitext.cc import stat_from_meta, merge_k2dict
@@ -11,13 +12,15 @@ if __name__ == "__main__":
 
     meta_files = glob.glob(os.path.join(args.meta_dir, "*.meta"))
 
-    stat_by_host = {}
-    stat_by_domain = {}
-
     for f in meta_files:
         print("Stating from metadata file ", f)
         s_by_host, s_by_domain = stat_from_meta(f)
-        merge_k2dict(stat_by_host, s_by_host)
-        merge_k2dict(stat_by_domain, s_by_domain)
 
-        print(len(stat_by_host), len(stat_by_domain))
+        stat_host_fn = os.path.join(os.path.dirname(f), os.path.basename(f) + ".host.json")
+        stat_domain_fn = os.path.join(os.path.dirname(f), os.path.basename(f) + ".domain.json")
+
+        with open(stat_host_fn, "w", encoding="utf-8") as stream:
+            json.dump(s_by_host, stream)
+
+        with open(stat_domain_fn, "w", encoding="utf-8") as stream:
+            json.dump(s_by_domain, stream)

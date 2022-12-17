@@ -179,9 +179,69 @@ def dump_metadata_wet(wet_path, out_fn=None):
     print(total)
 
 
+def stat_from_meta(meta_file):
+    stat_by_host = {}
+    stat_by_domain = {}
+
+    report_interval = 20000
+    total = 0
+
+    with open(meta_file, encoding="utf-8") as f:
+        for line in f:
+            parts = line.strip().split()
+            url, host, domain, lang, content_len = parts
+            content_len = int(content_len)
+
+            update_k2dict(stat_by_host, host, lang, content_len)
+            update_k2dict(stat_by_domain, domain, lang, content_len)
+            # if host not in stat_by_host:
+            #     stat_by_host[host] = {}
+            # if domain not in stat_by_domain:
+            #     stat_by_domain[domain] = {}
+            #
+            # if lang in stat_by_host[host]:
+            #     stat_by_host[host][lang] += content_len
+            # else:
+            #     stat_by_host[host][lang] = content_len
+            #
+            # if lang in stat_by_domain[domain]:
+            #     stat_by_domain[domain][lang] += content_len
+            # else:
+            #     stat_by_domain[domain][lang] = content_len
+
+            total += 1
+            if total % report_interval == 0:
+                print(total)
+        print(total)
+
+    return stat_by_host, stat_by_domain
+
+
+def update_k2dict(k2dict, k, kk, kv):
+    if k not in k2dict:
+        k2dict[k] = {}
+
+    if kk in k2dict[k]:
+        k2dict[k][kk] += kv
+    else:
+        k2dict[k][kk] = kv
+
+
+def merge_k2dict(k2dict1, kd2dict2):
+    for k, dic in kd2dict2.items():
+        for kk, kv in dic.items():
+            update_k2dict(k2dict1, k, kk, kv)
+
+    return k2dict1
+
+
 if __name__ == "__main__":
     wet_path = r"D:\dataset\text\cc22-40\CC-MAIN-20220924151538-20220924181538-00000.warc.wet"
     # for url, site, domain, lang, content_len in iter_metadata_wet(wet_path):
     #     print(url, site, domain, lang, content_len)
 
-    dump_metadata_wet(wet_path)
+    # dump_metadata_wet(wet_path)
+    s_by_host, s_by_domain = stat_from_meta(r"./CC-MAIN-2022-40/CC-MAIN-20220924151538-20220924181538-00000.warc.wet.meta")
+    for domain, lang2len in s_by_domain.items():
+        if len(lang2len) > 1:
+            print(domain,lang2len)

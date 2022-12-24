@@ -1,6 +1,6 @@
+"""3. Output bilingual hosts/domains based on stat data"""
 import argparse
 import json
-import os
 
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser()

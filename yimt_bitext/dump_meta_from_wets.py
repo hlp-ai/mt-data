@@ -1,3 +1,4 @@
+"""1. Download, parse WET files from CommonCrawl and dump metadata for each WET file"""
 import argparse
 import os
 

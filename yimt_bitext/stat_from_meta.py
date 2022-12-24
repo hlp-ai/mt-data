@@ -1,3 +1,4 @@
+""""2. Calculate statistics from metadata file"""
 import argparse
 import glob
 import json

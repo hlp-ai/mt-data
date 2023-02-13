@@ -11,20 +11,20 @@ if __name__ == "__main__":
     args = argparser.parse_args()
 
     wet_paths = os.path.join(args.wet_paths_dir, cc_wet_paths)
-    wet_paths_done = os.path.join(args.wet_paths_dir, cc_wet_paths_done)
+    wet_urls_processed_path = os.path.join(args.wet_paths_dir, cc_wet_paths_done)
 
-    wets_done = set()
-    if os.path.exists(wet_paths_done):
-        with open(wet_paths_done, encoding="utf-8") as f:
+    wet_urls_processed = set()
+    if os.path.exists(wet_urls_processed_path):
+        with open(wet_urls_processed_path, encoding="utf-8") as f:
             for u in f:
-                wets_done.add(u.strip())
+                wet_urls_processed.add(u.strip())
 
-    print("# of WET done: ", len(wets_done))
+    print("# of WET processed: ", len(wet_urls_processed))
 
     with open(wet_paths, encoding="utf-8") as f:
         for wet_url in f:  # for each wet file in cc archive
             wet_url = cc_base_url + wet_url.strip()
-            if wet_url in wets_done:
+            if wet_url in wet_urls_processed:
                 print(wet_url, " has been processed before")
                 continue
             print("Dump metadata for ", wet_url)
@@ -39,11 +39,12 @@ if __name__ == "__main__":
             # unzip WET file
             ungzip(wet_gz_path, wet_path)
 
+            # Parse and dump wet metadata
             print("Scanning ", wet_path)
             dump_metadata_wet(wet_path)
 
             print("Updating WET done file...")
-            with open(wet_paths_done, "a", encoding="utf-8") as f:
+            with open(wet_urls_processed_path, "a", encoding="utf-8") as f:
                 f.write(wet_url + "\n")
 
             print("Deleting downloaded file")

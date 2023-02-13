@@ -55,6 +55,7 @@ def ungzip(zip_fn, unzip_fn):
 
 
 def get_wet_paths(cc_archive_id, out_dir=None):
+    """Download, unzip and get WET file urls"""
     wet_paths_url = cc_data_url + cc_archive_id + "/" + cc_wet_paths_gz
     if out_dir is None:
         out_dir = "./" + cc_archive_id + "/"
@@ -180,8 +181,8 @@ def dump_metadata_wet(wet_path, out_fn=None):
 
 
 def stat_from_meta(meta_file):
-    stat_by_host = {}
-    stat_by_domain = {}
+    domain2hosts = {}
+    domain2lang2len = {}
 
     report_interval = 20000
     total = 0
@@ -192,29 +193,32 @@ def stat_from_meta(meta_file):
             url, host, domain, lang, content_len = parts
             content_len = int(content_len)
 
-            update_k2dict(stat_by_host, host, lang, content_len)
-            update_k2dict(stat_by_domain, domain, lang, content_len)
-            # if host not in stat_by_host:
-            #     stat_by_host[host] = {}
-            # if domain not in stat_by_domain:
-            #     stat_by_domain[domain] = {}
-            #
-            # if lang in stat_by_host[host]:
-            #     stat_by_host[host][lang] += content_len
-            # else:
-            #     stat_by_host[host][lang] = content_len
-            #
-            # if lang in stat_by_domain[domain]:
-            #     stat_by_domain[domain][lang] += content_len
-            # else:
-            #     stat_by_domain[domain][lang] = content_len
+            # update_k2dict(domain2hosts, host, lang, content_len)
+            update_k2set(domain2hosts, domain, host)
+            update_k2dict(domain2lang2len, domain, lang, content_len)
 
             total += 1
             if total % report_interval == 0:
-                print(total)
-        print(total)
+                print(" ", total, "urls")
+        print(" ", total, "urls")
 
-    return stat_by_host, stat_by_domain
+    return domain2hosts, domain2lang2len
+
+
+def update_k2set(k2list, k, v):
+    if k not in k2list:
+        k2list[k] = []
+
+    if v not in k2list[k]:
+        k2list[k].append(v)
+
+
+def merge_k2set(k2set1, k2set2):
+    for k, s in k2set2.items():
+        for ss in s:
+            update_k2set(k2set1, k, ss)
+
+    return k2set1
 
 
 def update_k2dict(k2dict, k, kk, kv):

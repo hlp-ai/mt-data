@@ -1,25 +1,27 @@
+"""Get urls to crawl from dumped metadata files"""
 import argparse
 import glob
+import json
 import os
 
 
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser()
     argparser.add_argument("--meta_dir", required=True, help="Directory of metadata file")
-    argparser.add_argument("--candidate", type=str, default="./candidates.txt", help="Candidate file path")
-    argparser.add_argument("--out_path", type=str, default="./candidate_urls.txt", help="Urls output path")
+    argparser.add_argument("--candidate", type=str, default="./multidomain2langs.json", help="Candidate file path")
+    argparser.add_argument("--out_path", type=str, default="./urls_tocrawl.txt", help="Urls output path")
+    argparser.add_argument("--langs", type=str, nargs=2, help="three-letter language codes")
     args = argparser.parse_args()
 
     meta_files = glob.glob(os.path.join(args.meta_dir, "*.meta"))
 
-    candidate_netlocs = set()
     with open(args.candidate, encoding="utf-8") as stream:
-        for netloc in stream:
-            netloc = netloc.strip()
-            if netloc not in candidate_netlocs:
-                candidate_netlocs.add(netloc)
+        multidomain2langs = json.load(stream)
 
     urls = set()
+    lang1, lang2 = args.langs
+
+    urls_found = 0
 
     for f in meta_files:
         print("Getting urls from metadata file ", f)
@@ -31,13 +33,16 @@ if __name__ == "__main__":
                 parts = line.strip().split()
                 url, host, domain, lang, content_len = parts
 
-                if host in candidate_netlocs or domain in candidate_netlocs:
-                    urls.add(url)
+                if domain in multidomain2langs:
+                    langs = multidomain2langs[domain]
+                    if lang1 in langs and lang2 in langs:
+                        urls.add(url)
+                        urls_found += 1
 
                 total += 1
                 if total % report_interval == 0:
-                    print(total)
-            print(total)
+                    print(total, urls_found)
+            print(total, urls_found)
 
     with open(args.out_path, "w", encoding="utf-8") as stream:
         for url in urls:

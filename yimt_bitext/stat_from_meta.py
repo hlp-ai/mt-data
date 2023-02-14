@@ -16,16 +16,16 @@ if __name__ == "__main__":
     domain2hosts = {}
     domain2lang2len = {}
 
-    stat_host_fn = os.path.join(args.meta_dir, "domain2hosts.json")
-    stat_domain_fn = os.path.join(args.meta_dir, "domain2lang2len.json")
+    domain2hosts_fn = os.path.join(args.meta_dir, "domain2hosts.json")
+    domain2lang2len_fn = os.path.join(args.meta_dir, "domain2lang2len.json")
 
     update = False
     if update:
         print("Loading existing stat for updating...")
-        with open(stat_host_fn, encoding="utf-8") as stream:
+        with open(domain2hosts_fn, encoding="utf-8") as stream:
             domain2hosts = json.load(stream)
 
-        with open(stat_domain_fn, encoding="utf-8") as stream:
+        with open(domain2lang2len_fn, encoding="utf-8") as stream:
             domain2lang2len = json.load(stream)
 
     for f in meta_files:
@@ -39,8 +39,8 @@ if __name__ == "__main__":
 
         print("  # of domains after merging: ", len(domain2lang2len))
 
-    with open(stat_host_fn, "w", encoding="utf-8") as stream:
+    with open(domain2hosts_fn, "w", encoding="utf-8") as stream:
         json.dump(domain2hosts, stream)
 
-    with open(stat_domain_fn, "w", encoding="utf-8") as stream:
+    with open(domain2lang2len_fn, "w", encoding="utf-8") as stream:
         json.dump(domain2lang2len, stream)

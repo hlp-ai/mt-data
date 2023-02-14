@@ -7,7 +7,7 @@ from yimt_bitext.cc import update_k2set
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser()
     argparser.add_argument("--stat_path", type=str, required=True, help="stat file")
-    argparser.add_argument("--out_path", type=str, default="./multidoamin2langs.json", help="output file path")
+    argparser.add_argument("--out_path", type=str, default="./multidomain2langs.json", help="output file path")
     args = argparser.parse_args()
 
     stat_path = args.stat_path

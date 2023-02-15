@@ -5,15 +5,15 @@ import json
 
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser()
-    argparser.add_argument("--candidate", type=str, default="./multidomain2langs.json", help="Candidate file path")
-    argparser.add_argument("--out_path", type=str, default="./urls_tocrawl.txt", help="Urls output path")
     argparser.add_argument("--langs", type=str, nargs=2, help="three-letter language codes")
     args = argparser.parse_args()
 
-    with open(args.candidate, encoding="utf-8") as stream:
+    multidoam2langs_fn = r"./multidomain2langs.json"
+    with open(multidoam2langs_fn, encoding="utf-8") as stream:
         multidomain2langs = json.load(stream)
 
-    with open("./CC-MAIN-2022-40/domain2hosts.json", encoding="utf-8") as stream:
+    domain2hosts_fn = r"./CC-MAIN-2022-40/domain2hosts.json"
+    with open(domain2hosts_fn, encoding="utf-8") as stream:
         domain2hosts = json.load(stream)
 
     entries = set()
@@ -35,6 +35,7 @@ if __name__ == "__main__":
             print(total, entries_found)
     print(total, entries_found)
 
-    with open(args.out_path, "w", encoding="utf-8") as stream:
+    out_path = r"./urls_tocrawl.txt"
+    with open(out_path, "w", encoding="utf-8") as stream:
         for url in entries:
             stream.write(url + "\n")

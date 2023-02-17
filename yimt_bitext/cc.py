@@ -181,8 +181,7 @@ def dump_metadata_wet(wet_path, out_fn=None):
 
 
 def stat_from_meta(meta_file):
-    domain2hosts = {}
-    domain2lang2len = {}
+    host2lang2len = {}
 
     report_interval = 20000
     total = 0
@@ -193,16 +192,14 @@ def stat_from_meta(meta_file):
             url, host, domain, lang, content_len = parts
             content_len = int(content_len)
 
-            # update_k2dict(domain2hosts, host, lang, content_len)
-            update_k2set(domain2hosts, domain, host)
-            update_k2dict(domain2lang2len, domain, lang, content_len)
+            update_k2dict(host2lang2len, host, lang, content_len)
 
             total += 1
             if total % report_interval == 0:
                 print(" ", total, "urls")
         print(" ", total, "urls")
 
-    return domain2hosts, domain2lang2len
+    return host2lang2len
 
 
 def update_k2set(k2list, k, v):

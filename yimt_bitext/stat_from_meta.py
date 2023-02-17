@@ -13,34 +13,25 @@ if __name__ == "__main__":
 
     meta_files = glob.glob(os.path.join(args.meta_dir, "*.meta"))
 
-    domain2hosts = {}
-    domain2lang2len = {}
+    host2lang2len = {}
 
-    domain2hosts_fn = os.path.join(args.meta_dir, "domain2hosts.json")
-    domain2lang2len_fn = os.path.join(args.meta_dir, "domain2lang2len.json")
+    host2lang2len_fn = os.path.join(args.meta_dir, "host2lang2len.json")
 
     update = False
     if update:
         print("Loading existing stat for updating...")
-        with open(domain2hosts_fn, encoding="utf-8") as stream:
-            domain2hosts = json.load(stream)
-
-        with open(domain2lang2len_fn, encoding="utf-8") as stream:
-            domain2lang2len = json.load(stream)
+        with open(host2lang2len_fn, encoding="utf-8") as stream:
+            host2lang2len = json.load(stream)
 
     for f in meta_files:
         print("Stating from metadata file ", f)
-        domain2hosts_local, domain2lang2len_local = stat_from_meta(f)
+        host2lang2len_local = stat_from_meta(f)
 
-        print("  # of domains found: ", len(domain2lang2len_local))
+        print("  # of hosts found: ", len(host2lang2len_local))
 
-        domain2hosts = merge_k2set(domain2hosts, domain2hosts_local)
-        domain2lang2len = merge_k2dict(domain2lang2len, domain2lang2len_local)
+        host2lang2len = merge_k2dict(host2lang2len, host2lang2len_local)
 
-        print("  # of domains after merging: ", len(domain2lang2len))
+        print("  # of hosts after merging: ", len(host2lang2len))
 
-    with open(domain2hosts_fn, "w", encoding="utf-8") as stream:
-        json.dump(domain2hosts, stream)
-
-    with open(domain2lang2len_fn, "w", encoding="utf-8") as stream:
-        json.dump(domain2lang2len, stream)
+    with open(host2lang2len_fn, "w", encoding="utf-8") as stream:
+        json.dump(host2lang2len, stream)

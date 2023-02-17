@@ -8,13 +8,9 @@ if __name__ == "__main__":
     argparser.add_argument("--langs", type=str, nargs=2, help="three-letter language codes")
     args = argparser.parse_args()
 
-    multidoam2langs_fn = r"./multidomain2langs.json"
-    with open(multidoam2langs_fn, encoding="utf-8") as stream:
-        multidomain2langs = json.load(stream)
-
-    domain2hosts_fn = r"./CC-MAIN-2022-40/domain2hosts.json"
-    with open(domain2hosts_fn, encoding="utf-8") as stream:
-        domain2hosts = json.load(stream)
+    multihost2langs_fn = r"./multihost2langs.json"
+    with open(multihost2langs_fn, encoding="utf-8") as stream:
+        multihost2langs = json.load(stream)
 
     entries = set()
     lang1, lang2 = args.langs
@@ -23,12 +19,10 @@ if __name__ == "__main__":
     report_interval = 2000
     total = 0
 
-    for domain, langs in multidomain2langs.items():
+    for host, langs in multihost2langs.items():
         if lang1 in langs and lang2 in langs:
-            hosts = domain2hosts[domain]
-            for e in hosts:
-                entries.add(e)
-                entries_found += 1
+            entries.add(host)
+            entries_found += 1
 
         total += 1
         if total % report_interval == 0:

@@ -1,14 +1,15 @@
 """Get entries to crawl from dumped metadata files"""
 import argparse
 import json
-
+import os
 
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser()
+    argparser.add_argument("--host2lang", type=str, required=True, help="stat file")
     argparser.add_argument("--langs", type=str, nargs=2, help="three-letter language codes")
     args = argparser.parse_args()
 
-    multihost2langs_fn = r"./multihost2langs.json"
+    multihost2langs_fn = args.host2lang
     with open(multihost2langs_fn, encoding="utf-8") as stream:
         multihost2langs = json.load(stream)
 
@@ -29,7 +30,7 @@ if __name__ == "__main__":
             print(total, entries_found)
     print(total, entries_found)
 
-    out_path = r"./urls_tocrawl.txt"
+    out_path = os.path.join(os.path.dirname(multihost2langs_fn), "urls_tocrawl.txt")
     with open(out_path, "w", encoding="utf-8") as stream:
         for url in entries:
             stream.write(url + "\n")

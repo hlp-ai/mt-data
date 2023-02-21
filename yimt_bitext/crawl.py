@@ -1,20 +1,29 @@
+from urllib.parse import urljoin
+
 import requests
 from bs4 import BeautifulSoup
 
 
 def fetch(u):
-    r = requests.get(u)
+    try:
+        r = requests.get(u)
+    except Exception:
+        print("Exception")
+        return None
     return r
 
 
-def parse(h):
+def parse(base, h):
     d = BeautifulSoup(h, "lxml")
     txt = d.get_text()
     aa = d.find_all("a")
     urls = []
     for a in aa:
         if a.has_attr("href"):
-            urls.append(a["href"])
+            au = urljoin(base, a["href"])
+            urls.append(au)
+
+    urls = list(filter(lambda u: u.startswith(base), urls))
 
     return txt, urls
 
@@ -25,7 +34,8 @@ with open(to_crawl_fn, encoding="utf-8") as f:
         url = url.strip()
         print("Fetching", url)
         r = fetch(url)
-        if r.status_code == 200:
+        if r is not None and r.status_code == 200:
             print("Parsing", url)
-            t, u = parse(r.text)
+            t, u = parse(url, r.text)
             print(u)
+

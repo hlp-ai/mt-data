@@ -1,4 +1,4 @@
-"""Get entries to crawl from dumped metadata files"""
+"""4. Get entries to crawl from candidate multilingual hosts"""
 import argparse
 import json
 import os

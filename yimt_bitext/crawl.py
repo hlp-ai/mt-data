@@ -1,41 +1,31 @@
-from urllib.parse import urljoin
-
-import requests
-from bs4 import BeautifulSoup
-
-
-def fetch(u):
-    try:
-        r = requests.get(u)
-    except Exception:
-        print("Exception")
-        return None
-    return r
-
-
-def parse(base, h):
-    d = BeautifulSoup(h, "lxml")
-    txt = d.get_text()
-    aa = d.find_all("a")
-    urls = []
-    for a in aa:
-        if a.has_attr("href"):
-            au = urljoin(base, a["href"])
-            urls.append(au)
-
-    urls = list(filter(lambda u: u.startswith(base), urls))
-
-    return txt, urls
+"""5. Crawl multilingual entries"""
+from yimt_bitext.base import BasicUrlsToCrawl, BasicUrlsCrawled, BasicCrawler, BasicPageParser
+from yimt_bitext.web import URL
 
 
 to_crawl_fn = "./CC-MAIN-2022-40/urls_tocrawl.txt"
-with open(to_crawl_fn, encoding="utf-8") as f:
-    for url in f:
-        url = url.strip()
-        print("Fetching", url)
-        r = fetch(url)
-        if r is not None and r.status_code == 200:
-            print("Parsing", url)
-            t, u = parse(url, r.text)
-            print(u)
+to_crawl = BasicUrlsToCrawl(to_crawl_fn)
+crawled = BasicUrlsCrawled()
+crawler = BasicCrawler()
+parser = BasicPageParser()
 
+while True:
+    url = to_crawl.next()
+    if url is None:
+        break
+    print("Fetching", url)
+    html_content = crawler.crawl(url)
+    if html_content is not None:
+        print("Parsing", url)
+        txt, outlinks = parser.parse(html_content, url)
+
+        # crawl in-site
+        u = URL(url)
+        site = u.scheme + "://" + u.netloc + "/"
+        outlinks = list(filter(lambda ol: ol.startswith(site), outlinks))
+        for ol in outlinks:
+            to_crawl.add(ol)
+
+        crawled.add(url)
+
+    print(len(crawled), len(to_crawl))

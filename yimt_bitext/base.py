@@ -1,15 +1,41 @@
 """Interface for core concepts"""
+from urllib.parse import urljoin
+
+import requests
+from bs4 import BeautifulSoup
 
 
 class UrlsCrawled:
 
-    def is_crawled(self, url):
+    def exists(self, url):
         """Is the url crawled?"""
         pass
 
-    def crawled(self, url):
+    def add(self, url):
         """The url has been crawled"""
         pass
+
+
+class BasicUrlsCrawled(UrlsCrawled):
+
+    def __init__(self):
+        self._ids = set()
+
+    def exists(self, url):
+        h = hash(url)
+        if h in self._ids:
+            return True
+        else:
+            return False
+
+    def add(self, url):
+        h = hash(url)
+        if h in self._ids:
+            return
+        self._ids.add(h)
+
+    def __len__(self):
+        return len(self._ids)
 
 
 class UrlsToCrawl:
@@ -23,10 +49,80 @@ class UrlsToCrawl:
         pass
 
 
+class BasicUrlsToCrawl(UrlsToCrawl):
+
+    def __init__(self, path):
+        self._urls = []
+        self._ids = set()
+        with open(path, encoding="utf-8") as f:
+            for url in f:
+                url = url.strip()
+                self.add(url)
+
+    def exists(self, url):
+        h = hash(url)
+        if h in self._ids:
+            return True
+        else:
+            return False
+
+    def add(self, url):
+        h = hash(url)
+        if h in self._ids:
+            return
+        self._ids.add(h)
+        self._urls.append(url)
+
+    def next(self):
+        if len(self._urls) == 0:
+            return None
+
+        return self._urls.pop()
+
+    def __len__(self):
+        return len(self._urls)
+
+
 class Crawler:
 
     def crawl(self, url):
         pass
+
+
+class BasicCrawler(Crawler):
+
+    def crawl(self, url):
+        try:
+            r = requests.get(url)
+        except Exception:
+            print("Exception")
+            return None
+
+        if r.status_code == 200:
+            return r.text
+        else:
+            return None
+
+
+class PageParser:
+
+    def parse(self, htm):
+        pass
+
+
+class BasicPageParser(PageParser):
+
+    def parse(self, htm, base):
+        d = BeautifulSoup(htm, "lxml")
+        txt = d.get_text()
+        aa = d.find_all("a")
+        urls = []
+        for a in aa:
+            if a.has_attr("href"):
+                au = urljoin(base, a["href"])
+                urls.append(au)
+
+        return txt, urls
 
 
 class LangStat:

@@ -37,8 +37,8 @@ if __name__ == "__main__":
 
         total += 1
         if total % report_interval == 0:
-            print("{} entires scanned, {} new multilingual entries found".format(total, entries_found))
-    print("{} entires scanned, {} new multilingual entries found".format(total, entries_found))
+            print("{} entries scanned, {} new multilingual entries found".format(total, entries_found))
+    print("{} entries scanned, {} new multilingual entries found".format(total, entries_found))
 
     with open(entries_path, "w", encoding="utf-8") as stream:
         for url in entries:

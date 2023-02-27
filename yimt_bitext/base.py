@@ -143,6 +143,16 @@ class SentenceSplitter:
         pass
 
 
+class BasicSentenceSplitter(SentenceSplitter):
+
+    def split(self, text):
+        paragraphs = text.split("\n")
+        paragraphs = [p.strip() for p in paragraphs]
+        paragraphs = list(filter(lambda p: len(p)>0, paragraphs))
+
+        return paragraphs
+
+
 class Host2Lang2Len:
 
     def update(self, host, lang2len):

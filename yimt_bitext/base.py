@@ -1,6 +1,7 @@
 """Interface for core concepts"""
 from urllib.parse import urljoin
 
+import langid
 import requests
 from bs4 import BeautifulSoup
 
@@ -91,9 +92,14 @@ class Crawler:
 
 class BasicCrawler(Crawler):
 
+    def __init__(self, timeout=30):
+        self._timeout = timeout
+
     def crawl(self, url):
         try:
-            r = requests.get(url)
+            header = {
+                'User-Agent': 'Mozilla/5.0 (Windows; U; MSIE 9.0; Windows NT 9.0; en-US)'}
+            r = requests.get(url, headers=header, timeout=self._timeout)
         except Exception:
             print("Exception")
             return None
@@ -135,6 +141,12 @@ class LangID:
 
     def detect(self, text):
         pass
+
+
+class BasicLangID(LangID):
+
+    def detect(self, text):
+        return langid.classify(text)[0]
 
 
 class SentenceSplitter:

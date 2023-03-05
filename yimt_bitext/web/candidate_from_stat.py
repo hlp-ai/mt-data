@@ -3,7 +3,7 @@ import argparse
 import json
 import os
 
-from yimt_bitext.cc import update_k2set
+from yimt_bitext.web.cc import update_k2set
 
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser()

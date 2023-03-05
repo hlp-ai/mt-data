@@ -1,7 +1,7 @@
 """0. Get WET file list from CommonCrawl"""
 import argparse
 
-from yimt_bitext.cc import get_wet_paths
+from yimt_bitext.web.cc import get_wet_paths
 
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser()

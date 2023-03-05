@@ -1,6 +1,6 @@
 import argparse
 
-from yimt_bitext.cc import dump_metadata_wet
+from yimt_bitext.web.cc import dump_metadata_wet
 
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser()

@@ -1,6 +1,6 @@
 """5. Crawl multilingual entries"""
-from yimt_bitext.base import BasicUrlsToCrawl, BasicUrlsCrawled, BasicCrawler, BasicPageParser
-from yimt_bitext.web import URL
+from yimt_bitext.web.base import BasicUrlsToCrawl, BasicUrlsCrawled, BasicCrawler, BasicPageParser
+from yimt_bitext.web.web import URL
 
 
 to_crawl_fn = "./CC-MAIN-2022-40/urls_tocrawl.txt"

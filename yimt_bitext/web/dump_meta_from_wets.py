@@ -2,7 +2,7 @@
 import argparse
 import os
 
-from yimt_bitext.cc import get_wet_name, download_progress, ungzip, cc_base_url, cc_wet_paths, \
+from yimt_bitext.web.cc import get_wet_name, download_progress, ungzip, cc_base_url, cc_wet_paths, \
     cc_wet_paths_done, dump_metadata_wet
 
 if __name__ == "__main__":

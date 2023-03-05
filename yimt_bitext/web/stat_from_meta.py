@@ -5,7 +5,7 @@ import json
 import os
 import shutil
 
-from yimt_bitext.cc import stat_from_meta, merge_k2dict
+from yimt_bitext.web.cc import stat_from_meta, merge_k2dict
 
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser()

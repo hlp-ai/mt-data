@@ -8,7 +8,7 @@ import requests
 # cc_archive_id = "CC-MAIN-2022-40"
 from warcio import ArchiveIterator
 
-from yimt_bitext.web import URL
+from yimt_bitext.web.web import URL
 
 cc_base_url = "https://data.commoncrawl.org/"
 cc_data_url = "https://data.commoncrawl.org/crawl-data/"

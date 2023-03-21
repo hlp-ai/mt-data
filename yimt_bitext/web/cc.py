@@ -54,26 +54,6 @@ def ungzip(zip_fn, unzip_fn):
         f.write(g.read())
 
 
-def get_wet_paths(cc_archive_id, out_dir=None):
-    """Download, unzip and get WET file urls"""
-    wet_paths_url = cc_data_url + cc_archive_id + "/" + cc_wet_paths_gz
-    if out_dir is None:
-        out_dir = "./" + cc_archive_id + "/"
-    if not os.path.exists(out_dir):
-        print("Making directory ", out_dir)
-        os.makedirs(out_dir, exist_ok=True)
-    cc_wet_paths_gz_path = os.path.join(out_dir, cc_wet_paths_gz)
-    download(wet_paths_url, cc_wet_paths_gz_path)
-
-    cc_wet_paths_path = os.path.join(out_dir, cc_wet_paths)
-    ungzip(cc_wet_paths_gz_path, cc_wet_paths_path)
-
-    wetf = open(cc_wet_paths_path, encoding="utf-8")
-    wet_paths = [cc_base_url+line.strip() for line in wetf]
-
-    return wet_paths
-
-
 def get_wet_name(wet_url):
     parts = wet_url.split("/")
     gz_path = parts[-1]
@@ -242,7 +222,8 @@ if __name__ == "__main__":
     #     print(url, site, domain, lang, content_len)
 
     # dump_metadata_wet(wet_path)
-    s_by_host, s_by_domain = stat_from_meta(r"./CC-MAIN-2022-40/CC-MAIN-20220924151538-20220924181538-00000.warc.wet.meta")
+    s_by_host, s_by_domain = stat_from_meta(
+        r"./CC-MAIN-2022-40/CC-MAIN-20220924151538-20220924181538-00000.warc.wet.meta")
     for domain, lang2len in s_by_domain.items():
         if len(lang2len) > 1:
-            print(domain,lang2len)
+            print(domain, lang2len)

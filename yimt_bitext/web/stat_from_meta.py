@@ -98,11 +98,13 @@ def stat2(meta_dir):
     update = True
     if update:
         print("Loading existing stat for updating...")
-        with open(domain2hosts_fn, encoding="utf-8") as stream:
-            domain2hosts = json.load(stream)
+        if os.path.exists(domain2hosts_fn):
+            with open(domain2hosts_fn, encoding="utf-8") as stream:
+                domain2hosts = json.load(stream)
 
-        with open(domain2lang2len_fn, encoding="utf-8") as stream:
-            domain2lang2len = json.load(stream)
+        if os.path.exists(domain2lang2len_fn):
+            with open(domain2lang2len_fn, encoding="utf-8") as stream:
+                domain2lang2len = json.load(stream)
 
     for f in meta_files:
         print("Stating from metadata file ", f)
@@ -130,4 +132,4 @@ if __name__ == "__main__":
     args = argparser.parse_args()
 
     meta_dir = args.meta_dir
-    stat1(meta_dir)
+    stat2(meta_dir)

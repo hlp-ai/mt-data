@@ -3,17 +3,14 @@ import argparse
 import json
 import os
 
-if __name__ == "__main__":
-    argparser = argparse.ArgumentParser()
-    argparser.add_argument("--host2lang", type=str, required=True, help="stat file")
-    argparser.add_argument("--langs", type=str, nargs=2, help="three-letter language codes")
-    args = argparser.parse_args()
 
-    multihost2langs_fn = args.host2lang
-    with open(multihost2langs_fn, encoding="utf-8") as stream:
-        multihost2langs = json.load(stream)
+def get_multilang_site(site2langs, langs):
+    multisite2langs_fn = site2langs
+    with open(multisite2langs_fn, encoding="utf-8") as stream:
+        multisite2langs = json.load(stream)
 
-    entries_path = os.path.join(os.path.dirname(multihost2langs_fn), "entires_tocrawl.txt")
+    lang1, lang2 = langs
+    entries_path = os.path.join(os.path.dirname(multisite2langs_fn), "entires_tocrawl-" + "-".join(langs) + ".txt")
 
     entries = set()
     if os.path.exists(entries_path):
@@ -24,13 +21,11 @@ if __name__ == "__main__":
 
     print("# of entries found:", len(entries))
 
-    lang1, lang2 = args.langs
-
     entries_found = 0
     report_interval = 2000
     total = 0
 
-    for host, langs in multihost2langs.items():
+    for host, langs in multisite2langs.items():
         if lang1 in langs and lang2 in langs and host not in entries:
             entries.add(host)
             entries_found += 1
@@ -43,3 +38,12 @@ if __name__ == "__main__":
     with open(entries_path, "w", encoding="utf-8") as stream:
         for url in entries:
             stream.write(url + "\n")
+
+
+if __name__ == "__main__":
+    argparser = argparse.ArgumentParser()
+    argparser.add_argument("--site2langs", type=str, required=True, help="site-to-langs file")
+    argparser.add_argument("--langs", type=str, nargs=2, required=True, help="three-letter language codes")
+    args = argparser.parse_args()
+
+    get_multilang_site(args.site2langs, args.langs)

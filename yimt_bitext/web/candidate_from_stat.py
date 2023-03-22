@@ -9,7 +9,6 @@ from yimt_bitext.web.cc import update_k2set
 def gen_candidate_multilang_site(stat_path):
     multisite2langs_path = os.path.join(os.path.dirname(stat_path), "multisite2langs.json")
 
-    site2lang2len = {}
     print("Loading stat file...")
     with open(stat_path, encoding="utf-8") as f:
         site2lang2len = json.load(f)

@@ -84,15 +84,18 @@ def stat1(meta_dir):
 
 
 def stat2(meta_dir):
-    meta_files = glob.glob(os.path.join(args.meta_dir, "*.meta"))
+    meta_files = glob.glob(os.path.join(meta_dir, "*.meta"))
+    processed_meta_dir = os.path.join(meta_dir, "processed_meta")
+    if not os.path.exists(processed_meta_dir):
+        os.mkdir(processed_meta_dir)
 
     domain2hosts = {}
     domain2lang2len = {}
 
-    domain2hosts_fn = os.path.join(args.meta_dir, "domain2hosts.json")
-    domain2lang2len_fn = os.path.join(args.meta_dir, "domain2lang2len.json")
+    domain2hosts_fn = os.path.join(meta_dir, "domain2hosts.json")
+    domain2lang2len_fn = os.path.join(meta_dir, "domain2lang2len.json")
 
-    update = False
+    update = True
     if update:
         print("Loading existing stat for updating...")
         with open(domain2hosts_fn, encoding="utf-8") as stream:
@@ -111,6 +114,8 @@ def stat2(meta_dir):
         domain2lang2len = merge_k2dict(domain2lang2len, domain2lang2len_local)
 
         print("  # of domains after merging: ", len(domain2lang2len))
+
+        shutil.move(f, processed_meta_dir)  # move meta file into done dir
 
     with open(domain2hosts_fn, "w", encoding="utf-8") as stream:
         json.dump(domain2hosts, stream)

@@ -10,7 +10,7 @@ def get_multilang_site(site2langs, langs):
         multisite2langs = json.load(stream)
 
     lang1, lang2 = langs
-    entries_path = os.path.join(os.path.dirname(multisite2langs_fn), "entires_tocrawl-" + "-".join(langs) + ".txt")
+    entries_path = os.path.join(os.path.dirname(multisite2langs_fn), "entries_tocrawl-" + "-".join(langs) + ".txt")
 
     entries = set()
     if os.path.exists(entries_path):

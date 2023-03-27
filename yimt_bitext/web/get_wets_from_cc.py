@@ -16,7 +16,9 @@ def get_wet_paths(cc_archive_id, out_dir=None):
 
     # download
     cc_wet_paths_gz_path = os.path.join(out_dir, cc_wet_paths_gz)
-    download(wet_paths_url, cc_wet_paths_gz_path)
+    if not download(wet_paths_url, cc_wet_paths_gz_path):
+        print("ERROR: Fail to download", wet_paths_url)
+        return []
 
     # unzip
     cc_wet_paths_path = os.path.join(out_dir, cc_wet_paths)

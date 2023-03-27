@@ -72,7 +72,8 @@ def dump_wet(wet_paths, wet_urls_processed_path):
             wet_path = os.path.join(args.wet_paths_dir, wet_name)
 
             # download WET file
-            download_progress(wet_url, wet_gz_path)
+            if not download_progress(wet_url, wet_gz_path):
+                continue
 
             # unzip WET file
             ungzip(wet_gz_path, wet_path)

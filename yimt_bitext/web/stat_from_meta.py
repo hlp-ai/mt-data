@@ -8,7 +8,7 @@ import shutil
 from yimt_bitext.web.cc import merge_k2dict, update_k2set, update_k2dict, merge_k2set
 
 
-def stat_from_meta1(meta_file):
+def stat_from_meta_by_host(meta_file):
     """For multilingual site"""
     host2lang2len = {}
 
@@ -31,7 +31,7 @@ def stat_from_meta1(meta_file):
     return host2lang2len
 
 
-def stat_from_meta2(meta_file):
+def stat_from_meta_by_domain(meta_file):
     """For multilingual domain"""
     domain2hosts = {}
     domain2lang2len = {}
@@ -56,7 +56,7 @@ def stat_from_meta2(meta_file):
     return domain2hosts, domain2lang2len
 
 
-def stat1(meta_dir):
+def stat_by_host(meta_dir):
     processed_meta_dir = os.path.join(meta_dir, "processed_meta")
     if not os.path.exists(processed_meta_dir):
         os.mkdir(processed_meta_dir)
@@ -71,7 +71,7 @@ def stat1(meta_dir):
     meta_files = glob.glob(os.path.join(meta_dir, "*.meta"))
     for f in meta_files:
         print("Stating from metadata file ", f)
-        host2lang2len_local = stat_from_meta1(f)
+        host2lang2len_local = stat_from_meta_by_host(f)
         print("  # of hosts found: ", len(host2lang2len_local))
 
         host2lang2len = merge_k2dict(host2lang2len, host2lang2len_local)
@@ -83,7 +83,7 @@ def stat1(meta_dir):
         json.dump(host2lang2len, stream)
 
 
-def stat2(meta_dir):
+def stat_by_domain(meta_dir):
     meta_files = glob.glob(os.path.join(meta_dir, "*.meta"))
     processed_meta_dir = os.path.join(meta_dir, "processed_meta")
     if not os.path.exists(processed_meta_dir):
@@ -108,7 +108,7 @@ def stat2(meta_dir):
 
     for f in meta_files:
         print("Stating from metadata file ", f)
-        domain2hosts_local, domain2lang2len_local = stat_from_meta2(f)
+        domain2hosts_local, domain2lang2len_local = stat_from_meta_by_domain(f)
 
         print("  # of domains found: ", len(domain2lang2len_local))
 
@@ -129,7 +129,11 @@ def stat2(meta_dir):
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser()
     argparser.add_argument("--meta_dir", required=True, help="Directory of metadata file")
+    argparser.add_argument("--by_host", action="store_true", help="stat by host")
     args = argparser.parse_args()
 
     meta_dir = args.meta_dir
-    stat2(meta_dir)
+    if args.by_host:
+        stat_by_host(meta_dir)
+    else:
+        stat_by_domain(meta_dir)

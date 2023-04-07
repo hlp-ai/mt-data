@@ -92,7 +92,7 @@ class Crawler:
 
 class BasicCrawler(Crawler):
 
-    def __init__(self, timeout=30):
+    def __init__(self, timeout=20):
         self._timeout = timeout
 
     def crawl(self, url):
@@ -100,11 +100,12 @@ class BasicCrawler(Crawler):
             header = {
                 'User-Agent': 'Mozilla/5.0 (Windows; U; MSIE 9.0; Windows NT 9.0; en-US)'}
             r = requests.get(url, headers=header, timeout=self._timeout)
-        except Exception:
-            print("Exception")
+        except Exception as e:
+            print("Exception for {}: {}".format(url, e))
             return None
 
         if r.status_code == 200:
+            r.encoding = "utf-8"  # TODO: How to parse text correctly?
             return r.text
         else:
             return None
@@ -112,7 +113,7 @@ class BasicCrawler(Crawler):
 
 class PageParser:
 
-    def parse(self, htm):
+    def parse(self, htm, url):
         pass
 
 
@@ -220,3 +221,20 @@ class WETs:
 
     def next(self):
         pass
+
+
+if __name__ == "__main__":
+    crawler = BasicCrawler()
+    pageparser = BasicPageParser()
+
+    url1 = "http://www.hust.edu.cn"
+    r = crawler.crawl(url1)
+    print(r)
+
+    if r:
+        txt, outlinks = pageparser.parse(r, url1)
+        print(txt)
+        print(outlinks)
+
+    r = crawler.crawl("http://www.google.com")
+    print(r)

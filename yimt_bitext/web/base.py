@@ -6,6 +6,19 @@ import requests
 from bs4 import BeautifulSoup
 
 
+class WetParser:
+
+    def __init__(self, wet_file):
+        self.wet_file = wet_file
+
+    def parse(self):
+        """Generator of parsed result
+
+        :return: dict of parsed result
+        """
+        pass
+
+
 class UrlsCrawled:
 
     def exists(self, url):

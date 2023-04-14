@@ -200,6 +200,12 @@ class LangStat:
     def stat_by_host(self, host):
         pass
 
+    def lang2len_by_domain(self, domain):
+        pass
+
+    def lang2len_by_host(self, host):
+        return self.stat_by_host(host)
+
     def domains(self):
         pass
 
@@ -213,7 +219,7 @@ class LangStat:
         pass
 
 
-def merge_host2lang(old_lang2len, new_lang2len):
+def merge_lang2len(old_lang2len, new_lang2len):
     for lang, length in new_lang2len.items():
         if lang not in old_lang2len:
             old_lang2len[lang] = length
@@ -243,7 +249,7 @@ class BasicLangStat(LangStat):
                 host2lang2len[host] = lang2len
             else:
                 old_lang2len = host2lang2len[host]
-                merge_host2lang(old_lang2len, lang2len)
+                merge_lang2len(old_lang2len, lang2len)
 
     def stat_by_domain(self, domain):
         if domain not in self.stat:
@@ -261,6 +267,17 @@ class BasicLangStat(LangStat):
                 return None
             else:
                 return host2lang2len[host]
+
+    def lang2len_by_domain(self, domain):
+        host2lang2len = self.stat_by_domain(domain)
+        if host2lang2len is None:
+            return None
+
+        lang2len_ret = {}
+        for host, lang2len in host2lang2len.items():
+            lang2len_ret = merge_lang2len(lang2len_ret, lang2len)
+
+        return lang2len_ret
 
     def domains(self):
         return self.stat.keys()

@@ -11,3 +11,9 @@ if __name__ == "__main__":
     assert len(lang_stat.hosts("abc.com")) == 2
 
     lang_stat.save()
+
+    lang_stat = BasicLangStat(stat_f)
+    lang2len = lang_stat.lang2len_by_domain("abc.com")
+    assert lang2len["zh"] == 100
+    lang2len = lang_stat.lang2len_by_host("http://en.abc.com/")
+    assert lang2len["en"] == 100

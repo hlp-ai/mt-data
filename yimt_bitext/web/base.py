@@ -195,24 +195,30 @@ class LangStat:
         pass
 
     def stat_by_domain(self, domain):
+        """host2lang2len for the given domain"""
         pass
 
     def stat_by_host(self, host):
+        """lang2len for the given host"""
         pass
 
     def lang2len_by_domain(self, domain):
+        """lang2len for the given domain"""
         pass
 
     def lang2len_by_host(self, host):
         return self.stat_by_host(host)
 
     def domains(self):
+        """domain list"""
         pass
 
     def hosts(self, domain):
+        """the host list in the domain"""
         pass
 
     def size(self):
+        """number of domains"""
         pass
 
     def save(self):

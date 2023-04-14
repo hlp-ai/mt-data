@@ -1,9 +1,13 @@
 """Interface for core concepts"""
+import json
+import os
 from urllib.parse import urljoin
 
 import langid
 import requests
 from bs4 import BeautifulSoup
+
+from yimt_bitext.web.web import URL
 
 
 class WetParser:
@@ -179,19 +183,100 @@ class BasicSentenceSplitter(SentenceSplitter):
         return paragraphs
 
 
-class Host2Lang2Len:
+def get_domain(host):
+    u = URL(host)
+    domain = u.fld
+    return domain
+
+
+class LangStat:
 
     def update(self, host, lang2len):
-        """Update the language statistics of given host"""
         pass
 
-    def get(self, host):
-        """Get the language statistics of given host"""
+    def stat_by_domain(self, domain):
         pass
 
-    def next(self):
-        """Iterate"""
+    def stat_by_host(self, host):
         pass
+
+    def domains(self):
+        pass
+
+    def hosts(self, domain):
+        pass
+
+    def size(self):
+        pass
+
+    def save(self):
+        pass
+
+
+def merge_host2lang(old_lang2len, new_lang2len):
+    for lang, length in new_lang2len.items():
+        if lang not in old_lang2len:
+            old_lang2len[lang] = length
+        else:
+            old_lang2len[lang] += length
+
+    return old_lang2len
+
+
+class BasicLangStat(LangStat):
+
+    def __init__(self, stat_file):
+        self.stat_file = stat_file
+        if os.path.exists(self.stat_file):
+            with open(stat_file, encoding="utf-8") as stream:
+                self.stat = json.load(stream)
+        else:
+            self.stat = {}
+
+    def update(self, host, lang2len):
+        domain = get_domain(host)
+        if domain not in self.stat:
+            self.stat[domain] = {host: lang2len}
+        else:
+            host2lang2len = self.stat[domain]
+            if host not in host2lang2len:
+                host2lang2len[host] = lang2len
+            else:
+                old_lang2len = host2lang2len[host]
+                merge_host2lang(old_lang2len, lang2len)
+
+    def stat_by_domain(self, domain):
+        if domain not in self.stat:
+            return None
+        else:
+            return self.stat[domain]
+
+    def stat_by_host(self, host):
+        domain = get_domain(host)
+        if domain not in self.stat:
+            return None
+        else:
+            host2lang2len = self.stat[domain]
+            if host not in host2lang2len:
+                return None
+            else:
+                return host2lang2len[host]
+
+    def domains(self):
+        return self.stat.keys()
+
+    def hosts(self, domain):
+        if domain not in self.stat:
+            return None
+
+        return self.stat[domain].keys()
+
+    def size(self):
+        return len(self.stat)
+
+    def save(self):
+        with open(self.stat_file, "w", encoding="utf-8") as stream:
+            json.dump(self.stat, stream)
 
 
 class MultiLangHost:

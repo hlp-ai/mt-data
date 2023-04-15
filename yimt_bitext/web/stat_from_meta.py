@@ -5,6 +5,7 @@ import json
 import os
 import shutil
 
+from yimt_bitext.web.base import BasicLangStat
 from yimt_bitext.web.cc import merge_k2dict, update_k2set, update_k2dict, merge_k2set
 
 
@@ -159,14 +160,29 @@ def stat_by_domain(meta_dir):
         json.dump(domain2lang2len, stream)
 
 
+def stat_from_metadata(meta_dir):
+    processed_meta_dir = os.path.join(meta_dir, "processed_meta")
+    if not os.path.exists(processed_meta_dir):
+        os.mkdir(processed_meta_dir)
+
+    lang_stat = BasicLangStat("domain2host2lang2len.json")
+
+    meta_files = glob.glob(os.path.join(meta_dir, "*.meta"))
+    for f in meta_files:
+        print("Stating from metadata file ", f)
+        host2lang2len_local = stat_from_meta_by_host(f)
+        for host, lang2len in host2lang2len_local.items():
+            lang_stat.update(host, lang2len)
+
+        shutil.move(f, processed_meta_dir)
+
+    lang_stat.save()
+
+
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser()
     argparser.add_argument("--meta_dir", required=True, help="Directory of metadata file")
-    argparser.add_argument("--by_host", action="store_true", help="stat by host")
     args = argparser.parse_args()
 
     meta_dir = args.meta_dir
-    if args.by_host:
-        stat_by_host(meta_dir)
-    else:
-        stat_by_domain(meta_dir)
+    stat_from_metadata(meta_dir)

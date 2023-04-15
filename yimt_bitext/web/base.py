@@ -224,6 +224,12 @@ class LangStat:
     def save(self):
         pass
 
+    def domains_for_langs(self, langs):
+        pass
+
+    def hosts_for_langs(self, langs):
+        pass
+
 
 def merge_lang2len(old_lang2len, new_lang2len):
     for lang, length in new_lang2len.items():
@@ -300,6 +306,26 @@ class BasicLangStat(LangStat):
     def save(self):
         with open(self.stat_file, "w", encoding="utf-8") as stream:
             json.dump(self.stat, stream)
+
+    def domains_for_langs(self, langs):
+        for domain in self.domains():
+            lang2len = self.lang2len_by_domain(domain)
+            found = True
+            for lang in langs:
+                if lang not in lang2len.keys():
+                    found = False
+                    break
+            if found:
+                yield domain
+
+    def hosts_for_langs(self, langs):
+        for domain in self.domains_for_langs(langs):
+            host2lang2len = self.stat_by_domain(domain)
+            for host, lang2len in host2lang2len.items():
+                for lang in langs:
+                    if lang in lang2len.keys():
+                        yield host
+                        break
 
 
 class MultiLangHost:

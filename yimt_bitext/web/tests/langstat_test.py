@@ -17,3 +17,6 @@ if __name__ == "__main__":
     assert lang2len["en"] == 130
     lang2len = lang_stat.lang2len_by_host("http://en.abc.com/")
     assert lang2len["en"] == 100
+
+    hosts = list(lang_stat.hosts_for_langs(["en", "zh"]))
+    assert len(hosts) == 2

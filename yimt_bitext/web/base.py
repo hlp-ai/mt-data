@@ -314,12 +314,14 @@ class BasicLangStat(LangStat):
 
     def hosts_for_langs(self, langs):
         for domain in self.domains_for_langs(langs):
+            hosts = []
             host2lang2len = self.stat_by_domain(domain)
             for host, lang2len in host2lang2len.items():
                 for lang in langs:
                     if lang in lang2len.keys():
-                        yield host
+                        hosts.append(host)
                         break
+            yield domain, hosts
 
 
 class MultiLangHost:

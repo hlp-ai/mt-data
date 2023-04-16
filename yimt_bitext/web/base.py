@@ -149,12 +149,6 @@ class BasicPageParser(PageParser):
         return txt, urls
 
 
-class LangStat:
-
-    def stat(self, text):
-        pass
-
-
 class LangID:
 
     def detect(self, text):

@@ -324,30 +324,6 @@ class BasicLangStat(LangStat):
             yield domain, hosts
 
 
-class MultiLangHost:
-
-    def update(self, host, lang):
-        """Add lang to lang list of host"""
-        pass
-
-    def get(self, host):
-        """Get the lang list of host"""
-        pass
-
-    def next(self):
-        """Iterate"""
-        pass
-
-
-class Host2Lang2Sent:
-
-    def update(self, host, lang, sentences):
-        pass
-
-    def get(self, host, lang):
-        pass
-
-
 class ProcessedWET:
 
     def is_processed(self, wet_url):

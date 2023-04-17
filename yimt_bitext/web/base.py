@@ -324,6 +324,31 @@ class BasicLangStat(LangStat):
             yield domain, hosts
 
 
+class SentenceRepo:
+
+    def store(self, sentences):
+        pass
+
+
+class BasicSentenceRepo(SentenceRepo):
+
+    def __init__(self, path="./"):
+        self.path = path
+        self.repo = {}
+
+    def store(self, lang2sentences):
+        for lang, sents in lang2sentences.items():
+            if lang not in self.repo:
+                self.repo[lang] = []
+            self.repo[lang] += sents
+
+    def __str__(self):
+        description= ""
+        for lang, sents in self.repo.items():
+            description += lang + ": " + str(len(sents)) + "; "
+        return description
+
+
 class ProcessedWET:
 
     def is_processed(self, wet_url):

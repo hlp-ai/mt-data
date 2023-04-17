@@ -1,5 +1,6 @@
 """5. Crawl multilingual entries"""
-from yimt_bitext.web.base import BasicUrlsToCrawl, BasicUrlsCrawled, BasicCrawler, BasicPageParser, BasicSentenceSplitter
+from yimt_bitext.web.base import BasicUrlsToCrawl, BasicUrlsCrawled, BasicCrawler, BasicPageParser, \
+    BasicSentenceSplitter, BasicLangID, BasicSentenceRepo
 from yimt_bitext.web.web import URL
 
 
@@ -9,6 +10,8 @@ crawled = BasicUrlsCrawled()
 crawler = BasicCrawler()
 parser = BasicPageParser()
 sentence_splitter = BasicSentenceSplitter()
+langid = BasicLangID()
+sent_repo = BasicSentenceRepo()
 
 while True:
     url = to_crawl.next()
@@ -21,7 +24,16 @@ while True:
         txt, outlinks = parser.parse(html_content, url)
 
         sentences = sentence_splitter.split(txt)
-        print(sentences)
+        lang2sentenes = {}
+        for s in sentences:
+            lang = langid.detect(s)
+            if lang in lang2sentenes:
+                lang2sentenes[lang].append(s)
+            else:
+                lang2sentenes[lang] = [s]
+
+        sent_repo.store(lang2sentenes)
+        print(sent_repo)
 
         # crawl in-site
         u = URL(url)
@@ -32,4 +44,4 @@ while True:
 
         crawled.add(url)
 
-    print(len(crawled), len(to_crawl))
+    print(len(crawled), "crawled,", len(to_crawl), "to crawl.")

@@ -350,6 +350,31 @@ class BasicSentenceRepo(SentenceRepo):
         return description
 
 
+class SentenceRepoFile(SentenceRepo):
+
+    def __init__(self, path="./lang2sents"):
+        if not os.path.exists(path):
+            os.makedirs(path, exist_ok=True)
+        self.path = path
+        self.lang2f = {}
+        self.lang2len = {}
+
+    def store(self, lang2sentences):
+        for lang, sents in lang2sentences.items():
+            if lang not in self.lang2f:
+                self.lang2f[lang] = open(os.path.join(self.path, lang + ".txt"), "w", encoding="utf-8")
+                self.lang2len[lang] = 0
+            for s in sents:
+                self.lang2f[lang].write(s + "\n")
+            self.lang2len[lang] += len(sents)
+
+    def __str__(self):
+        description= ""
+        for lang, count in self.lang2len.items():
+            description += lang + ": " + str(count) + "; "
+        return description
+
+
 class ProcessedWET:
 
     def is_processed(self, wet_url):

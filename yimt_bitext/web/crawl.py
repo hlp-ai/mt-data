@@ -1,17 +1,17 @@
 """5. Crawl multilingual entries"""
 from yimt_bitext.web.base import BasicUrlsToCrawl, BasicUrlsCrawled, BasicCrawler, BasicPageParser, \
-    BasicSentenceSplitter, BasicLangID, BasicSentenceRepo
+    BasicSentenceSplitter, BasicLangID, BasicSentenceRepo, SentenceRepoFile
 from yimt_bitext.web.web import URL
 
 
-to_crawl_fn = "./CC-MAIN-2022-40/urls_tocrawl.txt"
+to_crawl_fn = "../CC-MAIN-2022-40/urls_tocrawl.txt"
 to_crawl = BasicUrlsToCrawl(to_crawl_fn)
 crawled = BasicUrlsCrawled()
 crawler = BasicCrawler()
 parser = BasicPageParser()
 sentence_splitter = BasicSentenceSplitter()
 langid = BasicLangID()
-sent_repo = BasicSentenceRepo()
+sent_repo = SentenceRepoFile(accepted_langs=["zh", "en", "ko"])
 
 while True:
     url = to_crawl.next()

@@ -165,9 +165,11 @@ def stat_from_metadata(meta_dir):
     if not os.path.exists(processed_meta_dir):
         os.mkdir(processed_meta_dir)
 
-    lang_stat = BasicLangStat("domain2host2lang2len.json")
+    lang_stat = BasicLangStat(os.path.join(meta_dir, "domain2host2lang2len.json"))
 
     meta_files = glob.glob(os.path.join(meta_dir, "*.meta"))
+    if len(meta_files) == 0:
+        print("No meta file to process.")
     for f in meta_files:
         print("Stating from metadata file ", f)
         host2lang2len_local = stat_from_meta_by_host(f)
@@ -175,6 +177,8 @@ def stat_from_metadata(meta_dir):
             lang_stat.update(host, lang2len)
 
         shutil.move(f, processed_meta_dir)
+
+        print("# of domains:", lang_stat.size())
 
     lang_stat.save()
 

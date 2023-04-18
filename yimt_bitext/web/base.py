@@ -240,6 +240,7 @@ class BasicLangStat(LangStat):
     def __init__(self, stat_file):
         self.stat_file = stat_file
         if os.path.exists(self.stat_file):
+            print("Loading stat from", self.stat_file)
             with open(stat_file, encoding="utf-8") as stream:
                 self.stat = json.load(stream)
         else:

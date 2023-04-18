@@ -122,7 +122,7 @@ class BasicCrawler(Crawler):
             return None
 
         if r.status_code == 200:
-            r.encoding = "utf-8"  # TODO: How to parse text correctly?
+            r.encoding = r.apparent_encoding
             return r.text
         else:
             return None

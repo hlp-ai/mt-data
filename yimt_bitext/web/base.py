@@ -122,7 +122,7 @@ class BasicCrawler(Crawler):
             return None
 
         if r.status_code == 200:
-            r.encoding = "utf-8"  # TODO: How to parse text correctly?
+            r.encoding = r.apparent_encoding
             return r.text
         else:
             return None
@@ -240,6 +240,7 @@ class BasicLangStat(LangStat):
     def __init__(self, stat_file):
         self.stat_file = stat_file
         if os.path.exists(self.stat_file):
+            print("Loading stat from", self.stat_file)
             with open(stat_file, encoding="utf-8") as stream:
                 self.stat = json.load(stream)
         else:
@@ -346,6 +347,34 @@ class BasicSentenceRepo(SentenceRepo):
         description= ""
         for lang, sents in self.repo.items():
             description += lang + ": " + str(len(sents)) + "; "
+        return description
+
+
+class SentenceRepoFile(SentenceRepo):
+
+    def __init__(self, path="./lang2sents", accepted_langs=None):
+        if not os.path.exists(path):
+            os.makedirs(path, exist_ok=True)
+        self.path = path
+        self.lang2f = {}
+        self.lang2len = {}
+        self.accepted_langs = accepted_langs
+
+    def store(self, lang2sentences):
+        for lang, sents in lang2sentences.items():
+            if self.accepted_langs is not None and lang not in self.accepted_langs:
+                continue
+            if lang not in self.lang2f:
+                self.lang2f[lang] = open(os.path.join(self.path, lang + ".txt"), "a", encoding="utf-8")
+                self.lang2len[lang] = 0
+            for s in sents:
+                self.lang2f[lang].write(s + "\n")
+            self.lang2len[lang] += len(sents)
+
+    def __str__(self):
+        description= ""
+        for lang, count in self.lang2len.items():
+            description += lang + ": " + str(count) + "; "
         return description
 
 

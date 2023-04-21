@@ -166,6 +166,7 @@ def stat_from_metadata(meta_dir):
         os.mkdir(processed_meta_dir)
 
     lang_stat = BasicLangStat(os.path.join(meta_dir, "domain2host2lang2len.json"))
+    print("# of domains:", lang_stat.size())
 
     meta_files = glob.glob(os.path.join(meta_dir, "*.meta"))
     if len(meta_files) == 0:

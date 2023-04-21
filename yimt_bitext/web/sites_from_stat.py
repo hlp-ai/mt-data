@@ -1,4 +1,3 @@
-import json
 import sys
 
 from yimt_bitext.web.base import BasicLangStat

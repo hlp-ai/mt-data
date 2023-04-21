@@ -31,7 +31,10 @@ def download_progress(url, filepath):
     response = requests.get(url, stream=True)
     size = 0
     chunk_size = 4096 * 16
-    content_size = int(response.headers['content-length'])
+    if 'content-length' in response.headers:
+        content_size = int(response.headers['content-length'])
+    else:
+        content_size = 1024*1024
     try:
         if response.status_code == 200:
             print('Start downloading, [File Size]: {size:.2f} MB'.format(size=content_size / 1024 / 1024))

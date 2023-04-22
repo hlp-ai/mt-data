@@ -95,3 +95,7 @@ if __name__ == '__main__':
     uri = "http://www.abc.com/p/a.html?t=kor"
     lang = url_language.find_language(uri)
     print(lang)
+
+    uri = "http://www.abc.com/p/kora.jsp"
+    lang = url_language.find_language(uri)
+    print(lang)

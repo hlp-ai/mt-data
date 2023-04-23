@@ -317,9 +317,10 @@ class BasicLangStat(LangStat):
     def domains_for_langs(self, langs):
         for domain in self.domains():
             lang2len = self.lang2len_by_domain(domain)
+            langs_in_domain = self.languages(lang2len)
             found = True
             for lang in langs:
-                if lang not in lang2len.keys():
+                if lang not in langs_in_domain:
                     found = False
                     break
             if found:

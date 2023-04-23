@@ -80,6 +80,12 @@ class UrlLanguage(object):
             return self.code_to_language[match]
         return ''
 
+    def normalize_lang_code(self, lang_code):
+        if lang_code in self.code_to_language:
+            return self.code_to_language[lang_code]
+        else:
+            return None
+
 
 if __name__ == '__main__':
     url_language = UrlLanguage()
@@ -99,3 +105,8 @@ if __name__ == '__main__':
     uri = "http://www.abc.com/p/kora.jsp"
     lang = url_language.find_language(uri)
     print(lang)
+
+    while True:
+        uri = input("input url: ")
+        lang = url_language.find_language(uri)
+        print(lang)

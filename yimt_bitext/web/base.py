@@ -56,6 +56,35 @@ class BasicUrlsCrawled(UrlsCrawled):
         return len(self._ids)
 
 
+class DiskUrlsCrawled(UrlsCrawled):
+
+    def __init__(self, ser_file="crawled.txt"):
+        self._ids = set()
+        self.ser_stream = open(ser_file, "a", encoding="utf-8")
+
+    def exists(self, url):
+        h = hash(url)
+        if h in self._ids:
+            return True
+        else:
+            return False
+
+    def add(self, url):
+        h = hash(url)
+        if h in self._ids:
+            return
+        self._ids.add(h)
+        self.ser_stream.write(url + "\n")
+        if len(self) % 10 == 0:
+            self.ser_stream.flush()
+
+    def __len__(self):
+        return len(self._ids)
+
+    def close(self):
+        self.ser_stream.close()
+
+
 class UrlsToCrawl:
 
     def add(self, url):
@@ -72,6 +101,7 @@ class BasicUrlsToCrawl(UrlsToCrawl):
     def __init__(self, path):
         self._urls = []
         self._ids = set()
+        self.ser_path = path
         with open(path, encoding="utf-8") as f:
             for url in f:
                 url = url.strip()
@@ -90,6 +120,11 @@ class BasicUrlsToCrawl(UrlsToCrawl):
             return
         self._ids.add(h)
         self._urls.append(url)
+
+        if len(self) % 50 == 0:
+            with open(self.ser_path, "w", encoding="utf-8") as f:
+                for u in self._urls:
+                    f.write(u + "\n")
 
     def next(self):
         if len(self._urls) == 0:

@@ -2,7 +2,7 @@
 import sys
 
 from yimt_bitext.web.base import BasicUrlsToCrawl, BasicUrlsCrawled, BasicCrawler, BasicPageParser, \
-    BasicSentenceSplitter, BasicLangID, BasicSentenceRepo, SentenceRepoFile
+    BasicSentenceSplitter, BasicLangID, BasicSentenceRepo, SentenceRepoFile, DiskUrlsCrawled
 from yimt_bitext.web.web import URL
 
 
@@ -10,7 +10,7 @@ if __name__ == "__main__":
     to_crawl_fn = sys.argv[1]  # "../CC-MAIN-2022-40/urls_tocrawl.txt"
 
     to_crawl = BasicUrlsToCrawl(to_crawl_fn)
-    crawled = BasicUrlsCrawled()
+    crawled = DiskUrlsCrawled()  # BasicUrlsCrawled()
     crawler = BasicCrawler()
     parser = BasicPageParser()
     sentence_splitter = BasicSentenceSplitter()

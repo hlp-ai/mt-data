@@ -224,6 +224,18 @@ class LangStat:
     def hosts_for_langs(self, langs):
         pass
 
+    @classmethod
+    def languages(cls, lang2len):
+        total_langs = len(lang2len.keys())
+        total_lens = sum(lang2len.values())
+        avg_len = total_lens / total_langs
+        ret = []
+        for lang in lang2len.keys():
+            if lang2len[lang] > avg_len/5:
+                ret.append(lang)
+
+        return ret
+
 
 def merge_lang2len(old_lang2len, new_lang2len):
     for lang, length in new_lang2len.items():
@@ -305,9 +317,10 @@ class BasicLangStat(LangStat):
     def domains_for_langs(self, langs):
         for domain in self.domains():
             lang2len = self.lang2len_by_domain(domain)
+            langs_in_domain = self.languages(lang2len)
             found = True
             for lang in langs:
-                if lang not in lang2len.keys():
+                if lang not in langs_in_domain:
                     found = False
                     break
             if found:

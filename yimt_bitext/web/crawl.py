@@ -1,8 +1,8 @@
 """5. Crawl multilingual entries"""
 import sys
 
-from yimt_bitext.web.base import BasicUrlsToCrawl, BasicUrlsCrawled, BasicCrawler, BasicPageParser, \
-    BasicSentenceSplitter, BasicLangID, BasicSentenceRepo, SentenceRepoFile, DiskUrlsCrawled
+from yimt_bitext.web.base import  BasicSentenceSplitter, BasicLangID, SentenceRepoFile
+from yimt_bitext.web.crawl_base import BasicUrlsToCrawl, DiskUrlsCrawled, BasicCrawler, BasicPageParser
 from yimt_bitext.web.web import URL
 
 

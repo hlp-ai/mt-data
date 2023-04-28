@@ -124,7 +124,7 @@ class Fetcher:
 
 class BasicFetcher(Fetcher):
 
-    def __init__(self, timeout=20):
+    def __init__(self, timeout=(15, 15)):
         self._timeout = timeout
 
     def crawl(self, url):
@@ -132,15 +132,17 @@ class BasicFetcher(Fetcher):
             header = {
                 'User-Agent': 'Mozilla/5.0 (Windows; U; MSIE 9.0; Windows NT 9.0; en-US)'}
             r = requests.get(url, headers=header, timeout=self._timeout)
+
+            if r.status_code == 200:
+                r.encoding = r.apparent_encoding
+                return r.text
+            else:
+                return None
         except Exception as e:
             print("Exception for {}: {}".format(url, e))
             return None
-
-        if r.status_code == 200:
-            r.encoding = r.apparent_encoding
-            return r.text
-        else:
-            return None
+        finally:
+            r.close()
 
 
 class PageParser:

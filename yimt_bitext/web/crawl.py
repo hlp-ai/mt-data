@@ -2,7 +2,7 @@
 import sys
 
 from yimt_bitext.web.base import  BasicSentenceSplitter, BasicLangID, SentenceRepoFile
-from yimt_bitext.web.crawl_base import BasicUrlsToCrawl, DiskUrlsCrawled, BasicCrawler, BasicPageParser
+from yimt_bitext.web.crawl_base import BasicUrlsToCrawl, DiskUrlsCrawled, BasicFetcher, BasicPageParser
 from yimt_bitext.web.web import URL
 
 
@@ -11,7 +11,7 @@ if __name__ == "__main__":
 
     to_crawl = BasicUrlsToCrawl(to_crawl_fn)
     crawled = DiskUrlsCrawled()  # BasicUrlsCrawled()
-    crawler = BasicCrawler()
+    fetcher = BasicFetcher()
     parser = BasicPageParser()
     sentence_splitter = BasicSentenceSplitter()
     langid = BasicLangID()
@@ -22,7 +22,7 @@ if __name__ == "__main__":
         if url is None:
             break
         print("Fetching", url)
-        html_content = crawler.crawl(url)
+        html_content = fetcher.crawl(url)
         if html_content is not None:
             print("Parsing", url)
             txt, outlinks = parser.parse(html_content, url)

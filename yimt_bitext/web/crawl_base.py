@@ -116,13 +116,13 @@ class BasicUrlsToCrawl(UrlsToCrawl):
         return len(self._urls)
 
 
-class Crawler:
+class Fetcher:
 
     def crawl(self, url):
         pass
 
 
-class BasicCrawler(Crawler):
+class BasicFetcher(Fetcher):
 
     def __init__(self, timeout=20):
         self._timeout = timeout
@@ -165,7 +165,7 @@ class BasicPageParser(PageParser):
 
 
 if __name__ == "__main__":
-    crawler = BasicCrawler()
+    crawler = BasicFetcher()
     pageparser = BasicPageParser()
 
     url1 = "http://www.hust.edu.cn"

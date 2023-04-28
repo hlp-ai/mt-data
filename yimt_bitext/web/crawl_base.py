@@ -2,6 +2,44 @@ from urllib.parse import urljoin
 import requests
 from bs4 import BeautifulSoup
 
+from yimt_bitext.web import url_language
+from yimt_bitext.web.web import URL
+
+
+class UrlFilter:
+
+    def filter(self, url):
+        pass
+
+
+class BasicUrlFilter(UrlFilter):
+    def __iter__(self, domain, langs):
+        self.domain = domain
+        self.langs = langs
+
+    def filter(self, url):
+        url = url.lower()
+        if url.find(self.domain) < 0:
+            return False
+
+        u = URL(url)
+        path = u.path
+        filtered_type = [".pdf", ".doc", ".docx", ".ppt", ".pptx",
+                         "xls", ".xlsx",
+                         ".zip", ".gzip", ".rar", ".tar",
+                         ".jpg", ".jpeg", ".gif", "png",
+                         ".bin", ".exe"]
+        if len(path) > 0:
+            for t in filtered_type:
+                if path.endswith(t):
+                    return False
+
+        lang = url_language.find_language(url)
+        if len(lang) > 0 and lang not in self.langs:
+            return False
+
+        return True
+
 
 class UrlsCrawled:
 

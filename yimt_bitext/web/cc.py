@@ -44,6 +44,9 @@ def download_progress(url, filepath):
                     size += len(data)
                     print('\r' + '[Progress]: %s%.2f%%' % (
                         '>' * int(size * 50 / content_size), float(size / content_size * 100)), end=' ')
+        else:
+            print("Error:", url, ":", response.status_code)
+            return False
         end = time.time()
         print('Done！Time: %.2f secs' % (end - start))
 
@@ -51,6 +54,8 @@ def download_progress(url, filepath):
     except Exception as e:
         print(e)
         return False
+    finally:
+        response.close()
 
 
 def ungzip(zip_fn, unzip_fn):

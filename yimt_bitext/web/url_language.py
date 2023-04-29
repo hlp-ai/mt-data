@@ -3,7 +3,7 @@ import re
 
 class UrlLanguage(object):
 
-    def __init__(self, languages=None, strip_query_variables=False):
+    def __init__(self, strip_query_variables=False):
         self._strip_query_variables = []
         if strip_query_variables:
             self._strip_query_variables = [

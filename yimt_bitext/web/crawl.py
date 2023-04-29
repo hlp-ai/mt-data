@@ -56,6 +56,7 @@ class DomainCrawler:
                 self.crawled.add(url)
 
             print(len(self.crawled), "crawled,", len(self.to_crawl), "to crawl.")
+        print("Finish crawling for", self.domain)
 
 
 if __name__ == "__main__":

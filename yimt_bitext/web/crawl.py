@@ -3,13 +3,14 @@ import os
 import sys
 
 from yimt_bitext.web.base import  BasicSentenceSplitter, BasicLangID, SentenceRepoFile
-from yimt_bitext.web.crawl_base import BasicUrlsToCrawl, DiskUrlsCrawled, BasicFetcher, BasicPageParser
+from yimt_bitext.web.crawl_base import BasicUrlsToCrawl, DiskUrlsCrawled, BasicFetcher, BasicPageParser, BasicUrlFilter
 from yimt_bitext.web.web import URL
 
 
 class DomainCrawler:
 
-    def __init__(self, path, accepted_langs, domain=None):
+    def __init__(self, path, accepted_langs, domain):
+        self.domain = domain
         to_crawl_fn = os.path.join(path, "urls_tocrawl.txt")
         crawled_fn = os.path.join(path, "crawled.txt")
         sent_dir = os.path.join(path, "lang2sents")
@@ -21,6 +22,7 @@ class DomainCrawler:
         self.sentence_splitter = BasicSentenceSplitter()
         self.langid = BasicLangID()
         self.sent_repo = SentenceRepoFile(sent_dir, accepted_langs=accepted_langs)
+        self.url_filter = BasicUrlFilter(domain, accepted_langs)
 
     def crawl(self):
         while True:
@@ -45,12 +47,11 @@ class DomainCrawler:
                 self.sent_repo.store(lang2sentenes)
                 print(self.sent_repo)
 
-                # crawl in-site
-                u = URL(url)
-                site = u.scheme + "://" + u.netloc + "/"
-                outlinks = list(filter(lambda ol: ol.startswith(site), outlinks))
                 for ol in outlinks:
-                    self.to_crawl.add(ol)
+                    if self.url_filter.filter(ol):
+                        self.to_crawl.add(ol)
+                    else:
+                        print("Filtered:", ol)
 
                 self.crawled.add(url)
 
@@ -59,8 +60,9 @@ class DomainCrawler:
 
 if __name__ == "__main__":
     path = sys.argv[1]
+    domain = sys.argv[2]
 
     accepted_langs = ["zh", "en", "ko"]
 
-    crawler = DomainCrawler(path, accepted_langs=accepted_langs)
+    crawler = DomainCrawler(path, accepted_langs, domain)
     crawler.crawl()

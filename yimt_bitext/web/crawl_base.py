@@ -3,6 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from yimt_bitext.web import url_language
+from yimt_bitext.web.url_language import UrlLanguage
 from yimt_bitext.web.web import URL
 
 
@@ -13,9 +14,10 @@ class UrlFilter:
 
 
 class BasicUrlFilter(UrlFilter):
-    def __iter__(self, domain, langs):
+    def __init__(self, domain, langs):
         self.domain = domain
         self.langs = langs
+        self._url_lang = UrlLanguage()
 
     def filter(self, url):
         url = url.lower()
@@ -34,7 +36,7 @@ class BasicUrlFilter(UrlFilter):
                 if path.endswith(t):
                     return False
 
-        lang = url_language.find_language(url)
+        lang = self._url_lang.find_language(url)
         if len(lang) > 0 and lang not in self.langs:
             return False
 
@@ -179,8 +181,6 @@ class BasicFetcher(Fetcher):
         except Exception as e:
             print("Exception for {}: {}".format(url, e))
             return None
-        finally:
-            r.close()
 
 
 class PageParser:

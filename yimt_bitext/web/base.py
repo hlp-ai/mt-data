@@ -227,7 +227,7 @@ class BasicSentenceRepo(SentenceRepo):
             self.repo[lang] += sents
 
     def __str__(self):
-        description= ""
+        description= "# of sentences extracted for languages: "
         for lang, sents in self.repo.items():
             description += lang + ": " + str(len(sents)) + "; "
         return description
@@ -255,7 +255,7 @@ class SentenceRepoFile(SentenceRepo):
             self.lang2len[lang] += len(sents)
 
     def __str__(self):
-        description= ""
+        description= "# of sentences extracted for languages: "
         for lang, count in self.lang2len.items():
             description += lang + ": " + str(count) + "; "
         return description

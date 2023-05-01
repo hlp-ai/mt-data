@@ -250,8 +250,12 @@ class SentenceRepoFile(SentenceRepo):
             if lang not in self.lang2f:
                 self.lang2f[lang] = open(os.path.join(self.path, lang + ".txt"), "a", encoding="utf-8")
                 self.lang2len[lang] = 0
+            count = self.lang2len[lang]
             for s in sents:
                 self.lang2f[lang].write(s + "\n")
+                count += 1
+                if count % 50 == 0:
+                    self.lang2f[lang].flush()
             self.lang2len[lang] += len(sents)
 
     def __str__(self):

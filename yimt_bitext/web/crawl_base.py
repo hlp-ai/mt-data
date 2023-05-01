@@ -95,7 +95,7 @@ class DiskUrlsCrawled(UrlsCrawled):
             return
         self._ids.add(h)
         self.ser_stream.write(url + "\n")
-        if len(self) % 10 == 0:
+        if len(self) % 50 == 0:
             self.ser_stream.flush()
 
     def __len__(self):
@@ -141,7 +141,7 @@ class BasicUrlsToCrawl(UrlsToCrawl):
         self._ids.add(h)
         self._urls.append(url)
 
-        if len(self) % 50 == 0:
+        if len(self) % 500 == 0:
             with open(self.ser_path, "w", encoding="utf-8") as f:
                 for u in self._urls:
                     f.write(u + "\n")
@@ -150,7 +150,9 @@ class BasicUrlsToCrawl(UrlsToCrawl):
         if len(self._urls) == 0:
             return None
 
-        return self._urls.pop()
+        e = self._urls[0]
+        del self._urls[0]
+        return e
 
     def __len__(self):
         return len(self._urls)
@@ -177,6 +179,7 @@ class BasicFetcher(Fetcher):
                 r.encoding = r.apparent_encoding
                 return r.text
             else:
+                print("Error:", url, ":", r.status_code)
                 return None
         except Exception as e:
             print("Exception for {}: {}".format(url, e))
@@ -205,11 +208,12 @@ class BasicPageParser(PageParser):
 
 
 if __name__ == "__main__":
-    crawler = BasicFetcher()
+    import sys
+    fetcher = BasicFetcher()
     pageparser = BasicPageParser()
 
-    url1 = "http://www.hust.edu.cn"
-    r = crawler.crawl(url1)
+    url1 = sys.argv[1]
+    r = fetcher.crawl(url1)
     print(r)
 
     if r:
@@ -217,5 +221,3 @@ if __name__ == "__main__":
         print(txt)
         print(outlinks)
 
-    r = crawler.crawl("http://www.google.com")
-    print(r)

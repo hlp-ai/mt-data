@@ -172,7 +172,7 @@ class BasicFetcher(Fetcher):
     def crawl(self, url):
         try:
             header = {
-                'User-Agent': 'Mozilla/5.0 (Windows; U; MSIE 9.0; Windows NT 9.0; en-US)'}
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.117 Safari/537.36'}
             r = requests.get(url, headers=header, timeout=self._timeout)
 
             if r.status_code == 200:

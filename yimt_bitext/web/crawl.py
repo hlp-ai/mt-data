@@ -2,8 +2,11 @@
 import os
 import sys
 
+from yimt_bitext.utils.log import get_logger
 from yimt_bitext.web.base import  BasicSentenceSplitter, BasicLangID, SentenceRepoFile
 from yimt_bitext.web.crawl_base import BasicUrlsToCrawl, DiskUrlsCrawled, BasicFetcher, BasicPageParser, BasicUrlFilter
+
+logger = get_logger()
 
 
 class DomainCrawler:
@@ -28,10 +31,13 @@ class DomainCrawler:
             url = self.to_crawl.next()
             if url is None:
                 break
-            print("Fetching", url)
-            html_content = self.fetcher.crawl(url)
+            # print("Fetching", url)
+            logger.info(f"Fetcing {url}")
+            html_content, encoding = self.fetcher.crawl(url)
+            logger.info(f"{url}: {encoding}")
             if html_content is not None:
-                print("Parsing", url)
+                # print("Parsing", url)
+                logger.info(f"Parsing {url}")
                 txt, outlinks = self.parser.parse(html_content, url)
 
                 sentences = self.sentence_splitter.split(txt)
@@ -44,18 +50,24 @@ class DomainCrawler:
                         lang2sentenes[lang] = [s]
 
                 self.sent_repo.store(lang2sentenes)
-                print(self.sent_repo)
+                # print(self.sent_repo)
+                logger.info(self.sent_repo)
 
                 for ol in outlinks:
                     if self.url_filter.filter(ol):
                         self.to_crawl.add(ol)
                     else:
-                        print("Filtered:", ol)
+                        # print("Filtered:", ol)
+                        logger.info(f"Filtered: {ol}")
 
                 self.crawled.add(url)
 
-            print(len(self.crawled), "crawled,", len(self.to_crawl), "to crawl.")
-        print("Finish crawling for", self.domain)
+            # print(len(self.crawled), "crawled,", len(self.to_crawl), "to crawl.")
+            n_tocrawl = len(self.to_crawl)
+            n_crawled = len(self.crawled)
+            logger.info(f"{n_crawled} crawled, {n_tocrawl} to crawl")
+        # print("Finish crawling for", self.domain)
+        logger.info(f"Finish crawling for {self.domain}")
 
 
 if __name__ == "__main__":

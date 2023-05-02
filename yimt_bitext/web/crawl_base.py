@@ -176,8 +176,8 @@ class BasicFetcher(Fetcher):
 
             if r.status_code == 200:
                 r.encoding = r.apparent_encoding
-                print(r.encoding)
-                return r.text
+                # print(r.encoding)
+                return r.text, r.encoding
             else:
                 print("Error:", url, ":", r.status_code)
                 return None
@@ -217,7 +217,7 @@ if __name__ == "__main__":
     langid = BasicLangID()
 
     url1 = sys.argv[1]
-    r = fetcher.crawl(url1)
+    r, e = fetcher.crawl(url1)
 
     if r:
         txt, outlinks = pageparser.parse(r, url1)

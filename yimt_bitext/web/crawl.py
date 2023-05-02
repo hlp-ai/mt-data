@@ -4,7 +4,6 @@ import sys
 
 from yimt_bitext.web.base import  BasicSentenceSplitter, BasicLangID, SentenceRepoFile
 from yimt_bitext.web.crawl_base import BasicUrlsToCrawl, DiskUrlsCrawled, BasicFetcher, BasicPageParser, BasicUrlFilter
-from yimt_bitext.web.web import URL
 
 
 class DomainCrawler:

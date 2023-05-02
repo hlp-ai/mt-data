@@ -2,7 +2,6 @@ from urllib.parse import urljoin
 import requests
 from bs4 import BeautifulSoup
 
-from yimt_bitext.web import url_language
 from yimt_bitext.web.url_language import UrlLanguage
 from yimt_bitext.web.web import URL
 
@@ -177,6 +176,7 @@ class BasicFetcher(Fetcher):
 
             if r.status_code == 200:
                 r.encoding = r.apparent_encoding
+                print(r.encoding)
                 return r.text
             else:
                 print("Error:", url, ":", r.status_code)
@@ -209,15 +209,28 @@ class BasicPageParser(PageParser):
 
 if __name__ == "__main__":
     import sys
+    from yimt_bitext.web.base import BasicSentenceSplitter, BasicLangID
+
     fetcher = BasicFetcher()
     pageparser = BasicPageParser()
+    sentence_splitter = BasicSentenceSplitter()
+    langid = BasicLangID()
 
     url1 = sys.argv[1]
     r = fetcher.crawl(url1)
-    print(r)
 
     if r:
         txt, outlinks = pageparser.parse(r, url1)
         print(txt)
         print(outlinks)
+
+        sentences = sentence_splitter.split(txt)
+        lang2sentenes = {}
+        for s in sentences:
+            lang = langid.detect(s)
+            if lang in lang2sentenes:
+                lang2sentenes[lang].append(s)
+            else:
+                lang2sentenes[lang] = [s]
+        print(lang2sentenes)
 

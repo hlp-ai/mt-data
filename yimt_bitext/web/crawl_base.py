@@ -168,22 +168,15 @@ class BasicFetcher(Fetcher):
     def __init__(self, timeout=(15, 15)):
         self._timeout = timeout
 
-    def crawl(self, url):
-        try:
-            header = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.117 Safari/537.36'}
-            r = requests.get(url, headers=header, timeout=self._timeout)
+    def fetch(self, url):
+        header = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.117 Safari/537.36'}
+        r = requests.get(url, headers=header, timeout=self._timeout)
 
-            if r.status_code == 200:
-                r.encoding = r.apparent_encoding
-                # print(r.encoding)
-                return r.text, r.encoding
-            else:
-                print("Error:", url, ":", r.status_code)
-                return None
-        except Exception as e:
-            print("Exception for {}: {}".format(url, e))
-            return None
+        if r.status_code == 200:
+            r.encoding = r.apparent_encoding
+
+        return r
 
 
 class PageParser:
@@ -217,20 +210,26 @@ if __name__ == "__main__":
     langid = BasicLangID()
 
     url1 = sys.argv[1]
-    r, e = fetcher.crawl(url1)
 
-    if r:
-        txt, outlinks = pageparser.parse(r, url1)
-        print(txt)
-        print(outlinks)
+    try:
+        r = fetcher.fetch(url1)
+        if r.status_code == 200:
+            r = r.text
+            txt, outlinks = pageparser.parse(r, url1)
+            print(txt)
+            print(outlinks)
 
-        sentences = sentence_splitter.split(txt)
-        lang2sentenes = {}
-        for s in sentences:
-            lang = langid.detect(s)
-            if lang in lang2sentenes:
-                lang2sentenes[lang].append(s)
-            else:
-                lang2sentenes[lang] = [s]
-        print(lang2sentenes)
+            sentences = sentence_splitter.split(txt)
+            lang2sentenes = {}
+            for s in sentences:
+                lang = langid.detect(s)
+                if lang in lang2sentenes:
+                    lang2sentenes[lang].append(s)
+                else:
+                    lang2sentenes[lang] = [s]
+            print(lang2sentenes)
+        else:
+            print(r.status_code)
+    except Exception as e:
+        print(e)
 

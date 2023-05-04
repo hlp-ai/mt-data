@@ -79,6 +79,12 @@ class DiskUrlsCrawled(UrlsCrawled):
 
     def __init__(self, ser_file="crawled.txt"):
         self._ids = set()
+        with open(ser_file, encoding="utf-8") as f:
+            for u in f:
+                u = u.strip()
+                h = hash(u)
+                if h not in self._ids:
+                    self._ids.add(h)
         self.ser_stream = open(ser_file, "a", encoding="utf-8")
 
     def exists(self, url):

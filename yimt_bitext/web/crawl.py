@@ -1,4 +1,4 @@
-"""5. Crawl multilingual entries"""
+"""4. Crawl multilingual domain"""
 import os
 import sys
 

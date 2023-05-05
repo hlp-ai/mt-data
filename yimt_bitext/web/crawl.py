@@ -38,6 +38,9 @@ class DomainCrawler:
                 if r.status_code != 200:
                     self.logger.warn(f"{url}: {r.status_code}")
                     continue
+                if r.encoding is None:
+                    self.logger.warn(f"{url}: NO Encoding detected, maybe non-text page.")
+                    continue
                 self.logger.info(f"{url}: {r.encoding}")
                 html_content = r.text
                 if html_content is not None:

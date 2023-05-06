@@ -1,4 +1,4 @@
-"""5. Crawl multilingual entries"""
+"""4. Crawl multilingual domain"""
 import os
 import sys
 
@@ -37,6 +37,9 @@ class DomainCrawler:
                 r = self.fetcher.fetch(url)
                 if r.status_code != 200:
                     self.logger.warn(f"{url}: {r.status_code}")
+                    continue
+                if r.encoding is None:
+                    self.logger.warn(f"{url}: NO Encoding detected, maybe non-text page.")
                     continue
                 self.logger.info(f"{url}: {r.encoding}")
                 html_content = r.text

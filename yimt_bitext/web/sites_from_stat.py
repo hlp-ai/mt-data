@@ -1,3 +1,4 @@
+"""3. Get multilingual domains for given languages"""
 import sys
 
 from yimt_bitext.web.base import BasicLangStat

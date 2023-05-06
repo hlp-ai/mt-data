@@ -24,7 +24,7 @@ class DomainCrawler:
         self.sent_repo = SentenceRepoFile(sent_dir, accepted_langs=accepted_langs)
         self.url_filter = BasicUrlFilter(domain, accepted_langs)
 
-        self.logger = get_logger(os.path.join(path, "logs.txt"))
+        self.logger = get_logger(os.path.join(path, "logs.txt"), self.domain)
 
     def crawl(self):
         while True:

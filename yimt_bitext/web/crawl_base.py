@@ -24,6 +24,9 @@ class BasicUrlFilter(UrlFilter):
         if url.find(self.domain) < 0:
             return False
 
+        if url.startswith("mailto:"):
+            return False
+
         u = URL(url)
         path = u.path
         filtered_type = [".pdf", ".doc", ".docx", ".ppt", ".pptx",

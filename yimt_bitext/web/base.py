@@ -263,21 +263,3 @@ class SentenceRepoFile(SentenceRepo):
         for lang, count in self.lang2len.items():
             description += lang + ": " + str(count) + "; "
         return description
-
-
-class ProcessedWET:
-
-    def is_processed(self, wet_url):
-        pass
-
-    def processed(self, wet_url):
-        pass
-
-
-class WETs:
-
-    def add(self, cc_id):
-        pass
-
-    def next(self):
-        pass

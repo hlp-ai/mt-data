@@ -14,9 +14,13 @@ class UrlLanguage(object):
             self.code_to_language[code] = 'ar'
         for code in ['bulgarian', 'bul', 'bg']:
             self.code_to_language[code] = 'bg'
+        for code in ['breton', 'bre', 'br']:
+            self.code_to_language[code] = 'br'
         for code in ['czech', 'cze', 'cz', 'cs']:
             self.code_to_language[code] = 'cs'
-        for code in ['deutsch', 'german', 'ger', 'deu', 'de']:
+        for code in ['danish', 'da-dk', 'dan', 'da']:
+            self.code_to_language[code] = 'da'
+        for code in ['deutsch', 'german', 'ger', 'deu', 'de-at', 'de-ch', 'de-de', 'de-lu', 'de']:
             self.code_to_language[code] = 'de'
         for code in ['english', 'eng', 'en']:
             self.code_to_language[code] = 'en'
@@ -50,7 +54,7 @@ class UrlLanguage(object):
             self.code_to_language[code] = 'nl'
         for code in ['en-en', 'en-us', 'en-uk', 'en-ca', 'en-bz', 'en-ab',
                      'en-in', 'en-ie', 'en-jm', 'en-nz', 'en-ph', 'en-za',
-                     'en-tt', 'gb', 'en-gb', 'inglese', 'englisch', 'us', 'e']:
+                     'en-tt', 'gb', 'en-gb', 'inglese', 'englisch', 'us']:
             self.code_to_language[code] = 'en'
         for code in ['romanian', 'romana', 'romlang', 'rom', 'ro-ro', 'ro']:
             self.code_to_language[code] = 'ro'
@@ -62,6 +66,8 @@ class UrlLanguage(object):
         for code in ['finnish', 'finnisch', 'fin', 'suomi', 'suomeksi',
                      'suominen', 'suomija', 'fi-fi', 'fi']:
             self.code_to_language[code] = 'fi'
+        for code in ['thailand', 'th-th', 'thai', 'th']:
+            self.code_to_language[code] = 'th'
 
         pairs = list(self.code_to_language.items())
 

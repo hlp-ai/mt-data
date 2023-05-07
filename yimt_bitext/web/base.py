@@ -236,12 +236,21 @@ class BasicSentenceRepo(SentenceRepo):
 class SentenceRepoFile(SentenceRepo):
 
     def __init__(self, path="./lang2sents", accepted_langs=None):
-        if not os.path.exists(path):
-            os.makedirs(path, exist_ok=True)
         self.path = path
         self.lang2f = {}
         self.lang2len = {}
         self.accepted_langs = accepted_langs
+
+        if not os.path.exists(path):
+            os.makedirs(path, exist_ok=True)
+        else:
+            lang_files = os.listdir(path)
+            for f in lang_files:
+                if f.endswith(".txt"):
+                    lang = f[0:f.find(".txt")]
+                    with open(os.path.join(path, f), encoding="utf-8") as stream:
+                        self.lang2len[lang] = len(stream.readlines())
+                    self.lang2f[lang] = open(os.path.join(self.path, f), "a", encoding="utf-8")
 
     def store(self, lang2sentences):
         for lang, sents in lang2sentences.items():

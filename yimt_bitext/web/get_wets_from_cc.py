@@ -10,6 +10,8 @@ def get_wet_paths(cc_archive_id, out_dir=None):
     wet_paths_url = cc_data_url + cc_archive_id + "/" + cc_wet_paths_gz
     if out_dir is None:
         out_dir = "./" + cc_archive_id + "/"
+    else:
+        out_dir = os.path.join(out_dir, cc_archive_id)
     if not os.path.exists(out_dir):
         print("Making directory ", out_dir)
         os.makedirs(out_dir, exist_ok=True)

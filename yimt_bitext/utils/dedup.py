@@ -25,7 +25,7 @@ def dedup_file(in_path, out_path=None):
         for p in f:
             p = p.strip()
             total += 1
-            if total % 100000 == 0:
+            if total % 1000 == 0:
                 print("Total:", total, "Unique:", n)
 
             pn = norm(p)

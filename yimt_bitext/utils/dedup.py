@@ -13,7 +13,9 @@ def norm(s, lower=True, remove_noletter=True):
     return s
 
 
-def dedup_file(in_path, out_path):
+def dedup_file(in_path, out_path=None):
+    if out_path is None:
+        out_path = in_path + ".deduped"
     pairs = set()
 
     n = 0

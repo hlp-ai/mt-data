@@ -39,3 +39,10 @@ def dedup_file(in_path, out_path=None):
             out_f.write(p + "\n")
 
     print("Total:", total, "Unique:", n)
+
+
+if __name__ == "__main__":
+    import sys
+    in_fn = sys.argv[1]
+
+    dedup_file(in_fn)

@@ -1,4 +1,5 @@
 """4. Crawl multilingual domain"""
+import json
 import os
 import sys
 
@@ -78,6 +79,26 @@ class DomainCrawler:
                 self.logger.warn(url + ": " + str(e))
         # print("Finish crawling for", self.domain)
         self.logger.info(f"Finish crawling for {self.domain}")
+
+
+class CrawlManager:
+
+    def __init__(self, crawl_dir):
+        self.crawl_dir = crawl_dir
+        if not os.path.exists(self.crawl_dir):
+            os.makedirs(self.crawl_dir, exist_ok=True)
+
+    def update(self, sites_file):
+        with open(sites_file, encoding="utf-8") as sites_f:
+            domain2hosts_langs = json.load(sites_f)
+
+        for domain, hosts in domain2hosts_langs.items():
+            doamin_dir = os.path.join(self.crawl_dir, domain)
+            if not os.path.exists(doamin_dir):
+                os.makedirs(doamin_dir, exist_ok=True)
+                with open(os.path.join(doamin_dir, "urls_tocrawl.txt"), "w", encoding="utf-8") as f:
+                    for s in hosts:
+                        f.write(s + "\n")
 
 
 if __name__ == "__main__":

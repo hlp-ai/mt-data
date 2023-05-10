@@ -2,6 +2,7 @@
 import json
 import os
 import langid
+import sqlite3
 
 from yimt_bitext.web.web import URL
 
@@ -207,6 +208,130 @@ class BasicLangStat(LangStat):
                         break
             yield domain, hosts
 
+class SqliteLangStat(LangStat):
+    def __init__(self, db_file):
+        self.db_file=db_file
+        if os.path.exists(self.db_file):
+            print("connecting", self.db_file)
+            self.con = sqlite3.connect(db_file)
+            self.cur=self.con.cursor()
+        else:
+            self.con = sqlite3.connect('%s'%db_file)
+            self.cur = self.con.cursor()
+            self.cur.execute("CREATE TABLE language(\
+                       host CHAR NOT NULL,\
+                       domain CHAR NOT NULL,\
+                       lang CHAR NOT NULL,\
+                       lang2len INT,\
+                       primary key(host,lang));")
+            self.con.commit()
+
+    def update(self, host, lang2len):
+        for key in lang2len:
+            self.cur.execute("SELECT host,lang From language WHERE host='%s' AND lang ='%s'"\
+                             %(host,key))
+            f=self.cur.fetchone()
+            if f:
+                self.cur.execute("UPDATE language SET lang2len = lang2len+%d WHERE host = '%s' AND lang ='%s';" \
+                                 % (lang2len[key],host, key))
+                self.con.commit()
+            else:
+                domain = get_domain(host)
+                self.cur.execute("INSERT INTO language VALUES ('%s','%s','%s','%d')"\
+                                 %(host,domain,key,lang2len[key]))
+                self.con.commit()
+
+    def stat_by_domain(self, domain):
+        self.cur.execute("SELECT host,lang,lang2len From language WHERE domain ='%s'" \
+                         % (domain))
+        f = self.cur.fetchall()
+        if f:
+            statdomain = {}
+            statdomain[domain]={}
+            for a in f:
+                domain_lang2len={a[1]:a[2]}
+                if a[0] not in statdomain[domain]:
+                    statdomain[domain][a[0]]=domain_lang2len
+                else:
+                    merge_lang2len(statdomain[domain][a[0]],domain_lang2len)
+            return statdomain[domain]
+        else:
+            return None
+
+    def stat_by_host(self, host):
+        domain = get_domain(host)
+        self.cur.execute("SELECT host,domain,lang,lang2len From language WHERE host ='%s'" \
+                         % (host))
+        f = self.cur.fetchall()
+        if f:
+            stathost = {}
+            stathost[domain] = {}
+            for a in f:
+                domain_lang2len={a[2]:a[3]}
+                if a[0] not in stathost[domain]:
+                    stathost[domain][a[0]]=domain_lang2len
+                else:
+                    merge_lang2len(stathost[domain][a[0]],domain_lang2len)
+            return stathost[domain][host]
+        else:
+            return None
+
+    def lang2len_by_domain(self, domain):
+        host2lang2len = self.stat_by_domain(domain)
+        if host2lang2len is None:
+            return None
+        lang2len_ret = {}
+        for host, lang2len in host2lang2len.items():
+            lang2len_ret = merge_lang2len(lang2len_ret, lang2len)
+        return lang2len_ret
+
+    def domains(self):
+        self.cur.execute("SELECT domain From language")
+        f = self.cur.fetchall()
+        domainslist={}
+        for a in f:
+            if a[0] not in domainslist:
+                domainslist[a[0]]={}
+        return domainslist.keys()
+
+    def hosts(self, domain):
+        self.cur.execute("SELECT host From language WHERE domain = '%s'"%domain)
+        f = self.cur.fetchall()
+        hostslist={}
+        for a in f:
+            if a[0] not in hostslist:
+                hostslist[a[0]]={}
+        return hostslist.keys()
+
+    def size(self):
+        return len(self.domains())
+
+    def save(self):
+        self.cur.close()
+        self.con.close()
+
+    def domains_for_langs(self, langs):
+        for domain in self.domains():
+            lang2len = self.lang2len_by_domain(domain)
+            langs_in_domain = self.languages(lang2len)
+            found = True
+            for lang in langs:
+                if lang not in langs_in_domain:
+                    found = False
+                    break
+            if found:
+                yield domain
+
+    def hosts_for_langs(self, langs):
+        for domain in self.domains_for_langs(langs):
+            hosts = []
+            host2lang2len = self.stat_by_domain(domain)
+            for host, lang2len in host2lang2len.items():
+                for lang in langs:
+                    if lang in lang2len.keys():
+                        hosts.append(host)
+                        break
+            yield domain, hosts
 
 class SentenceRepo:
 

@@ -43,7 +43,7 @@ class VectorSimilarityCosine(VectorSimilarity):
         pass
 
 
-class VectroSimilarityMargin(VectorSimilarity):
+class VectorSimilarityMargin(VectorSimilarity):
 
     def get_score(self, vec1, vec2):
         pass

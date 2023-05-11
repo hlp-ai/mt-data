@@ -85,7 +85,7 @@ class DomainCrawler:
 def crawl_domain(domain_path):
     domain = os.path.basename(domain_path)
     logger = get_logger(os.path.join(domain_path, "logs.txt"), domain)
-    logger.info("***Start crawling thread for {domain}")
+    logger.info(f"***Start crawling thread for {domain}")
 
     to_crawl_fn = os.path.join(domain_path, "urls_tocrawl.txt")
     crawled_fn = os.path.join(domain_path, "crawled.txt")

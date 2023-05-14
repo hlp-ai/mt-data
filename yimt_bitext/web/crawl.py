@@ -167,6 +167,7 @@ class CrawlManager:
         for domain, hosts in domain2hosts_langs.items():
             doamin_dir = os.path.join(self.crawl_dir, domain)
             if not os.path.exists(doamin_dir):
+                print("Found new domain:", domain)
                 os.makedirs(doamin_dir, exist_ok=True)
                 with open(os.path.join(doamin_dir, "urls_tocrawl.txt"), "w", encoding="utf-8") as f:
                     for s in hosts:

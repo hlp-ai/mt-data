@@ -95,7 +95,7 @@ def process_wet_url(wet_url):
 
     # download WET file
     if not download_wet(wet_url, wet_gz_path):
-        return wet_url
+        return False, wet_url
 
     # unzip WET file
     ungzip(wet_gz_path, wet_path)
@@ -108,7 +108,7 @@ def process_wet_url(wet_url):
     os.remove(wet_gz_path)
     os.remove(wet_path)
 
-    return wet_url
+    return True, wet_url
 
 
 def dump_wet_batch(wet_paths, wet_urls_processed_path):
@@ -135,10 +135,11 @@ def dump_wet_batch(wet_paths, wet_urls_processed_path):
             to_dump_wet_urls.append(wet_url)
 
     executor = ThreadPoolExecutor(max_workers=max_workers)
-    for r in executor.map(process_wet_url, to_dump_wet_urls):
-        logger_wet.info("Fininsh {}".format(r))
-        with open(wet_urls_processed_path, "a", encoding="utf-8") as f:
-            f.write(r + "\n")
+    for success, u in executor.map(process_wet_url, to_dump_wet_urls):
+        if success:
+            logger_wet.info("Fininsh {}".format(u))
+            with open(wet_urls_processed_path, "a", encoding="utf-8") as f:
+                f.write(u + "\n")
 
 
 def dump_wet(wet_paths, wet_urls_processed_path):

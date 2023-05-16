@@ -1,9 +1,13 @@
 """1. Download, parse WET files from CommonCrawl and dump metadata for each WET file"""
 import argparse
 import os
+import time
+from concurrent.futures.thread import ThreadPoolExecutor
 
+import requests
 from warcio import ArchiveIterator
 
+from yimt_bitext.utils.log import get_logger
 from yimt_bitext.web.cc import get_wet_name, download_progress, ungzip, cc_base_url, cc_wet_paths, \
     cc_wet_paths_done
 from yimt_bitext.web.web import URL
@@ -46,6 +50,95 @@ def dump_metadata_wet(wet_path, out_fn=None):
             if total % report_interval == 0:
                 print(total)
     print(total)
+
+
+logger_wet = get_logger(log_filename="./dump_wets.log", name="WET")
+
+
+def download_wet(url, filepath):
+    start = time.time()
+    header = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.117 Safari/537.36'}
+    response = requests.get(url, header, stream=True)
+    size = 0
+    chunk_size = 4096 * 16
+    n_read = 0
+
+    try:
+        if response.status_code == 200:
+            with open(filepath, 'wb') as file:
+                for data in response.iter_content(chunk_size=chunk_size):
+                    file.write(data)
+                    size += len(data)
+                    n_read += 1
+                    if n_read % 4 == 0:
+                        logger_wet.info("{}: {:.2f}M {} secs".format(url, size/(1024*1024), (time.time()-start)))
+        else:
+            logger_wet.warning("Error: {}: {}".format(url, response.status_code))
+            return False
+        logger_wet.info("{} Done: {:.2f}M {} secs".format(url, size/(1024*1024), (time.time()-start)))
+
+        return True
+    except Exception as e:
+        logger_wet.warning(e)
+        return False
+    finally:
+        response.close()
+
+
+def process_wet_url(wet_url):
+    logger_wet.info("Dump metadata for {}".format(wet_url))
+    wet_gz_name, wet_name = get_wet_name(wet_url)
+
+    wet_gz_path = os.path.join(args.wet_paths_dir, wet_gz_name)
+    wet_path = os.path.join(args.wet_paths_dir, wet_name)
+
+    # download WET file
+    if not download_wet(wet_url, wet_gz_path):
+        return wet_url
+
+    # unzip WET file
+    ungzip(wet_gz_path, wet_path)
+
+    # Parse and dump wet metadata
+    logger_wet.info("Scanning {}".format(wet_path))
+    dump_metadata_wet(wet_path)
+
+    logger_wet.info("Deleting downloaded file")
+    os.remove(wet_gz_path)
+    os.remove(wet_path)
+
+    return wet_url
+
+
+def dump_wet_batch(wet_paths, wet_urls_processed_path):
+    # read processed WET file list
+    wet_urls_processed = set()
+    if os.path.exists(wet_urls_processed_path):
+        with open(wet_urls_processed_path, encoding="utf-8") as f:
+            for u in f:
+                wet_urls_processed.add(u.strip())
+
+    logger_wet.info("# of WET processed: {}".format(len(wet_urls_processed)))
+
+    max_workers = 4
+
+    to_dump_wet_urls = []
+
+    with open(wet_paths, encoding="utf-8") as f:
+        for wet_url in f:  # for each wet file in cc archive
+            wet_url = cc_base_url + wet_url.strip()
+            if wet_url in wet_urls_processed:  # skip processed WET file
+                logger_wet.info("{} has been processed before".format(wet_url))
+                continue
+
+            to_dump_wet_urls.append(wet_url)
+
+    executor = ThreadPoolExecutor(max_workers=max_workers)
+    for r in executor.map(process_wet_url, to_dump_wet_urls):
+        logger_wet.info("Fininsh {}".format(r))
+        with open(wet_urls_processed_path, "a", encoding="utf-8") as f:
+            f.write(r + "\n")
 
 
 def dump_wet(wet_paths, wet_urls_processed_path):
@@ -99,4 +192,5 @@ if __name__ == "__main__":
     wet_paths = os.path.join(args.wet_paths_dir, cc_wet_paths)
     wet_urls_processed_path = os.path.join(args.wet_paths_dir, cc_wet_paths_done)
 
-    dump_wet(wet_paths, wet_urls_processed_path)
+    # dump_wet(wet_paths, wet_urls_processed_path)
+    dump_wet_batch(wet_paths, wet_urls_processed_path)

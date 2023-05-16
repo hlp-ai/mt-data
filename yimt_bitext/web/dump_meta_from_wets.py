@@ -72,11 +72,11 @@ def download_wet(url, filepath):
                     size += len(data)
                     n_read += 1
                     if n_read % 4 == 0:
-                        logger_wet.info("{}: {:.2f}M {} secs".format(url, size/(1024*1024), (time.time()-start)))
+                        logger_wet.info("{}: {:.2f}M {:.1f} secs".format(url, size/(1024*1024), (time.time()-start)))
         else:
             logger_wet.warning("Error: {}: {}".format(url, response.status_code))
             return False
-        logger_wet.info("{} Done: {:.2f}M {} secs".format(url, size/(1024*1024), (time.time()-start)))
+        logger_wet.info("{} Done: {:.2f}M {:.1f} secs".format(url, size/(1024*1024), (time.time()-start)))
 
         return True
     except Exception as e:

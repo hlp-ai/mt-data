@@ -8,13 +8,16 @@ class SentenceVectorization:
         raise NotImplementedError
 
 
-class NaiveSentenceVectorization(SentenceVectorization):
+class DummySentenceVectorization(SentenceVectorization):
+
+    def __init__(self, vec_len = 32):
+        self.vec_len = vec_len
 
     def get_vector(self, text):
-        if text is str:
-            return np.array([1.0, 2.0])
-        elif text is list:
-            return np.array([[1.0, 2.0], [1.0, 2.0]])
+        if isinstance(text, str):
+            return np.random.random((self.vec_len,))
+        elif isinstance(text, list):
+            return np.random.random((len(text), self.vec_len))
 
 
 class SentenceVectorizationLaBSE(SentenceVectorization):

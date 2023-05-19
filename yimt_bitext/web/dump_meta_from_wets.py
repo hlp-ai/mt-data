@@ -111,7 +111,7 @@ def process_wet_url(wet_url):
     return True, wet_url
 
 
-def dump_wet_batch(wet_paths, wet_urls_processed_path):
+def dump_wet_batch(wet_paths, wet_urls_processed_path, max_workers = 4):
     # read processed WET file list
     wet_urls_processed = set()
     if os.path.exists(wet_urls_processed_path):
@@ -120,8 +120,6 @@ def dump_wet_batch(wet_paths, wet_urls_processed_path):
                 wet_urls_processed.add(u.strip())
 
     logger_wet.info("# of WET processed: {}".format(len(wet_urls_processed)))
-
-    max_workers = 4
 
     to_dump_wet_urls = []
 
@@ -188,10 +186,11 @@ def dump_wet(wet_paths, wet_urls_processed_path):
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser()
     argparser.add_argument("--wet_paths_dir", required=True, help="Directory of wet.paths file")
+    argparser.add_argument("--max_workders", type=int, default=6, help="Directory of wet.paths file")
     args = argparser.parse_args()
 
     wet_paths = os.path.join(args.wet_paths_dir, cc_wet_paths)
     wet_urls_processed_path = os.path.join(args.wet_paths_dir, cc_wet_paths_done)
 
     # dump_wet(wet_paths, wet_urls_processed_path)
-    dump_wet_batch(wet_paths, wet_urls_processed_path)
+    dump_wet_batch(wet_paths, wet_urls_processed_path, args.max_workders)

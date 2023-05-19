@@ -76,7 +76,7 @@ def download_wet(url, filepath):
         else:
             logger_wet.warning("Error: {}: {}".format(url, response.status_code))
             return False
-        logger_wet.info("{} Done: {:.2f}M {:.1f} secs".format(url, size/(1024*1024), (time.time()-start)))
+        logger_wet.info("{} Downloaded: {:.2f}M {:.1f} secs".format(url, size/(1024*1024), (time.time()-start)))
 
         return True
     except Exception as e:
@@ -98,6 +98,7 @@ def process_wet_url(wet_url):
         return False, wet_url
 
     # unzip WET file
+    logger_wet.info("Unziping {} into {}".format(wet_gz_path, wet_path))
     ungzip(wet_gz_path, wet_path)
 
     # Parse and dump wet metadata

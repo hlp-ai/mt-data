@@ -59,7 +59,6 @@ def download_progress(url, filepath):
 
 
 def ungzip(zip_fn, unzip_fn):
-    print("Unziping ", zip_fn, " into ", unzip_fn)
     g = gzip.GzipFile(mode="rb", fileobj=open(zip_fn, 'rb'))
     with open(unzip_fn, "wb") as f:
         f.write(g.read())
@@ -114,12 +113,6 @@ def count_lang(wet_path, host2lang2len, urls_file=None):
                     else:
                         lang2len[most_prob_lang] = content_len
 
-                # for lang in langs:
-                #     if lang in lang2len:
-                #         lang2len[lang] += content_len
-                #     else:
-                #         lang2len[lang] = content_len
-
             i += 1
 
             if i % 2000 == 0:
@@ -131,28 +124,6 @@ def count_lang(wet_path, host2lang2len, urls_file=None):
         urlf.close()
 
     return new_hosts
-
-
-# def stat_from_meta(meta_file):
-#     host2lang2len = {}
-#
-#     report_interval = 20000
-#     total = 0
-#
-#     with open(meta_file, encoding="utf-8") as f:
-#         for line in f:
-#             parts = line.strip().split()
-#             url, host, domain, lang, content_len = parts
-#             content_len = int(content_len)
-#
-#             update_k2dict(host2lang2len, host, lang, content_len)
-#
-#             total += 1
-#             if total % report_interval == 0:
-#                 print(" ", total, "urls")
-#         print(" ", total, "urls")
-#
-#     return host2lang2len
 
 
 def update_k2set(k2list, k, v):
@@ -187,16 +158,3 @@ def merge_k2dict(k2dict1, kd2dict2):
             update_k2dict(k2dict1, k, kk, kv)
 
     return k2dict1
-
-
-# if __name__ == "__main__":
-#     wet_path = r"D:\dataset\text\cc22-40\CC-MAIN-20220924151538-20220924181538-00000.warc.wet"
-#     # for url, site, domain, lang, content_len in iter_metadata_wet(wet_path):
-#     #     print(url, site, domain, lang, content_len)
-#
-#     # dump_metadata_wet(wet_path)
-#     s_by_host, s_by_domain = stat_from_meta(
-#         r"./CC-MAIN-2022-40/CC-MAIN-20220924151538-20220924181538-00000.warc.wet.meta")
-#     for domain, lang2len in s_by_domain.items():
-#         if len(lang2len) > 1:
-#             print(domain, lang2len)

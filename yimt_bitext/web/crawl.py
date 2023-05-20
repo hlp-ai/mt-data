@@ -1,4 +1,5 @@
 """4. Crawl multilingual domain"""
+import argparse
 import json
 import os
 from concurrent.futures.thread import ThreadPoolExecutor
@@ -112,7 +113,13 @@ class CrawlManager:
 
 
 if __name__ == "__main__":
-    crawl_manager = CrawlManager("./crawl-kozhen")
-    lang_list = ["ko", "zh", "en"]
-    crawl_manager.update("./sites-kor-zho.json")
+    argparser = argparse.ArgumentParser()
+    argparser.add_argument("--crawl_dir", required=True, help="Directory for crawling")
+    argparser.add_argument("--langs", required=True, help="Language list seperated with comma")
+    argparser.add_argument("--sites_file", required=True, help="sites json file")
+    args = argparser.parse_args()
+
+    crawl_manager = CrawlManager(args.crawl_dir)
+    lang_list = args.langs.split(",")
+    crawl_manager.update(args.sites_file)
     crawl_manager.start_crawl(lang_list)

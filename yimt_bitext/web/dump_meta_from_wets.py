@@ -187,7 +187,7 @@ def dump_wet(wet_paths, wet_urls_processed_path):
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser()
     argparser.add_argument("--wet_paths_dir", required=True, help="Directory of wet.paths file")
-    argparser.add_argument("--max_workders", type=int, default=6, help="Directory of wet.paths file")
+    argparser.add_argument("--max_workers", type=int, default=6, help="Directory of wet.paths file")
     args = argparser.parse_args()
 
     wet_paths = os.path.join(args.wet_paths_dir, cc_wet_paths)

@@ -7,6 +7,9 @@ class SentenceVectorization:
     def get_vector(self, text):
         raise NotImplementedError
 
+    def get_dim(self):
+        raise NotImplementedError
+
 
 class DummySentenceVectorization(SentenceVectorization):
 
@@ -18,6 +21,9 @@ class DummySentenceVectorization(SentenceVectorization):
             return np.random.random((self.vec_len,))
         elif isinstance(text, list):
             return np.random.random((len(text), self.vec_len))
+
+    def get_dim(self):
+        return self.vec_len
 
 
 class SentenceVectorizationLaBSE(SentenceVectorization):
@@ -73,9 +79,12 @@ class SentenceVectorizationLaBSE(SentenceVectorization):
         return np.array(input_ids_all), np.array(input_mask_all), np.array(segment_ids_all)
 
     def get_vector(self, text):
-        #输出句子的嵌入向量
+        # text is a list
         input_ids, input_mask, segment_ids = self._create_input(text, self.tokenizer, self.max_seq_length)
         return self.labse_model([input_ids, input_mask, segment_ids])
+
+    def get_dim(self):
+        return 768
 
 
 class VectorSimilarity:
@@ -96,10 +105,10 @@ class NaiveVectorSimilarity(VectorSimilarity):
 
 class VectorSimilarityCosine(VectorSimilarity):
 
-    def get_score(self, vec1, vec2):     # 求向量余弦相似度
-        num = float(np.dot(vec1, vec2))  # 向量点乘
-        denom = np.linalg.norm(vec1) * np.linalg.norm(vec2)  # 求模长的乘积
-        return num / denom
+    def get_score(self, vec1, vec2):
+        # vec1 and vec2 with shape [b, d]
+        sim = np.matmul(vec1, np.transpose(vec2))
+        return sim
 
 
 class VectorSimilarityMargin(VectorSimilarity):
@@ -149,20 +158,16 @@ def load_vec_index(annoy_dir, dim=48):
 
 
 if __name__ == '__main__':
-    dim = 3
-    src_embeddings = np.random.normal(0, 1, (100000, dim))
-    tar_embeddings = np.random.normal(0, 1, (100000, dim))
-    build_vec_index(src_embeddings, 'source.ann', dim, 6)
-    build_vec_index(tar_embeddings, 'target.ann', dim, 6)
+    s1 = ["This is a book", "I am a teacher."]
+    t1 = ["这是一本书。", "我是老师。"]
 
-    vec_index1 = load_vec_index('source.ann', dim)
-    vec_index2 = load_vec_index('target.ann', dim)
+    vector = SentenceVectorizationLaBSE("D:/kidden/mt/open/mt-ex/mt/data/labse1")
+    v1 = vector.get_vector(s1)
+    print(v1.shape)
 
-    k = 8
-    get_margin = VectorSimilarityMargin(vec_index1, vec_index2, k)
+    v2 = vector.get_vector(t1)
+    print(v2.shape)
 
-    v1 = np.array([0, 3, 0])
-    v2 = np.array([0, -3, 0])
-
-    s=get_margin.get_score(v1,v2)
+    scorer = VectorSimilarityCosine()
+    s = scorer.get_score(v1, v2)
     print(s)

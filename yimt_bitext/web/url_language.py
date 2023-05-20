@@ -68,6 +68,34 @@ class UrlLanguage(object):
             self.code_to_language[code] = 'fi'
         for code in ['thailand', 'th-th', 'thai', 'th']:
             self.code_to_language[code] = 'th'
+        for code in ['greek', 'el', 'ell', 'gre', 'el_gr']:  # 现代希腊语
+            self.code_to_language[code] = 'el'
+        for code in ['latin', 'la', 'lat']:  # 拉丁语
+            self.code_to_language[code] = 'la'
+        for code in ['norwegian', 'Norsk', 'no', 'nor', 'no_no', 'no_no_ny']:
+            self.code_to_language[code] = 'no'
+        for code in ['polish', 'pl', 'pol', 'pl_pl']:  # 波兰语
+            self.code_to_language[code] = 'pl'
+        for code in ['swedish', 'svenska', 'sv', 'swe', 'sv_se']:  # 瑞典语
+            self.code_to_language[code] = 'sv'
+        for code in ['ukrainian', 'uk', 'ukr', 'uk_ua']:  # 乌克兰语
+            self.code_to_language[code] = 'uk'
+        for code in ['burmese', 'my', 'mya', 'bur']:  # 缅甸语
+            self.code_to_language[code] = 'my'
+        for code in ['tibetan', 'bo', 'bod', 'tib']:  # 藏语
+            self.code_to_language[code] = 'bo'
+        for code in ['hungarian', 'hu', 'hun']:  # 匈牙利语
+            self.code_to_language[code] = 'hu'
+        for code in ['indonesian', 'id', 'ind']:  # 印尼语
+            self.code_to_language[code] = 'id'
+        for code in ['mongolian', 'mn', 'mon']:  # 蒙古语
+            self.code_to_language[code] = 'mn'
+        for code in ['belarusian', 'be', 'bel', 'be_by']:  # 白俄罗斯语
+            self.code_to_language[code] = 'be'
+        for code in ['bengali', 'bn', 'ben']:  # 孟加拉语
+            self.code_to_language[code] = 'bn'
+        for code in ['croatian', 'hr', 'hrv', 'hr_hr']:  # 克罗地亚语
+            self.code_to_language[code] = 'hr'
 
         pairs = list(self.code_to_language.items())
 

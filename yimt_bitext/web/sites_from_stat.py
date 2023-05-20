@@ -1,14 +1,19 @@
 """3. Get multilingual domains for given languages"""
+import argparse
 import json
-import sys
 from collections import defaultdict
 
 from yimt_bitext.web.base import BasicLangStat
 from yimt_bitext.web.url_language import UrlLanguage
 
 if __name__ == "__main__":
-    stat_f = sys.argv[1]
-    langs = sys.argv[2].split(",")
+    argparser = argparse.ArgumentParser()
+    argparser.add_argument("--stat_file", required=True, help="Stat file")
+    argparser.add_argument("--langs", required=True, help="Language list seperated with comma")
+    args = argparser.parse_args()
+
+    stat_f = args.stat_file
+    langs = args.langs.split(",")
     lang_stat = BasicLangStat(stat_f)
     out_f = "sites-" + "-".join(langs) + ".json"
 

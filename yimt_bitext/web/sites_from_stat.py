@@ -10,12 +10,16 @@ if __name__ == "__main__":
     argparser = argparse.ArgumentParser()
     argparser.add_argument("--stat_file", required=True, help="Stat file")
     argparser.add_argument("--langs", required=True, help="Language list seperated with comma")
+    argparser.add_argument("--out", default=None, help="output file")
     args = argparser.parse_args()
 
     stat_f = args.stat_file
     langs = args.langs.split(",")
     lang_stat = BasicLangStat(stat_f)
-    out_f = "sites-" + "-".join(langs) + ".json"
+    if args.out is None:
+        out_f = "sites-" + "-".join(langs) + ".json"
+    else:
+        out_f = args.out
 
     filter = True
     url_language = UrlLanguage()

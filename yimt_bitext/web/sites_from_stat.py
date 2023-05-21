@@ -1,6 +1,7 @@
 """3. Get multilingual domains for given languages"""
 import argparse
 import json
+import os
 from collections import defaultdict
 
 from yimt_bitext.web.base import BasicLangStat
@@ -17,7 +18,8 @@ if __name__ == "__main__":
     langs = args.langs.split(",")
     lang_stat = BasicLangStat(stat_f)
     if args.out is None:
-        out_f = "sites-" + "-".join(langs) + ".json"
+        d = os.path.dirname(stat_f)
+        out_f = os.path.join(d, "sites-" + "-".join(langs) + ".json")
     else:
         out_f = args.out
 

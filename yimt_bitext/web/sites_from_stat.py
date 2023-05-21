@@ -10,7 +10,7 @@ from yimt_bitext.web.url_language import UrlLanguage
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser()
     argparser.add_argument("--stat_file", required=True, help="Stat file")
-    argparser.add_argument("--langs", required=True, help="Language list seperated with comma")
+    argparser.add_argument("--langs", required=True, help="3-letter Language code list separated with comma")
     argparser.add_argument("--out", default=None, help="output file")
     args = argparser.parse_args()
 

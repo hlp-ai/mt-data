@@ -57,6 +57,8 @@ def clean_file(in_path, out_path=None):
                 print(n)
     print(n)
 
+    return out_path
+
 
 if __name__ == "__main__":
     # print(clean_text("提⁠供⁠四⁠項⁠保⁠障⁠：房源預訂保障如果在罕見情況下，"))

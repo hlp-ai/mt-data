@@ -40,6 +40,8 @@ def dedup_file(in_path, out_path=None):
 
     print("Total:", total, "Unique:", n)
 
+    return out_path
+
 
 if __name__ == "__main__":
     import sys

@@ -114,12 +114,21 @@ class CrawlManager:
 
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser()
-    argparser.add_argument("--crawl_dir", required=True, help="Directory for crawling")
-    argparser.add_argument("--langs", required=True, help="Language list seperated with comma")
     argparser.add_argument("--sites_file", required=True, help="sites json file")
+    argparser.add_argument("--crawl_dir", default=None, help="Directory for crawling")
+    argparser.add_argument("--langs", required=True, help="Language list seperated with comma")
+    argparser.add_argument("--max_workers", default=8, type=int, help="Language list seperated with comma")
     args = argparser.parse_args()
 
-    crawl_manager = CrawlManager(args.crawl_dir)
     lang_list = args.langs.split(",")
+
+    if args.crawl_dir is None:
+        d = os.path.dirname(args.sites_file)
+        crawl_dir = os.path.join(d, "crawl-" + "-".join(lang_list))
+    else:
+        crawl_dir = args.crawl_dir
+
+    crawl_manager = CrawlManager(crawl_dir)
+
     crawl_manager.update(args.sites_file)
-    crawl_manager.start_crawl(lang_list)
+    crawl_manager.start_crawl(lang_list, args.max_workers)

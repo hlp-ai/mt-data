@@ -194,4 +194,4 @@ if __name__ == "__main__":
     wet_urls_processed_path = os.path.join(args.wet_paths_dir, cc_wet_paths_done)
 
     # dump_wet(wet_paths, wet_urls_processed_path)
-    dump_wet_batch(wet_paths, wet_urls_processed_path, args.max_workders)
+    dump_wet_batch(wet_paths, wet_urls_processed_path, args.max_workers)

@@ -91,19 +91,6 @@ class PageCollector(HTMLParser):
             self.p.append(data)
 
 
-def get_text(html_txt):
-    parser = PageCollector()
-    parser.feed(html_txt)
-    parser.close()
-
-    return "\n".join(parser.doc)
-
-
-def get_text_bs4(html_txt):
-    soup = BeautifulSoup(html_txt, 'html.parser')
-    return soup.body.get_text()
-
-
 if __name__ == "__main__":
     u1 = "http://www.baidu.com"
     print(get_domain(u1))

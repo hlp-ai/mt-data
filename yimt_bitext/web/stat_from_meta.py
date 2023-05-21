@@ -9,39 +9,6 @@ from yimt_bitext.web.base import BasicLangStat
 from yimt_bitext.web.cc import merge_k2dict, update_k2set, update_k2dict, merge_k2set
 
 
-class NetLangDist:
-
-    def __init__(self, stat_file):
-        self.stat_file = stat_file
-        if os.path.exists(self.stat_file):
-            with open(stat_file, encoding="utf-8") as stream:
-                self.net2lang2len = json.load(stream)
-        else:
-            self.net2lang2len = {}
-
-    def __len__(self):
-        return len(self.net2lang2len)
-
-    def __contains__(self, item):
-        return item in self.net2lang2len
-
-    def __getitem__(self, item):
-        return self.net2lang2len[item]
-
-    def __iter__(self):
-        return iter(self.net2lang2len)
-
-    def items(self):
-        return self.net2lang2len.items()
-
-    def save(self):
-        with open(self.stat_file, "w", encoding="utf-8") as stream:
-            json.dump(self.net2lang2len, stream)
-
-    def update(self, net2lang2len):
-        merge_k2dict(self.net2lang2len, net2lang2len)
-
-
 def stat_from_meta_by_host(meta_file):
     """For multilingual site"""
     host2lang2len = {}

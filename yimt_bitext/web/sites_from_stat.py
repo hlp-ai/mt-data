@@ -23,7 +23,6 @@ if __name__ == "__main__":
     else:
         out_f = args.out
 
-    filter = True
     url_language = UrlLanguage()
     normalized_langs = [url_language.normalize_lang_code(lang) for lang in langs]
 

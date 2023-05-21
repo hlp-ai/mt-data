@@ -1,17 +1,13 @@
 import gzip
 import time
-from urllib.parse import urlparse
 
 import requests
-
-from warcio import ArchiveIterator
 
 cc_base_url = "https://data.commoncrawl.org/"
 cc_data_url = "https://data.commoncrawl.org/crawl-data/"
 cc_wet_paths_gz = "wet.paths.gz"
 cc_wet_paths = "wet.paths"
 cc_wet_paths_done = cc_wet_paths + ".done"
-cc_stat_host_file = "stat_host.json"
 
 
 def download(url, local_fn):
@@ -69,61 +65,6 @@ def get_wet_name(wet_url):
     gz_path = parts[-1]
     idx = gz_path.find(".gz")
     return gz_path, gz_path[:idx]
-
-
-def count_lang(wet_path, host2lang2len, urls_file=None):
-    print("Scanning ", wet_path)
-    new_hosts = 0
-    if urls_file is not None:
-        urlf = open(urls_file, "a", encoding="utf-8")
-    else:
-        urlf = None
-
-    with open(wet_path, 'rb') as stream:
-        i = 0
-        for record in ArchiveIterator(stream):
-            if record.rec_type == 'conversion':
-                # TODO: When WARC-Identified-Content-Language is not available, language identification is needed.
-                langs = record.rec_headers.get_header("WARC-Identified-Content-Language")
-                url = record.rec_headers.get_header("WARC-Target-URI")
-                content_len = int(record.rec_headers.get_header("Content-Length"))
-                if langs is not None:
-                    langs = langs.split(",")
-                else:
-                    langs = []
-
-                if urlf is not None:
-                    urlf.write(url + "\n")
-
-                u = urlparse(url)
-                host = u.scheme + "://" + u.netloc + "/"
-                # host = get_domain(u)
-
-                if host not in host2lang2len:
-                    host2lang2len[host] = {}
-                    new_hosts += 1
-
-                lang2len = host2lang2len[host]
-
-                # TODO: More precise lengths of text of different languages
-                if len(langs) > 0:
-                    most_prob_lang = langs[0]
-                    if most_prob_lang in lang2len:
-                        lang2len[most_prob_lang] += content_len
-                    else:
-                        lang2len[most_prob_lang] = content_len
-
-            i += 1
-
-            if i % 2000 == 0:
-                print(i, " URLs")
-
-    print(i, " URLs")
-
-    if urlf is not None:
-        urlf.close()
-
-    return new_hosts
 
 
 def update_k2set(k2list, k, v):

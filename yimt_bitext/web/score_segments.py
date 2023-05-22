@@ -52,7 +52,7 @@ if __name__ == "__main__":
 
                 for m, s in enumerate(b1, 0):
                     for n, t in enumerate(b2, 0):
-                        of.write("{:.4f} {} {}\n".format(scores[m, n], s, t))
+                        of.write("{:.4f}\t{}\t{}\n".format(scores[m, n], s, t))
 
                 t2 += len(b2)
                 print("File-1: {}, File-2: {}".format(t1, t2))

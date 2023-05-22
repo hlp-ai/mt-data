@@ -1,12 +1,18 @@
 """6. Score sentence pairs"""
-import sys
+import argparse
 
 from yimt_bitext.web.sentence_vector import VectorSimilarityCosine, SentenceVectorizationLaBSE
 
 if __name__ == "__main__":
-    fn1 = sys.argv[1]
-    fn2 = sys.argv[2]
-    out = sys.argv[3]
+    argparser = argparse.ArgumentParser()
+    argparser.add_argument("--file1", required=True, help="Text file for language1")
+    argparser.add_argument("--file2", required=True, help="Text file for language2")
+    argparser.add_argument("--out", default=None, help="output file")
+    args = argparser.parse_args()
+
+    fn1 = args.file1
+    fn2 = args.file2
+    out = args.out
 
     vec_scorer = VectorSimilarityCosine()
     segment_vector = SentenceVectorizationLaBSE("D:/kidden/mt/open/mt-ex/mt/data/labse1")

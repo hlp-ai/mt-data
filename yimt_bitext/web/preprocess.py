@@ -1,7 +1,6 @@
 """5. Preprocess sentence files"""
 import argparse
 import os
-import sys
 
 from yimt_bitext.utils.clean import clean_file
 from yimt_bitext.utils.dedup import dedup_file

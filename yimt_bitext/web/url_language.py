@@ -28,9 +28,9 @@ class UrlLanguage(object):
             self.code_to_language[code] = 'es'
         for code in ['french', 'francais', 'fran', 'fra', 'fre', 'fr']:
             self.code_to_language[code] = 'fr'
-        for code in ['chinese', 'chi', 'zh', "zho"]:
+        for code in ['chinese', 'chi', 'zh', "zho", "zh-cn", "zh-tw", "cn"]:
             self.code_to_language[code] = 'zh'
-        for code in ['japanese', 'ja', 'ja-jp']:
+        for code in ['japanese', 'ja', 'ja-jp', 'jpn', 'jp']:
             self.code_to_language[code] = 'jp'
         for code in ['vietnamese', 'vi', 'vi-vn']:
             self.code_to_language[code] = 'vi'

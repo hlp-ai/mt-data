@@ -1,6 +1,5 @@
-"""4. Crawl multilingual domain"""
+"""4. Crawl multilingual domain for TEST"""
 import argparse
-import sys
 
 from yimt_bitext.web.crawl import crawl_domain
 
@@ -11,6 +10,6 @@ if __name__ == "__main__":
     args = argparser.parse_args()
 
     accepted_langs = args.langs.split(",")
-    path = sys.domain_dir
+    path = args.domain_dir
 
     crawl_domain(path, accepted_langs)

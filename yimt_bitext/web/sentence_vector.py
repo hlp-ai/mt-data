@@ -87,6 +87,32 @@ class SentenceVectorizationLaBSE(SentenceVectorization):
         return 768
 
 
+
+class SentenceVectorizationLaBSE_2(SentenceVectorizationLaBSE):
+    # 使用LaBSE_2和universal-sentence-encoder-cmlm/multilingual-preprocess_2嵌入句子
+    def __init__(self, model_url, preprocessor_url):
+        # preprocessor是tensorflow hub里的预处理器包，下载地址：https://tfhub.dev/google/universal-sentence-encoder-cmlm/multilingual-preprocess/2
+        self.labse_model, self.preprocessor = self._get_model(model_url, preprocessor_url)
+
+    def _get_model(self, model_url, preprocessor_url):
+        import tensorflow_hub as hub
+        import tensorflow_text   #得有tensorflow_text，不然会报错
+        labse_model = hub.KerasLayer(model_url)
+        preprocessor = hub.KerasLayer(preprocessor_url)
+        return labse_model, preprocessor
+
+    def _create_input(self, input_strings):
+        return self.preprocessor(input_strings)
+
+    def get_vector(self, text):
+        # text is a list
+        input = self._create_input(text)
+        return self.labse_model(input)["default"]
+
+    def get_dim(self):
+        return 768
+
+
 class VectorSimilarity:
     """计算向量或向量列表间的相似性分数"""
 
@@ -158,10 +184,12 @@ def load_vec_index(annoy_dir, dim=48):
 
 
 if __name__ == '__main__':
+    import tensorflow as tf
     s1 = ["This is a book", "I am a teacher."]
     t1 = ["这是一本书。", "我是老师。"]
 
-    vector = SentenceVectorizationLaBSE("D:/kidden/mt/open/mt-ex/mt/data/labse1")
+    # vector = SentenceVectorizationLaBSE("D:/kidden/mt/open/mt-ex/mt/data/labse1")
+    vector = SentenceVectorizationLaBSE_2(r"C:\Users\Lenovo\Desktop\LaBSE_2", r"C:\Users\Lenovo\Desktop\universal-sentence-encoder-cmlm_multilingual-preprocess_2")
     v1 = vector.get_vector(s1)
     print(v1.shape)
 

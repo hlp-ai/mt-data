@@ -116,7 +116,7 @@ if __name__ == "__main__":
     argparser = argparse.ArgumentParser()
     argparser.add_argument("--sites_file", required=True, help="sites json file")
     argparser.add_argument("--crawl_dir", default=None, help="Directory for crawling")
-    argparser.add_argument("--langs", required=True, help="Language list seperated with comma")
+    argparser.add_argument("--langs", required=True, help="2-letter language code list seperated with comma")
     argparser.add_argument("--max_workers", default=8, type=int, help="Language list seperated with comma")
     args = argparser.parse_args()
 

@@ -127,6 +127,7 @@ class BasicLangStat(LangStat):
             print("Loading stat from", self.stat_file)
             with open(stat_file, encoding="utf-8") as stream:
                 self.stat = json.load(stream)
+            print("# of domains:", len(self.stat))
         else:
             self.stat = {}
 

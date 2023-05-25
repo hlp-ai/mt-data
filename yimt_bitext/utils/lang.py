@@ -1,6 +1,8 @@
+import os
 
+import fasttext
 
-fasttext_model = None
+fasttext_model = fasttext.load_model(os.path.join(os.path.dirname(__file__), "lid.176.ftz"))
 
 
 def detect_lang(text, k=1, lib="fasttext"):
@@ -11,11 +13,7 @@ def detect_lang(text, k=1, lib="fasttext"):
     :param lib: which detection lib used
     :return:
     """
-    global fasttext_model
     if lib == "fasttext":
-        import fasttext
-        if fasttext_model is None:
-            fasttext_model = fasttext.load_model("lid.176.ftz")
         text = text[:200].lower() if len(text) > 200 else text.lower()
         prediction = fasttext_model.predict(text.replace("\n", " "), k=k)
         lang1 = prediction[0][0][9:]

@@ -13,7 +13,7 @@ from yimt_bitext.web.crawl_base import BasicUrlsToCrawl, DiskUrlsCrawled, BasicF
 def crawl_domain(domain_path, lang_list):
     domain = os.path.basename(domain_path)
     logger = get_logger(os.path.join(domain_path, "logs.txt"), domain)
-    logger.info(f"***Start crawling thread for {domain}")
+    logger.info(f"***START CRAWLING {domain}")
 
     to_crawl_fn = os.path.join(domain_path, "urls_tocrawl.txt")
     crawled_fn = os.path.join(domain_path, "crawled.txt")
@@ -37,12 +37,12 @@ def crawl_domain(domain_path, lang_list):
             logger.info(f"Fetching {url}")
             r = fetcher.fetch(url)
             if r.status_code != 200:
-                logger.warn(f"{url}: {r.status_code}")
+                logger.warning(f"{url}: {r.status_code}")
                 continue
             if r.encoding is None:
-                logger.warn(f"{url}: NO Encoding detected, maybe non-text page.")
+                logger.warning(f"{url}: NO Encoding detected, maybe non-text page.")
                 continue
-            logger.info(f"{url}: {r.encoding}")
+            logger.debug(f"{url}: {r.encoding}")
             html_content = r.text
             if html_content is not None:
                 # print("Parsing", url)
@@ -76,9 +76,9 @@ def crawl_domain(domain_path, lang_list):
             n_crawled = len(crawled)
             logger.info(f"{n_crawled} crawled, {n_tocrawl} to crawl")
         except Exception as e:
-            logger.warn(url + ": " + str(e))
+            logger.warning(url + ": " + str(e))
     # print("Finish crawling for", self.domain)
-    logger.info(f"***Finish crawling for {domain}")
+    logger.info(f"***FINISH CRAWLING {domain}")
 
 
 class CrawlManager:
@@ -112,6 +112,8 @@ class CrawlManager:
         self.logger.info("# of domains: {} to crawl".format(len(domain_paths)))
 
         pool.map(partial(crawl_domain, lang_list=accepted_langs), domain_paths)
+
+        self.logger.info("***All CRAWL DONE.")
 
 
 if __name__ == "__main__":

@@ -362,11 +362,10 @@ class BasicSentenceRepo(SentenceRepo):
 
 class SentenceRepoFile(SentenceRepo):
 
-    def __init__(self, path="./lang2sents", accepted_langs=None):
+    def __init__(self, path="./lang2sents"):
         self.path = path
         self.lang2f = {}
         self.lang2len = {}
-        self.accepted_langs = accepted_langs
 
         if not os.path.exists(path):
             os.makedirs(path, exist_ok=True)
@@ -381,8 +380,6 @@ class SentenceRepoFile(SentenceRepo):
 
     def store(self, lang2sentences):
         for lang, sents in lang2sentences.items():
-            if self.accepted_langs is not None and lang not in self.accepted_langs:
-                continue
             if lang not in self.lang2f:
                 self.lang2f[lang] = open(os.path.join(self.path, lang + ".txt"), "a", encoding="utf-8")
                 self.lang2len[lang] = 0

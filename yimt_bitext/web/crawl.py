@@ -25,7 +25,7 @@ def crawl_domain(domain_path, lang_list):
     parser = BasicPageParser()
     sentence_splitter = BasicSentenceSplitter()
     langid = BasicLangID()
-    sent_repo = SentenceRepoFile(sent_dir, accepted_langs=lang_list)
+    sent_repo = SentenceRepoFile(sent_dir)
     url_filter = BasicUrlFilter(domain, lang_list)
 
     while True:
@@ -43,6 +43,7 @@ def crawl_domain(domain_path, lang_list):
                 logger.warning(f"{url}: NO Encoding detected, maybe non-text page.")
                 continue
             logger.debug(f"{url}: {r.encoding}")
+
             html_content = r.text
             if html_content is not None:
                 # print("Parsing", url)
@@ -53,31 +54,33 @@ def crawl_domain(domain_path, lang_list):
                 lang2sentenes = {}
                 for s in sentences:
                     lang = langid.detect(s)
+                    if lang_list is not None and lang not in lang_list:
+                        continue
                     if lang in lang2sentenes:
                         lang2sentenes[lang].append(s)
                     else:
                         lang2sentenes[lang] = [s]
 
-                sent_repo.store(lang2sentenes)
-                # print(self.sent_repo)
-                logger.info(sent_repo)
+                if len(lang2sentenes) > 0:
+                    sent_repo.store(lang2sentenes)
+                    logger.info(sent_repo)
+                else:
+                    logger.debug("NO sentence found for {}".format(url))
 
                 for ol in outlinks:
                     if url_filter.filter(ol):
                         to_crawl.add(ol)
                     else:
-                        # print("Filtered:", ol)
                         logger.debug(f"Filtered: {ol}")
 
                 crawled.add(url)
 
-            # print(len(self.crawled), "crawled,", len(self.to_crawl), "to crawl.")
             n_tocrawl = len(to_crawl)
             n_crawled = len(crawled)
             logger.info(f"{n_crawled} crawled, {n_tocrawl} to crawl")
         except Exception as e:
             logger.warning(url + ": " + str(e))
-    # print("Finish crawling for", self.domain)
+
     logger.info(f"***FINISH CRAWLING {domain}")
 
 

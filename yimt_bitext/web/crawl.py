@@ -88,6 +88,8 @@ class CrawlManager:
         if not os.path.exists(self.crawl_dir):
             os.makedirs(self.crawl_dir, exist_ok=True)
 
+        self.logger = get_logger(os.path.join(crawl_dir, "logs.txt"), "CrawlManager")
+
     def update(self, sites_file):
         with open(sites_file, encoding="utf-8") as sites_f:
             domain2hosts_langs = json.load(sites_f)
@@ -95,7 +97,7 @@ class CrawlManager:
         for domain, hosts in domain2hosts_langs.items():
             doamin_dir = os.path.join(self.crawl_dir, domain)
             if not os.path.exists(doamin_dir):
-                print("Found new domain:", domain)
+                self.logger.info("Found new domain: {}".format(domain))
                 os.makedirs(doamin_dir, exist_ok=True)
                 with open(os.path.join(doamin_dir, "urls_tocrawl.txt"), "w", encoding="utf-8") as f:
                     for s in hosts:
@@ -107,7 +109,7 @@ class CrawlManager:
         for domain in os.listdir(self.crawl_dir):
             domain_path = os.path.join(self.crawl_dir, domain)
             domain_paths.append(domain_path)
-        print("# of domains:", len(domain_paths))
+        self.logger.info("# of domains: {} to crawl".format(len(domain_paths)))
 
         pool.map(partial(crawl_domain, lang_list=accepted_langs), domain_paths)
 

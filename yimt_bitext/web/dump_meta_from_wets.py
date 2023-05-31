@@ -41,15 +41,13 @@ def dump_metadata_wet(wet_path, out_fn=None):
     if out_fn is None:
         out_fn = os.path.join(os.path.dirname(wet_path), os.path.basename(wet_path) + ".meta")
 
-    report_interval = 10000
     total = 0
     with open(out_fn, "w", encoding="utf-8") as stream:
         for url, site, domain, lang, content_len in iter_metadata_wet(wet_path):
             print(url, site, domain, lang, content_len, file=stream)
             total += 1
-            if total % report_interval == 0:
-                print(total)
-    print(total)
+
+    return total
 
 
 logger_wet = get_logger(log_filename="./dump_wets.log", name="WET")
@@ -71,7 +69,7 @@ def download_wet(url, filepath):
                     file.write(data)
                     size += len(data)
                     n_read += 1
-                    if n_read % 4 == 0:
+                    if n_read % 64 == 0:
                         logger_wet.info("{}: {:.2f}M {:.1f} secs".format(url, size/(1024*1024), (time.time()-start)))
         else:
             logger_wet.warning("Error: {}: {}".format(url, response.status_code))
@@ -103,7 +101,8 @@ def process_wet_url(wet_url):
 
     # Parse and dump wet metadata
     logger_wet.info("Scanning {}".format(wet_path))
-    dump_metadata_wet(wet_path)
+    n = dump_metadata_wet(wet_path)
+    logger_wet.info("{} urls scanned.".format(n))
 
     logger_wet.info("Deleting downloaded file")
     os.remove(wet_gz_path)
@@ -136,7 +135,7 @@ def dump_wet_batch(wet_paths, wet_urls_processed_path, max_workers = 4):
     executor = ThreadPoolExecutor(max_workers=max_workers)
     for success, u in executor.map(process_wet_url, to_dump_wet_urls):
         if success:
-            logger_wet.info("Fininsh {}".format(u))
+            logger_wet.info("Finish {}".format(u))
             with open(wet_urls_processed_path, "a", encoding="utf-8") as f:
                 f.write(u + "\n")
 
@@ -149,16 +148,16 @@ def dump_wet(wet_paths, wet_urls_processed_path):
             for u in f:
                 wet_urls_processed.add(u.strip())
 
-    print("# of WET processed: ", len(wet_urls_processed))
+    logger_wet.info("# of WET processed: {}".format(len(wet_urls_processed)))
 
     with open(wet_paths, encoding="utf-8") as f:
         for wet_url in f:  # for each wet file in cc archive
             wet_url = cc_base_url + wet_url.strip()
             if wet_url in wet_urls_processed:  # skip processed WET file
-                print(wet_url, " has been processed before")
+                logger_wet.info("{} has been processed before".format(wet_url))
                 continue
 
-            print("Dump metadata for ", wet_url)
+            logger_wet.info("Dump metadata for {}".format(wet_url))
             wet_gz_name, wet_name = get_wet_name(wet_url)
 
             wet_gz_path = os.path.join(args.wet_paths_dir, wet_gz_name)
@@ -172,14 +171,14 @@ def dump_wet(wet_paths, wet_urls_processed_path):
             ungzip(wet_gz_path, wet_path)
 
             # Parse and dump wet metadata
-            print("Scanning ", wet_path)
+            logger_wet.info("Scanning {}".format(wet_path))
             dump_metadata_wet(wet_path)
 
-            print("Updating WET done file...")
+            logger_wet.info("Updating WET done file...")
             with open(wet_urls_processed_path, "a", encoding="utf-8") as f:
                 f.write(wet_url + "\n")
 
-            print("Deleting downloaded file")
+            logger_wet.info("Deleting downloaded file")
             os.remove(wet_gz_path)
             os.remove(wet_path)
 

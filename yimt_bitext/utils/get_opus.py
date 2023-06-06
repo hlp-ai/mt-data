@@ -17,13 +17,16 @@ def download_opus_moses(corpus_name, corpus_version, sl, tl, out_dir="./"):
     BLOCK_SIZE = 1024 * 128
 
     try:
-        r = requests.get(moses_url, headers=headers, timeout=(15, 15), stream=True)
+        r = requests.get(moses_url, headers=headers, timeout=(15, 15), stream=True, allow_redirects=False)
+        if r.status_code != 200:
+            return False
         with open(local_moses_file, "wb") as f:
             for block in r.iter_content(BLOCK_SIZE):
                 f.write(block)
                 print(".", end="")
+        return True
     except Exception as e:
-        print(e)
+        print(moses_url, e)
     finally:
         r.close()
 
@@ -33,4 +36,6 @@ corpus_name = "KDE4"
 corpus_version = "v2"
 sl = "en"
 tl = "tr"
-download_opus_moses(corpus_name, corpus_version, sl, tl)
+
+success = download_opus_moses(corpus_name, corpus_version, sl, tl)
+print(success)

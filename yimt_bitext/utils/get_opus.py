@@ -19,25 +19,27 @@ def download_opus_moses(corpus_name, corpus_version, sl, tl, out_dir="./"):
     total = 0
 
     try:
-        r = requests.get(moses_url, headers=headers, timeout=(15, 15), stream=True, allow_redirects=False)
+        r = requests.get(moses_url, headers=headers, timeout=(20, 20), stream=True, allow_redirects=False)
         if r.status_code != 200:
             print(moses_url, r.status_code)
             return False
 
         if 'content-length' in r.headers:
             content_size = int(r.headers['content-length'])
-            print("{}: {}".format(moses_url, content_size))
+            print("{}: {:.4f} MB".format(moses_url, content_size/(1024*1024)))
 
         with open(local_moses_file, "wb") as f:
             for block in r.iter_content(BLOCK_SIZE):
                 f.write(block)
                 total += len(block)
-                print("{}: {}".format(moses_url, total))
+                print("{}: {:.4f} MB".format(moses_url, total/(1024*1024)))
         return True
     except Exception as e:
         print(moses_url, e)
     finally:
         r.close()
+
+    return False
 
 
 corpus_name = "KDE4"

@@ -78,9 +78,14 @@ if __name__ == "__main__":
             corpus_name = parts[0]
             corpus_version = parts[1]
 
-            if to_zh:
-                for lang in langs:
-                    p = os.path.join(out_dir, lang + "-" + "zh")
-                    os.makedirs(p, exist_ok=True)
-                    success = download_opus_moses(corpus_name, corpus_version, lang, "zh", p)
-                    logger.info(corpus_name + " " + lang + "-zh " + str(success))
+            for lang in langs:
+                if to_zh:
+                    tl = "zh"
+                    sl = lang
+                else:
+                    sl = "en"
+                    tl = lang
+                p = os.path.join(out_dir, sl + "-" + tl)
+                os.makedirs(p, exist_ok=True)
+                success = download_opus_moses(corpus_name, corpus_version, sl, tl, p)
+                logger.info(corpus_name + " " + sl + "-" + tl + " " + str(success))

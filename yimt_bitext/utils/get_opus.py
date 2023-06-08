@@ -15,6 +15,9 @@ def download_opus_moses(corpus_name, corpus_version, sl, tl, out_dir="./"):
     format = "moses"
     corpus_path = "OPUS-" + corpus_name + "/" + corpus_version
     local_moses_file = os.path.join(out_dir, corpus_name + "-" + corpus_version + "-" + sl + "-" + tl + ".txt.zip")
+    if os.path.exists(local_moses_file):
+        logger.info("{} exists".format(local_moses_file))
+        return True
     remote_moses_file = sl + "-" + tl + ".txt.zip"
     moses_url = OPUS_DOWNLOAD_BASE_URL + "/" + corpus_path + "/" + format + "/" + remote_moses_file
     logger.info(moses_url)

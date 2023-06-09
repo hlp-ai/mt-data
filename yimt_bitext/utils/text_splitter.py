@@ -36,24 +36,3 @@ def split_sentences(text, lang="en"):
         sentences = sentence_split(text, lang)
 
     return sentences
-
-
-def split_sent_file(fn, out_path=None, lang="en"):
-    if out_path is None:
-        out_path = fn + ".sent"
-
-    with open(fn, encoding="utf-8") as f1, open(out_path, "w", encoding="utf-8") as out:
-        for p in f1:
-            p = p.strip()
-            sentences = sentence_split(p, lang)
-            for s in sentences:
-                out.write(s + "\n")
-
-    return out_path
-
-
-if __name__ == "__main__":
-    fn = sys.argv[1]
-    lang = sys.argv[2]
-
-    split_sent_file(fn, lang=lang)

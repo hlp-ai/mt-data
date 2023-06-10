@@ -13,7 +13,7 @@ def norm(s, lower=True, remove_noletter=True):
     return s
 
 
-def dedup_file(in_path, out_path=None):
+def dedup_file(in_path, out_path=None, logger=None):
     if out_path is None:
         out_path = in_path + ".deduped"
     pairs = set()
@@ -25,12 +25,14 @@ def dedup_file(in_path, out_path=None):
         for p in f:
             p = p.strip()
             total += 1
-            if total % 1000 == 0:
-                print("Total:", total, "Unique:", n)
+            if total % 100000 == 0:
+                if logger:
+                    logger.info("Total: {}, Unique: {}".format(total, n))
 
             pn = norm(p)
             h = hash(pn)
             if h in pairs:
+                logger.debug("Duplicate: {}".format(p))
                 continue
             else:
                 pairs.add(h)
@@ -38,7 +40,7 @@ def dedup_file(in_path, out_path=None):
             n += 1
             out_f.write(p + "\n")
 
-    print("Total:", total, "Unique:", n)
+    logger.info("Total: {}, Unique: {}".format(total, n))
 
     return out_path
 

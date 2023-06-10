@@ -1,14 +1,13 @@
 import os
+import sys
 import zipfile
 
-
+from yimt_bitext.utils.clean import clean_file
+from yimt_bitext.utils.dedup import dedup_file
 from yimt_bitext.utils.log import get_logger
 
 
-logger_opus = get_logger("opus.log", "mt.opus")
-
-
-def extract_zips(zips_dir, out_dir=None):
+def extract_zips(zips_dir, out_dir=None, logger_opus=None):
     """Unzip zip files in a directory into out directory"""
     if out_dir is None:
         out_dir = os.path.join(zips_dir, "unzip")
@@ -18,7 +17,8 @@ def extract_zips(zips_dir, out_dir=None):
         if not zipf.endswith(".zip"):
             continue
 
-        logger_opus.info("Unzip {}".format(zipf))
+        if logger_opus:
+            logger_opus.info("Unzip {}".format(zipf))
 
         zFile = zipfile.ZipFile(os.path.join(zips_dir, zipf), "r")
         for fileM in zFile.namelist():
@@ -47,9 +47,9 @@ def same_lines(path1, path2):
         return False
 
 
-def single_to_pair(src_path, tgt_path, pair_path):
+def single_to_pair(src_path, tgt_path, pair_path, logger_opus=None):
     """Combine source and target file into a parallel one"""
-    logger_opus.info("{} {}->{}".format(src_path, tgt_path, pair_path))
+    logger_opus.info("Merge{} {} into {}".format(src_path, tgt_path, pair_path))
     assert same_lines(src_path, tgt_path)
 
     cnt = 0
@@ -58,11 +58,14 @@ def single_to_pair(src_path, tgt_path, pair_path):
             out_f.write(p[0].strip() + "\t" + p[1].strip() + "\n")
             cnt += 1
             if cnt % 100000 == 0:
-                logger_opus.info("{}: {}".format(pair_path, cnt))
-        logger_opus.info("{}: {}".format(pair_path, cnt))
+                if logger_opus:
+                    logger_opus.info("{}: {}".format(pair_path, cnt))
+
+        if logger_opus:
+            logger_opus.info("{}: {}".format(pair_path, cnt))
 
 
-def merge_moses(in_dir, source_lang=None, target_lang=None, out_dir=None):
+def merge_moses(in_dir, source_lang=None, target_lang=None, out_dir=None, logger_opus=None):
     assert source_lang is not None or target_lang is not None
 
     if out_dir is None:
@@ -86,19 +89,19 @@ def merge_moses(in_dir, source_lang=None, target_lang=None, out_dir=None):
         f2 = os.path.join(in_dir, f2)
         if source_lang is not None:
             if f1.endswith(source_lang):
-                single_to_pair(f1, f2, outf)
+                single_to_pair(f1, f2, outf, logger_opus)
             elif f2.endswith(source_lang):
-                single_to_pair(f2, f1, outf)
+                single_to_pair(f2, f1, outf, logger_opus)
         elif target_lang is not None:
             if f1.endswith(target_lang):
-                single_to_pair(f2, f1, outf)
+                single_to_pair(f2, f1, outf, logger_opus)
             elif f2.endswith(target_lang):
-                single_to_pair(f1, f2, outf)
+                single_to_pair(f1, f2, outf, logger_opus)
 
     return out_dir
 
 
-def merge_files(data_root, out_fn):
+def merge_files(data_root, out_fn, logger_opus=None):
     """Merge files in a directory into one file"""
     data_files = [os.path.join(data_root, f) for f in os.listdir(data_root)]
 
@@ -114,6 +117,28 @@ def merge_files(data_root, out_fn):
                     out_f.write(line + "\n")
                     cnt += 1
                     if cnt % 100000 == 0:
-                        logger_opus.info("{}: {}".format(out_path, cnt))
+                        if logger_opus:
+                            logger_opus.info("Merging {}: {}".format(out_path, cnt))
 
-        logger_opus.info("{}: {}".format(out_path, cnt))
+        if logger_opus:
+            logger_opus.info("Merging {}: {}".format(out_path, cnt))
+
+    return out_path
+
+
+def preprocess(in_dir, target_lang="zh", logger=None):
+    path = extract_zips(in_dir, logger_opus=logger)
+
+    path = merge_moses(path, target_lang=target_lang, logger_opus=logger)
+
+    path = merge_files(path, "to" + target_lang + ".tsv", logger_opus=logger)
+    path = clean_file(path, logger=logger)
+
+    dedup_file(path, logger=logger)
+
+
+if __name__ == "__main__":
+    p = sys.argv[1]
+    logger_opus = get_logger("opus.log", "OPUS")
+    preprocess(p, logger=logger_opus)
+

@@ -40,7 +40,7 @@ def clean_text(text):
     return "".join(output)
 
 
-def clean_file(in_path, out_path=None):
+def clean_file(in_path, out_path=None, logger=None):
     if out_path is None:
         out_path = in_path + ".cleaned"
 
@@ -53,9 +53,11 @@ def clean_file(in_path, out_path=None):
 
             n += 1
 
-            if n % 1000 == 0:
-                print(n)
-    print(n)
+            if n % 100000 == 0:
+                if logger:
+                    logger.info("Cleaning {}".format(n))
+    if logger:
+        logger.info("Cleaning {}".format(n))
 
     return out_path
 

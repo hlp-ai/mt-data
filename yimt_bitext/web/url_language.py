@@ -54,7 +54,7 @@ class UrlLanguage(object):
             self.code_to_language[code] = 'nl'
         for code in ['en-en', 'en-us', 'en-uk', 'en-ca', 'en-bz', 'en-ab',
                      'en-in', 'en-ie', 'en-jm', 'en-nz', 'en-ph', 'en-za',
-                     'en-tt', 'gb', 'en-gb', 'inglese', 'englisch', 'us']:
+                     'en-tt', 'gb', 'en-gb', 'inglese', 'english', 'us']:
             self.code_to_language[code] = 'en'
         for code in ['romanian', 'romana', 'romlang', 'rom', 'ro-ro', 'ro']:
             self.code_to_language[code] = 'ro'

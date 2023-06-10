@@ -96,3 +96,24 @@ def merge_moses(in_dir, source_lang=None, target_lang=None, out_dir=None):
                 single_to_pair(f1, f2, outf)
 
     return out_dir
+
+
+def merge_files(data_root, out_fn):
+    """Merge files in a directory into one file"""
+    data_files = [os.path.join(data_root, f) for f in os.listdir(data_root)]
+
+    out_path = os.path.join(data_root, out_fn)
+
+    cnt = 0
+    with open(out_path, "w", encoding="utf-8") as out_f:
+        for f in data_files:
+            in_f = open(f, encoding="utf-8")
+            for line in in_f:
+                line = line.strip()
+                if len(line) > 0:
+                    out_f.write(line + "\n")
+                    cnt += 1
+                    if cnt % 100000 == 0:
+                        logger_opus.info("{}: {}".format(out_path, cnt))
+
+        logger_opus.info("{}: {}".format(out_path, cnt))

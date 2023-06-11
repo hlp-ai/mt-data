@@ -127,13 +127,19 @@ def merge_files(data_root, out_fn, logger_opus=None):
 
 
 def preprocess(in_dir, target_lang="zh", logger=None):
+    logger.info("***Unzipping***")
     path = extract_zips(in_dir, logger_opus=logger)
 
+    logger.info("***Merging Moses***")
     path = merge_moses(path, target_lang=target_lang, logger_opus=logger)
 
+    logger.info("***Merging Files***")
     path = merge_files(path, "to" + target_lang + ".tsv", logger_opus=logger)
+
+    logger.info("***Cleaning***")
     path = clean_file(path, logger=logger)
 
+    logger.info("***Deduping***")
     dedup_file(path, logger=logger)
 
 

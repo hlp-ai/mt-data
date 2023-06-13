@@ -24,6 +24,20 @@ def detok_zh_str(s):
     return result
 
 
+def detok_zh_file_inplace(in_file):
+    lines = []
+    with open(in_file, encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            line = re.sub(r"\s{2,}", " ", line)
+            line = line.strip()
+            lines.append(line)
+
+    with open(in_file, "w", encoding="utf-8") as f:
+        for line in lines:
+            f.write(detok_zh_str(line) + "\n")
+
+
 def hant_2_hans(hant_str: str):
     """Traditional Chinese to Simplified Chinese"""
     return zhconv.convert(hant_str, 'zh-hans')

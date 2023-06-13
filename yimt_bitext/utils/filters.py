@@ -74,51 +74,6 @@ class LangFilter(Filter):
         return src, tgt
 
 
-class LenFilter(Filter):
-    """Filter pair which is too long or short"""
-
-    def __init__(self, src_lens=(None, None), tgt_lens=(None, None), src_len_fn=len, tgt_len_fn=len):
-        self.src_min_len = src_lens[0]
-        self.src_max_len = src_lens[1]
-        self.tgt_min_len = tgt_lens[0]
-        self.tgt_max_len = tgt_lens[1]
-
-        self.src_len_fn = src_len_fn
-        self.tgt_len_fn = tgt_len_fn
-
-    def filter(self, src, tgt):
-        src_len = self.src_len_fn(src)
-        tgt_len = self.tgt_len_fn(tgt)
-
-        if self.src_min_len is not None and src_len < self.src_min_len:
-            return None
-        if self.src_max_len is not None and src_len > self.src_max_len:
-            return None
-        if self.tgt_min_len is not None and tgt_len < self.tgt_min_len:
-            return None
-        if self.tgt_max_len is not None and tgt_len > self.tgt_max_len:
-            return None
-        return src, tgt
-
-
-class LenDiffFilter(Filter):
-    """Filter pair whose source and target have big length difference"""
-
-    def __init__(self, ratio, src_len_fn=len, tgt_len_fn=len):
-        self.ratio = ratio
-        self.src_len_fn = src_len_fn
-        self.tgt_len_fn = tgt_len_fn
-
-    def filter(self, src, tgt):
-        len_src = self.src_len_fn(src)
-        len_tgt = self.tgt_len_fn(tgt)
-
-        if len_src <= self.ratio * len_tgt and len_tgt <= self.ratio * len_src:
-            return src, tgt
-        else:
-            return None
-
-
 class LengthFilter(Filter):
 
     space_sep_len_f = lambda s: len(s.split())
@@ -154,25 +109,6 @@ class LengthFilter(Filter):
             return src, tgt
         else:
             return None
-
-
-class LongWordFilter(Filter):
-    """Used for languages with space for word divider"""
-    def __init__(self, max_long=(40, 40)):
-        self.src_max_len = max_long[0]
-        self.tgt_max_len = max_long[1]
-
-    def filter(self, src, tgt):
-        if self.src_max_len is None and self.tgt_max_len is None:
-            return src, tgt
-
-        if self.src_max_len is not None and max([len(w) for w in src.split()]) > self.src_max_len:
-            return None
-
-        if self.tgt_max_len is not None and max([len(w) for w in tgt.split()]) > self.tgt_max_len:
-            return None
-
-        return src, tgt
 
 
 class AlphabetRatioFilter(Filter):

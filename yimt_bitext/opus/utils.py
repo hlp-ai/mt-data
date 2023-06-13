@@ -5,7 +5,7 @@ import zipfile
 from yimt_bitext.utils.clean import clean_file
 from yimt_bitext.utils.dedup import dedup_file
 from yimt_bitext.utils.log import get_logger
-from yimt_bitext.utils.normalizers import detok_zh_file_inplace
+from yimt_bitext.utils.normalizers import detok_zh_file_inplace, normalize_file, ToZhNormalizer
 
 
 def extract_zips(zips_dir, out_dir=None, logger_opus=None):
@@ -50,7 +50,7 @@ def same_lines(path1, path2):
 
 def single_to_pair(src_path, tgt_path, pair_path, logger_opus=None):
     """Combine source and target file into a parallel one"""
-    logger_opus.info("Merge{} {} into {}".format(src_path, tgt_path, pair_path))
+    logger_opus.info("Merge {} {} into {}".format(src_path, tgt_path, pair_path))
     assert same_lines(src_path, tgt_path)
 
     cnt = 0
@@ -145,8 +145,10 @@ def preprocess(in_dir, target_lang="zh", logger=None):
     logger.info("***Merging Files***")
     path = merge_files(path, "to" + target_lang + ".tsv", logger_opus=logger)
 
-    logger.info("***Cleaning***")
-    path = clean_file(path, logger=logger)
+    logger.info("***Normalizing***")
+    if target_lang == "zh":
+        normalizers = [ToZhNormalizer()]
+    path = normalize_file(path, normalizers, logger=logger)
 
     logger.info("***Deduping***")
     dedup_file(path, logger=logger)

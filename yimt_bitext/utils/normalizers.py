@@ -120,3 +120,49 @@ class Hant2Hans(Normalizer):
         s = hant_2_hans(s)
 
         return s
+
+
+class ToZhNormalizer(Normalizer):
+
+    def __init__(self):
+        self.cleaner = Cleaner()
+        self.t2s = Hant2Hans()
+
+    def normalize(self, s):
+        s = s.strip()
+        pair = s.split("\t")
+        if len(pair) != 2:
+            return ""
+
+        src = pair[0]
+        tgt = pair[1]
+
+        src = self.cleaner.normalize(src)
+        tgt = self.cleaner.normalize(tgt)
+        tgt = self.t2s.normalize(tgt)
+
+        return src + "\t" + tgt
+
+
+def normalize_file(in_path, normalizers, out_path=None, logger=None):
+    if out_path is None:
+        out_path = in_path + ".normalized"
+
+    n = 0
+    with open(in_path, encoding="utf-8") as in_f, open(out_path, "w", encoding="utf-8") as out_f:
+        for line in in_f:
+            for normalizer in normalizers:
+                line = normalizer.normalize(line)
+
+            if len(line) > 0:
+                out_f.write(line + "\n")
+
+            n += 1
+
+            if n % 100000 == 0:
+                if logger:
+                    logger.info("Normalizing {}".format(n))
+    if logger:
+        logger.info("Normalizing {}".format(n))
+
+    return out_path

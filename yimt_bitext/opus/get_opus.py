@@ -3,9 +3,11 @@ import sys
 
 import requests
 
-from yimt_bitext.opus.utils import logger_opus
+from yimt_bitext.utils.log import get_logger
 
 OPUS_DOWNLOAD_BASE_URL = "https://object.pouta.csc.fi"
+
+logger_opus = get_logger("opus.log", "OPUS")
 
 
 def download_opus_moses(corpus_name, corpus_version, sl, tl, out_dir="./"):
@@ -46,15 +48,6 @@ def download_opus_moses(corpus_name, corpus_version, sl, tl, out_dir="./"):
         r.close()
 
     return False
-
-
-# corpus_name = "KDE4"
-# corpus_version = "v2"
-# sl = "en"
-# tl = "tr"
-#
-# success = download_opus_moses(corpus_name, corpus_version, sl, tl)
-# print(success)
 
 
 if __name__ == "__main__":

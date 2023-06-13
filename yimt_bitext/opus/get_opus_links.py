@@ -23,5 +23,3 @@ if __name__ == "__main__":
     print(len(moses_links))
     for l in moses_links:
         print(l)
-
-

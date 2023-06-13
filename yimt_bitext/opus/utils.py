@@ -5,6 +5,7 @@ import zipfile
 from yimt_bitext.utils.clean import clean_file
 from yimt_bitext.utils.dedup import dedup_file
 from yimt_bitext.utils.log import get_logger
+from yimt_bitext.utils.normalizers import detok_zh_file_inplace
 
 
 def extract_zips(zips_dir, out_dir=None, logger_opus=None):
@@ -87,6 +88,14 @@ def merge_moses(in_dir, source_lang=None, target_lang=None, out_dir=None, logger
         outf = os.path.join(out_dir, bname + ".tsv")
         f1 = os.path.join(in_dir, f1)
         f2 = os.path.join(in_dir, f2)
+
+        if f1.endswith("zh") and f1.find("bible") >= 0:
+            logger_opus.info("Detokenizing {}".format(f1))
+            detok_zh_file_inplace(f1)
+        elif f2.endswith("zh") and f2.find("bible") >= 0:
+            logger_opus.info("Detokenizing {}".format(f2))
+            detok_zh_file_inplace(f2)
+
         if source_lang is not None:
             if f1.endswith(source_lang):
                 single_to_pair(f1, f2, outf, logger_opus)

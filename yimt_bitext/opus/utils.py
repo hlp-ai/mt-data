@@ -89,10 +89,10 @@ def merge_moses(in_dir, source_lang=None, target_lang=None, out_dir=None, logger
         f1 = os.path.join(in_dir, f1)
         f2 = os.path.join(in_dir, f2)
 
-        if f1.endswith("zh") and f1.find("bible") >= 0:
+        if f1.endswith("zh") and (f1.find("bible") >= 0 or f1.find("XLEnt") >= 0):
             logger_opus.info("Detokenizing {}".format(f1))
             detok_zh_file_inplace(f1)
-        elif f2.endswith("zh") and f2.find("bible") >= 0:
+        elif f2.endswith("zh") and (f2.find("bible") >= 0 or f2.find("XLEnt") >= 0):
             logger_opus.info("Detokenizing {}".format(f2))
             detok_zh_file_inplace(f2)
 

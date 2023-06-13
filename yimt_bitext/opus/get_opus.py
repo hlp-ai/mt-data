@@ -80,8 +80,8 @@ if __name__ == "__main__":
                     tl = "zh"
                     sl = lang
                 else:
-                    sl = "en"
-                    tl = lang
+                    tl = "en"
+                    sl = lang
                 p = os.path.join(out_dir, sl + "-" + tl)
                 os.makedirs(p, exist_ok=True)
                 success = download_opus_moses(corpus_name, corpus_version, sl, tl, p)

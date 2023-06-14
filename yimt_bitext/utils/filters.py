@@ -212,6 +212,45 @@ class NonZeroNumeralsFilter(Filter):
             return None
 
 
+def filter_file(in_path, filters, out_path=None, logger=None):
+    if out_path is None:
+        out_path = in_path + ".filtered"
+
+    total = 0
+    passed = 0
+
+    with open(in_path, encoding="utf-8") as in_f, open(out_path, "w", encoding="utf-8") as out_f:
+        for line in in_f:
+            total += 1
+            if total % 10000 == 0:
+                if logger:
+                    logger.info("Total: {} Passed: {}".format(total, passed))
+            line = line.strip()
+            cols = line.split("\t")
+            if len(cols) >= 2:
+                src, tgt = cols[:2]
+            else:
+                if logger:
+                    logger.warning("NO Pair: {}".format(line))
+                continue
+
+            valid = True
+            for f in filters:
+                if f.filter(src, tgt) is None:
+                    if logger:
+                        logger.debug("{}: {}".format(f.__class__.__name__, line))
+                    valid = False
+                    break
+            if valid:
+                passed += 1
+                out_f.write(line + "\n")
+
+    if logger:
+        logger.info("Total: {} Passed: {}".format(total, passed))
+
+    return out_path
+
+
 if __name__ == "__main__":
     same_filter = SameFilter()
     print(same_filter.filter("i like it", "i like it"))

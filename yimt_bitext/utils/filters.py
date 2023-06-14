@@ -1,3 +1,7 @@
+import difflib
+import itertools
+import string
+
 import regex
 
 from yimt_bitext.utils.lang import detect_lang
@@ -168,3 +172,108 @@ class CharacterRatioFilter(Filter):
             return None
 
         return src, tgt
+
+
+class NonZeroNumeralsFilter(Filter):
+    """Similarity measure between numerals of the two sentences with zeros removed
+
+    If require_all is True, all scores (for pairs of n segments) have
+    to be equal or above the threshold; otherwise at least one the
+    scores have to be equal or above the threshold. For bilingual
+    input, it has no effect.
+
+    See :cite:`vazquez-etal-2019-university`
+
+    """
+
+    def __init__(self, threshold=0.5, require_all=True):
+        self.threshold = threshold
+        self.require_all = require_all
+
+    def score(self, pair):
+        nums = [[int(c) for c in sent if c in string.digits and c != '0']
+                for sent in pair]
+        ratios = []
+        for num1, num2 in itertools.combinations(nums, 2):
+            seq = difflib.SequenceMatcher(None, num1, num2)
+            ratios.append(seq.ratio())
+        return ratios
+
+    def filter(self, src, tgt):
+        score = self.score((src, tgt))
+        if self.require_all:
+            if all(ratio >= self.threshold for ratio in score):
+                return src, tgt
+            else:
+                return None
+        if any(ratio >= self.threshold for ratio in score):
+            return src, tgt
+        else:
+            return None
+
+
+if __name__ == "__main__":
+    same_filter = SameFilter()
+    print(same_filter.filter("i like it", "i like it"))
+    print(same_filter.filter("i like it", " like it"))
+    print(same_filter.filter("i like it", "I like it "))
+    print(same_filter.filter("我喜欢", "我喜欢"))
+
+    print()
+
+    empty_filter = EmptyFilter()
+    print(empty_filter.filter("", " "))
+    print(empty_filter.filter(" a test", " "))
+    print(empty_filter.filter("a test", "just a test"))
+
+    print()
+
+    overlap_filter = OverlapFilter(ratio=0.5)
+    print(overlap_filter.filter("abcdef", "abcdef"))
+    print(overlap_filter.filter("啊啊啊", "啊啊啊"))
+    print(overlap_filter.filter("aaaaaaa", "aaa啊啊啊啊啊啊阿"))
+
+    print()
+    lang_filter = LangFilter("en", "zh")
+    print(lang_filter.filter("i like it", "i like it"))
+    print(lang_filter.filter("i like it", "我真的很喜欢它。"))
+
+    print()
+
+    new_len_filter = LengthFilter(src_len_fn=LengthFilter.space_sep_len_f,
+                                  tgt_len_fn=LengthFilter.space_sep_len_f,
+                                  src_lens=(2, 4), tgt_lens=(2, 7),
+                                  ratio=3)
+    print(new_len_filter.filter("like", "what what are wrong"))
+    print(new_len_filter.filter("a b", "aaaaa bbbb cccc"))
+    print(new_len_filter.filter("a b", "aaaaa bbbb ccccdddddddddd ff ee dd f"))
+
+    print()
+
+    new_len_filter2 = LengthFilter(src_len_fn=LengthFilter.space_sep_len_f,
+                                  tgt_len_fn=LengthFilter.char_len_f,
+                                  src_lens=(2, 4), tgt_lens=(2, 7),
+                                  ratio=3)
+    print(new_len_filter2.filter("a b", "啊啊啊啊啊啊啊啊啊啊啊啊"))
+    print(new_len_filter2.filter("a b", "啊啊啊啊"))
+
+    print()
+
+    alphabet_filter = AlphabetRatioFilter(threshold=0.8, exclude_whitespace=True)
+    print(alphabet_filter.filter("a b cddd", "啊啊 啊啊啊啊"))
+    print(alphabet_filter.filter("a b cddd", "啊啊 啊啊啊啊+++++"))
+    print(alphabet_filter.filter("a b cddd09999999555", "啊啊 啊啊啊啊"))
+
+    print()
+
+    char_filter = CharacterRatioFilter(scripts=("Latin", "Han"), thresholds=(0.8, 0.8))
+    print(char_filter.filter("a b cddd", "啊啊 啊啊啊啊+++++++"))
+    print(char_filter.filter("a b cddd啊啊啊啊", "啊啊 啊啊啊啊"))
+
+    print()
+    t1 = "abc 132"
+    t2 = "dddddd 233"
+    t3 = "eeee 132"
+    number_filter = NonZeroNumeralsFilter(threshold=1.0)
+    print(number_filter.filter(t1, t2))
+    print(number_filter.filter(t1, t3))

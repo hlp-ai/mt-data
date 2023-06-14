@@ -9,6 +9,8 @@ LinguaTools-WikiTitles v2014
 MultiUN v1
 NeuLab-TedTalks v1
 News-Commentary v16
+OpenSubtitles v2016
+OpenSubtitles v2018
 ParaCrawl v9
 PHP v1
 QED v2.0a

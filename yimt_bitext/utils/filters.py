@@ -292,7 +292,7 @@ def filter_file(in_path, filters, out_path=None, logger=None):
     with open(in_path, encoding="utf-8") as in_f, open(out_path, "w", encoding="utf-8") as out_f:
         for line in in_f:
             total += 1
-            if total % 10000 == 0:
+            if total % 100000 == 0:
                 if logger:
                     logger.info("Total: {} Passed: {}".format(total, passed))
             line = line.strip()

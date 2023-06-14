@@ -1,4 +1,5 @@
 import sys
+from pathlib import Path
 
 from yimt_bitext.opus.utils import extract_zips, merge_moses, merge_files
 from yimt_bitext.utils.dedup import dedup_bitext_file
@@ -16,7 +17,9 @@ def preprocess(in_dir, target_lang="zh", logger=None):
     path = merge_moses(path, target_lang=target_lang, logger_opus=logger)
 
     logger.info("***Merging Files***")
-    path = merge_files(path, "to" + target_lang + ".tsv", logger_opus=logger)
+    parts = Path(in_dir).parts
+    dirname = parts[-1]
+    path = merge_files(path, dirname + ".tsv", logger_opus=logger)
 
     logger.info("***Normalizing***")
     if target_lang == "zh":
@@ -29,7 +32,9 @@ def preprocess(in_dir, target_lang="zh", logger=None):
     logger.info("***Filtering***")
     filters = [EmptyFilter(), SameFilter(), OverlapFilter(ratio=0.5), NonZeroNumeralsFilter(threshold=1.0),
                AlphabetRatioFilter(threshold=0.75), RepetitionFilter()]
-    filter_file(path, filters=filters, logger=logger)
+    path = filter_file(path, filters=filters, logger=logger)
+
+    return path
 
 
 if __name__ == "__main__":

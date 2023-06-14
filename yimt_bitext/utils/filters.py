@@ -212,6 +212,76 @@ class NonZeroNumeralsFilter(Filter):
             return None
 
 
+class RepetitionFilter(Filter):
+    """Filter segments with repeated content
+
+    Filter segments with substrings of min_length to max_length
+    characters that are repeated at least threshold number of times.
+    The first occurrence is not counted to the threshold, i.e.,
+    threshold 2 means that the substring has to occur three times.
+
+    There may be optional space character(s) between the repeated
+    strings that are not counted to the length. The repeated string
+    cannot start with a whitespace character but is not limited
+    otherwise.
+
+    """
+
+    def __init__(self, threshold=2, min_length=3, max_length=16, **kwargs):
+        self._threshold = threshold
+        self._min_length = min_length
+        self._max_length = max_length
+        self._regexp = self._get_regexp()
+        super().__init__(**kwargs)
+
+    @property
+    def min_length(self):
+        """Minimum number of characters in pattern"""
+        return self._min_length
+
+    @property
+    def max_length(self):
+        """Maximum number of characters in pattern"""
+        return self._max_length
+
+    @property
+    def threshold(self):
+        """Threshold for the number of repetitions"""
+        return self._threshold
+
+    def _get_regexp(self):
+        """Return compiled regexp for finding repetitions"""
+        rstring = f'(\\S.{{{self.min_length-1},{self.max_length}}}?)(?: *\\1){{{self.threshold},}}'
+        return regex.compile(rstring)
+
+    def get_repetitions(self, segment):
+        """Return the number of repetitions and the repeated string
+
+        Returns the number of repetitions and the repeated string for
+        the first match of at least self.threshold number of
+        repetitions. The segment may contain longer repetitions than
+        the one returned. If there no matched repetitions, zero and
+        None are returned.
+
+        """
+        match = self._regexp.search(segment)
+        if match:
+            full = match.group(0)
+            repeated = match.group(1)
+            return full.count(repeated) - 1, repeated
+        return 0, None
+
+    def score(self, pair):
+        return [self.get_repetitions(sent)[0] for sent in pair]
+
+    def filter(self, src, tgt):
+        score = self.score((src, tgt))
+        if all(repetitions < self.threshold for repetitions in score):
+            return src, tgt
+        else:
+            return None
+
+
 def filter_file(in_path, filters, out_path=None, logger=None):
     if out_path is None:
         out_path = in_path + ".filtered"
@@ -316,3 +386,8 @@ if __name__ == "__main__":
     number_filter = NonZeroNumeralsFilter(threshold=1.0)
     print(number_filter.filter(t1, t2))
     print(number_filter.filter(t1, t3))
+
+    print()
+    rep_filter = RepetitionFilter()
+    print(rep_filter.filter("abcd abcd abcd what what", "how are you"))
+    print(rep_filter.filter("aaaa", "how are you"))

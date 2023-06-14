@@ -3,7 +3,7 @@ import sys
 from yimt_bitext.opus.utils import extract_zips, merge_moses, merge_files
 from yimt_bitext.utils.dedup import dedup_file
 from yimt_bitext.utils.filters import filter_file, EmptyFilter, SameFilter, OverlapFilter, NonZeroNumeralsFilter, \
-    AlphabetRatioFilter
+    AlphabetRatioFilter, RepetitionFilter
 from yimt_bitext.utils.log import get_logger
 from yimt_bitext.utils.normalizers import ToZhNormalizer, normalize_file
 
@@ -28,7 +28,7 @@ def preprocess(in_dir, target_lang="zh", logger=None):
 
     logger.info("***Filtering***")
     filters = [EmptyFilter(), SameFilter(), OverlapFilter(ratio=0.5), NonZeroNumeralsFilter(threshold=1.0),
-               AlphabetRatioFilter(threshold=0.75)]
+               AlphabetRatioFilter(threshold=0.75), RepetitionFilter()]
     filter_file(path, filters=filters, logger=logger)
 
 

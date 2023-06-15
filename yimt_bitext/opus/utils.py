@@ -1,11 +1,7 @@
 import os
-import sys
 import zipfile
 
-from yimt_bitext.utils.clean import clean_file
-from yimt_bitext.utils.dedup import dedup_file
-from yimt_bitext.utils.log import get_logger
-from yimt_bitext.utils.normalizers import detok_zh_file_inplace, normalize_file, ToZhNormalizer
+from yimt_bitext.utils.normalizers import detok_zh_file_inplace
 
 
 def extract_zips(zips_dir, out_dir=None, logger_opus=None):

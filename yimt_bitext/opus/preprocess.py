@@ -27,7 +27,7 @@ def preprocess(in_dir, target_lang="zh", logger=None):
     path = normalize_file(path, normalizers, logger=logger)
 
     logger.info("***Deduping***")
-    path = dedup_bitext_file(path, logger=logger)
+    path = dedup_bitext_file(path, dedup_srctgt=True, remove_noletter=False, logger=logger)
 
     logger.info("***Filtering***")
     filters = [EmptyFilter(), SameFilter(), OverlapFilter(ratio=0.5), NonZeroNumeralsFilter(threshold=1.0),

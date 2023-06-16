@@ -22,6 +22,7 @@ def preprocess(in_dir, target_lang="zh", logger=None):
     path = merge_files(path, dirname + ".tsv", logger_opus=logger)
 
     logger.info("***Normalizing***")
+    normalizers = []
     if target_lang == "zh":
         normalizers = [ToZhNormalizer()]
     path = normalize_file(path, normalizers, logger=logger)
@@ -31,7 +32,7 @@ def preprocess(in_dir, target_lang="zh", logger=None):
 
     logger.info("***Filtering***")
     filters = [EmptyFilter(), SameFilter(), OverlapFilter(ratio=0.5), NonZeroNumeralsFilter(threshold=1.0),
-               AlphabetRatioFilter(threshold=0.75), RepetitionFilter()]
+               AlphabetRatioFilter(threshold=0.75, exclude_whitespace=True), RepetitionFilter()]
     path = filter_file(path, filters=filters, logger=logger)
 
     return path

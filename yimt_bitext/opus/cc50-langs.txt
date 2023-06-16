@@ -1,0 +1,51 @@
+mk
+lt Latin
+et Latin
+lv Latin
+bg
+is Latin
+sl Latin
+sk Latin
+fi Latin
+he
+da Latin
+no Latin
+hr
+hu Latin
+sv
+el
+cs Latin
+si
+af Latin
+xh Latin
+nl Latin
+tl
+ro Latin
+uk
+ml
+pl Latin
+ha
+jv Latin
+ta
+pa
+te
+mr
+sw Latin
+ur
+bn
+fa
+hi
+th
+it Latin
+vi Latin
+ko
+ja
+de Latin
+id Latin
+pt Latin
+ru Cyrillic
+ar
+fr Latin
+es Latin
+en Latin
+zh Han

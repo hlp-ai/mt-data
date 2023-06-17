@@ -1,50 +1,50 @@
-mk
+mk Cyrillic
 lt Latin
 et Latin
 lv Latin
-bg
+bg Cyrillic
 is Latin
 sl Latin
 sk Latin
 fi Latin
-he
+he Hebrew
 da Latin
 no Latin
-hr
+hr Latin
 hu Latin
-sv
-el
+sv Latin
+el Greek
 cs Latin
-si
+si Sinhala
 af Latin
 xh Latin
 nl Latin
-tl
+tl Latin
 ro Latin
-uk
-ml
+uk Cyrillic
+ml Malayalam
 pl Latin
-ha
+ha Latin
 jv Latin
-ta
-pa
-te
-mr
+ta Tamil
+pa Gurmukhi
+te Telugu
+mr Devanagari
 sw Latin
-ur
-bn
-fa
-hi
-th
+ur Arabic
+bn Bengali
+fa Arabic
+hi Devanagari
+th Thai
 it Latin
 vi Latin
-ko
+ko Hangul
 ja
 de Latin
 id Latin
 pt Latin
 ru Cyrillic
-ar
+ar Arabic
 fr Latin
 es Latin
 en Latin

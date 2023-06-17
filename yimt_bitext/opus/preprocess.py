@@ -1,7 +1,9 @@
+import os
+import shutil
 import sys
 from pathlib import Path
 
-from yimt_bitext.opus.utils import extract_zips, merge_moses, merge_files
+from yimt_bitext.opus.utils import extract_zips, merge_moses, merge_files, split
 from yimt_bitext.utils.dedup import dedup_bitext_file
 from yimt_bitext.utils.filters import filter_file, EmptyFilter, SameFilter, OverlapFilter, NonZeroNumeralsFilter, \
     AlphabetRatioFilter, RepetitionFilter
@@ -34,6 +36,12 @@ def preprocess(in_dir, target_lang="zh", logger=None):
     filters = [EmptyFilter(), SameFilter(), OverlapFilter(ratio=0.5), NonZeroNumeralsFilter(threshold=1.0),
                AlphabetRatioFilter(threshold=0.75, exclude_whitespace=True), RepetitionFilter()]
     path = filter_file(path, filters=filters, logger=logger)
+
+    logger.info("***Splitting***")
+    split_dir = os.path.join(os.path.dirname(path), "score")
+    os.mkdir(split_dir)
+    path = shutil.copy(path, split_dir)
+    split(path, logger=logger)
 
     return path
 

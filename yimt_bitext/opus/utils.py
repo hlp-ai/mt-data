@@ -129,3 +129,37 @@ def merge_files(data_root, out_fn, logger_opus=None):
             logger_opus.info("Merging {}: {}".format(out_path, cnt))
 
     return out_path
+
+
+def split(file, num_per_file=500000, logger=None):
+    """Split corpus into multiple files with the same lines"""
+    in_file = open(file, encoding="utf-8")
+
+    cnt = 0
+    n_f = 0
+
+    if logger:
+        logger.info("Split {}: File {}".format(in_file, n_f))
+    out_file = open("{}-{}".format(file, n_f), "w", encoding="utf-8")
+
+    for p in in_file:
+        cnt += 1
+
+        out_file.write(p.strip() + "\n")
+
+        if cnt % 100000 == 0:
+            if logger:
+                logger.info("Split {}: {}".format(in_file, cnt))
+
+        if cnt % num_per_file == 0:
+            out_file.close()
+
+            n_f += 1
+            out_file = open("{}-{}".format(in_file, n_f), "w", encoding="utf-8")
+            if logger:
+                logger.info("Split {}: File {}".format(in_file, n_f))
+
+    out_file.close()
+
+    if logger:
+        logger.info("Split {}: {}".format(in_file, cnt))

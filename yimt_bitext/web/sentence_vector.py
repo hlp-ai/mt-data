@@ -147,17 +147,24 @@ class VectorSimilarityMargin(VectorSimilarity):
         self.cos_sim = VectorSimilarityCosine()
 
     def get_score(self, vec1, vec2):
-        #计算np向量vec1, vec2之间的边缘分数
+        #批计算np向量vec1, vec2之间的边缘分数，也兼容单个向量对计算
+        vec1 = np.atleast_2d(vec1)
+        vec2 = np.atleast_2d(vec2)
         cos_xy = self.cos_sim.get_score(vec1, vec2)
-        src_neighbors = self.index1.get_nns_by_vector(vec1, self.k)
-        tar_neighbors = self.index2.get_nns_by_vector(vec2, self.k)
-        denominator = 0
-        for v in src_neighbors:
-            denominator += self.cos_sim.get_score(vec1, self.index1.get_item_vector(v))
-        for v in tar_neighbors:
-            denominator += self.cos_sim.get_score(vec2, self.index2.get_item_vector(v))
-        denominator = denominator / self.k / 2
-        margin = cos_xy / denominator
+        margin = []
+        for i in range(vec1.shape[0]):
+            margin_in_row = []
+            for j in range(vec2.shape[0]):
+                src_neighbors = self.index1.get_nns_by_vector(vec1[i], self.k)
+                tar_neighbors = self.index2.get_nns_by_vector(vec2[j], self.k)
+                denominator = 0
+                for v in src_neighbors:
+                    denominator += self.cos_sim.get_score(vec1[i], self.index1.get_item_vector(v))
+                for v in tar_neighbors:
+                    denominator += self.cos_sim.get_score(vec2[j], self.index2.get_item_vector(v))
+                denominator = denominator / self.k / 2
+                margin_in_row.append(cos_xy[i][j] / denominator)
+            margin.append(margin_in_row)
         return margin
 
 

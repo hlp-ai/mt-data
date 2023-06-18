@@ -1,14 +1,16 @@
 import os
+import re
 import shutil
 import sys
 from pathlib import Path
 
-from yimt_bitext.opus.utils import extract_zips, merge_moses, merge_files, split
+from yimt_bitext.opus.utils import extract_zips, merge_moses, merge_files, split, score_tsv
 from yimt_bitext.utils.dedup import dedup_bitext_file
 from yimt_bitext.utils.filters import filter_file, EmptyFilter, SameFilter, OverlapFilter, NonZeroNumeralsFilter, \
     AlphabetRatioFilter, RepetitionFilter
 from yimt_bitext.utils.log import get_logger
 from yimt_bitext.utils.normalizers import ToZhNormalizer, normalize_file
+from yimt_bitext.web.filter_score import filter_tsv
 
 
 def preprocess(in_dir, target_lang="zh", logger=None):
@@ -42,6 +44,21 @@ def preprocess(in_dir, target_lang="zh", logger=None):
     os.mkdir(split_dir)
     path = shutil.copy(path, split_dir)
     split(path, logger=logger)
+
+    logger.info("***Scoring***")
+    files = os.listdir(split_dir)
+    for f in files:
+        if re.match(r".+\d+", f):
+            score_tsv(os.path.join(split_dir, f), logger=logger)
+
+    logger.info("***Filtering by score***")
+    filter_dir = os.path.join(split_dir, "sfilter")
+    os.mkdir(filter_dir)
+    files = os.listdir(split_dir)
+    for f in files:
+        if f.endswith(".score"):
+            logger.info("Filter {} by score".format(f))
+            filter_tsv(os.path.join(split_dir, f), os.path.join(filter_dir, f+".sfilter"), 0.5, logger=logger)
 
     return path
 

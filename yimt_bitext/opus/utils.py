@@ -205,6 +205,6 @@ def score_tsv(in_path, out_path=None,
         if n % (40*block) == 0:
             t = time.time() - start
             if logger:
-                logger.info("{}: {:.2f}".format(n, n/t))
+                logger.info("{}: {:.2f} pairs/sec".format(n, n/t))
 
     out_f.close()

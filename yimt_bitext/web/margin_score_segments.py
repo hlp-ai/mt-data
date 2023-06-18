@@ -7,8 +7,8 @@ if __name__ == "__main__":
     argparser = argparse.ArgumentParser()
     argparser.add_argument("--file1", required=True, help="Text file for language1")
     argparser.add_argument("--file2", required=True, help="Text file for language2")
-    argparser.add_argument("--annoy_dir1", required=True, help="Annoy index for language1")
-    argparser.add_argument("--annoy_dir2", required=True, help="Annoy Index for language2")
+    argparser.add_argument("--annoy_dir1", required=True, help="Annoy path for language1")
+    argparser.add_argument("--annoy_dir2", required=True, help="Annoy path for language2")
     # 本地向量检索文件路径
 
     argparser.add_argument("--k", default=8, help="The factor 'k' in margin formula")

@@ -1,5 +1,6 @@
 import difflib
 import itertools
+import os
 import string
 
 import regex
@@ -285,6 +286,9 @@ class RepetitionFilter(Filter):
 def filter_file(in_path, filters, out_path=None, logger=None):
     if out_path is None:
         out_path = in_path + ".filtered"
+
+    if os.path.exists(out_path):
+        return out_path
 
     total = 0
     passed = 0

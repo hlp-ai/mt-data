@@ -1,3 +1,5 @@
+import os
+
 import regex
 
 
@@ -16,6 +18,10 @@ def norm(s, lower=True, remove_noletter=True):
 def dedup_file(in_path, out_path=None, logger=None):
     if out_path is None:
         out_path = in_path + ".deduped"
+
+    if os.path.exists(out_path):
+        return out_path
+
     pairs = set()
 
     n = 0
@@ -58,6 +64,9 @@ def dedup_bitext_file(in_path, out_path=None,
 
     if out_path is None:
         out_path = in_path + ".deduped"
+
+    if os.path.exists(out_path):
+        return out_path
 
     n = 0
     total = 0

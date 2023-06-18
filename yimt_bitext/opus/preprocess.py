@@ -41,24 +41,34 @@ def preprocess(in_dir, target_lang="zh", logger=None):
 
     logger.info("***Splitting***")
     split_dir = os.path.join(os.path.dirname(path), "score")
-    os.mkdir(split_dir)
-    path = shutil.copy(path, split_dir)
-    split(path, logger=logger)
+    if not os.path.exists(split_dir):
+        os.mkdir(split_dir)
+        path = shutil.copy(path, split_dir)
+        split(path, logger=logger)
 
     logger.info("***Scoring***")
     files = os.listdir(split_dir)
     for f in files:
-        if re.match(r".+\d+", f):
+        if re.match(r".+\d+$", f):
             score_tsv(os.path.join(split_dir, f), logger=logger)
 
     logger.info("***Filtering by score***")
     filter_dir = os.path.join(split_dir, "sfilter")
-    os.mkdir(filter_dir)
+    if not os.path.exists(filter_dir):
+        os.mkdir(filter_dir)
     files = os.listdir(split_dir)
     for f in files:
         if f.endswith(".score"):
             logger.info("Filter {} by score".format(f))
-            filter_tsv(os.path.join(split_dir, f), os.path.join(filter_dir, f+".sfilter"), 0.5, logger=logger)
+            out_path = os.path.join(filter_dir, f+".sfilter")
+            if os.path.exists(out_path):
+                continue
+            filter_tsv(os.path.join(split_dir, f), out_path, 0.5, logger=logger)
+
+    logger.info("***Merging Files***")
+    out_path = os.path.join(filter_dir, dirname + "-preprocessed.tsv")
+    if not os.path.exists(out_path):
+        path = merge_files(filter_dir, out_path, logger_opus=logger)
 
     return path
 

@@ -1,3 +1,4 @@
+import os
 import re
 
 import zhconv
@@ -147,6 +148,9 @@ class ToZhNormalizer(Normalizer):
 def normalize_file(in_path, normalizers, out_path=None, logger=None):
     if out_path is None:
         out_path = in_path + ".normalized"
+
+    if os.path.exists(out_path):
+        return out_path
 
     n = 0
     with open(in_path, encoding="utf-8") as in_f, open(out_path, "w", encoding="utf-8") as out_f:

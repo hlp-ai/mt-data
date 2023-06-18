@@ -1,6 +1,8 @@
 import os
+import time
 import zipfile
 
+from yimt_bitext.opus.bitext_scorers import LaBSEScorer
 from yimt_bitext.utils.normalizers import detok_zh_file_inplace
 
 
@@ -129,3 +131,80 @@ def merge_files(data_root, out_fn, logger_opus=None):
             logger_opus.info("Merging {}: {}".format(out_path, cnt))
 
     return out_path
+
+
+def split(file, num_per_file=500000, logger=None):
+    """Split corpus into multiple files with the same lines"""
+    in_file = open(file, encoding="utf-8")
+
+    cnt = 0
+    n_f = 0
+
+    if logger:
+        logger.info("Split {}: File {}".format(file, n_f))
+    out_file = open("{}-{}".format(file, n_f), "w", encoding="utf-8")
+
+    for p in in_file:
+        cnt += 1
+
+        out_file.write(p.strip() + "\n")
+
+        if cnt % 100000 == 0:
+            if logger:
+                logger.info("Split {}: {}".format(file, cnt))
+
+        if cnt % num_per_file == 0:
+            out_file.close()
+
+            n_f += 1
+            out_file = open("{}-{}".format(in_file, n_f), "w", encoding="utf-8")
+            if logger:
+                logger.info("Split {}: File {}".format(file, n_f))
+
+    out_file.close()
+
+    if logger:
+        logger.info("Split {}: {}".format(file, cnt))
+
+
+def score_tsv(in_path, out_path=None,
+         labse_model_dir="D:/kidden/mt/open/mt-ex/mt/data/labse1",
+         block=8,
+         max_seq_len=48, logger=None
+         ):
+    scorer = LaBSEScorer(labse_model_dir, max_seq_len)
+
+    lines = open(in_path, encoding="utf-8").readlines()
+    if logger:
+        logger.info("# of lines: {}".format(len(lines)))
+
+    if out_path is None:
+        out_path = in_path + ".score"
+
+    out_f = open(out_path, "w", encoding="utf-8")
+
+    n = 0
+    start = time.time()
+    for i in range(0, len(lines), block):
+        buf = lines[i:i+block]
+        srcs = []
+        tgts = []
+        for line in buf:
+            line = line.strip()
+            pair = line.split("\t")
+            src = pair[0]
+            tgt = pair[1]
+            srcs.append(src)
+            tgts.append(tgt)
+
+        ss = scorer.score(srcs, tgts)
+        for j in range(len(ss)):
+            out_f.write("{:.4f}\t{}\t{}\n".format(ss[j], srcs[j], tgts[j]))
+
+        n += len(buf)
+        if n % (40*block) == 0:
+            t = time.time() - start
+            if logger:
+                logger.info("{}: {:.2f}".format(n, n/t))
+
+    out_f.close()

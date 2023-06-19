@@ -53,6 +53,7 @@ def preprocess(in_dir, target_lang="zh", logger=None):
             score_tsv(os.path.join(split_dir, f), logger=logger)
 
     logger.info("***Filtering by score***")
+    min_socre = 0.6
     filter_dir = os.path.join(split_dir, "sfilter")
     if not os.path.exists(filter_dir):
         os.mkdir(filter_dir)
@@ -63,7 +64,7 @@ def preprocess(in_dir, target_lang="zh", logger=None):
             out_path = os.path.join(filter_dir, f+".sfilter")
             if os.path.exists(out_path):
                 continue
-            filter_tsv(os.path.join(split_dir, f), out_path, 0.5, logger=logger)
+            filter_tsv(os.path.join(split_dir, f), out_path, min_socre, logger=logger)
 
     logger.info("***Merging Files***")
     out_path = os.path.join(filter_dir, dirname + "-preprocessed.tsv")

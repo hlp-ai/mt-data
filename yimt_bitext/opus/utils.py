@@ -166,7 +166,7 @@ def split(file, num_per_file=500000, logger=None):
             out_file.close()
 
             n_f += 1
-            out_file = open("{}-{}".format(in_file, n_f), "w", encoding="utf-8")
+            out_file = open("{}-{}".format(file, n_f), "w", encoding="utf-8")
             if logger:
                 logger.info("Split {}: File {}".format(file, n_f))
 

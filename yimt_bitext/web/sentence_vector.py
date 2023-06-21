@@ -11,22 +11,8 @@ class SentenceVectorization:
         raise NotImplementedError
 
 
-class DummySentenceVectorization(SentenceVectorization):
-
-    def __init__(self, vec_len = 32):
-        self.vec_len = vec_len
-
-    def get_vector(self, text):
-        if isinstance(text, str):
-            return np.random.random((self.vec_len,))
-        elif isinstance(text, list):
-            return np.random.random((len(text), self.vec_len))
-
-    def get_dim(self):
-        return self.vec_len
-
-
 class SentenceVectorizationLaBSE(SentenceVectorization):
+
     def __init__(self, model_url, max_seq_length=48):
         self.max_seq_length = max_seq_length
         self.labse_model, labse_layer = self._get_model(model_url, max_seq_length)
@@ -87,16 +73,22 @@ class SentenceVectorizationLaBSE(SentenceVectorization):
         return 768
 
 
+def normalize_vector(embeds):
+    norms = np.linalg.norm(embeds, 2, axis=1, keepdims=True)
+    return embeds / norms
+
 
 class SentenceVectorizationLaBSE_2(SentenceVectorizationLaBSE):
     # 使用LaBSE_2和universal-sentence-encoder-cmlm/multilingual-preprocess_2嵌入句子
-    def __init__(self, model_url, preprocessor_url):
+
+    def __init__(self, model_url,
+                 preprocessor_url="https://hub.tensorflow.google.cn/google/universal-sentence-encoder-cmlm/multilingual-preprocess/2"):
         # preprocessor是tensorflow hub里的预处理器包，下载地址：https://tfhub.dev/google/universal-sentence-encoder-cmlm/multilingual-preprocess/2
         self.labse_model, self.preprocessor = self._get_model(model_url, preprocessor_url)
 
     def _get_model(self, model_url, preprocessor_url):
         import tensorflow_hub as hub
-        import tensorflow_text   #得有tensorflow_text，不然会报错
+        import tensorflow_text  # 得有tensorflow_text，不然会报错
         labse_model = hub.KerasLayer(model_url)
         preprocessor = hub.KerasLayer(preprocessor_url)
         return labse_model, preprocessor
@@ -107,7 +99,7 @@ class SentenceVectorizationLaBSE_2(SentenceVectorizationLaBSE):
     def get_vector(self, text):
         # text is a list
         input = self._create_input(text)
-        return self.labse_model(input)["default"]
+        return normalize_vector(self.labse_model(input)["default"])
 
     def get_dim(self):
         return 768
@@ -120,15 +112,6 @@ class VectorSimilarity:
         raise NotImplementedError
 
 
-class NaiveVectorSimilarity(VectorSimilarity):
-
-    def get_score(self, vec1, vec2):
-        if len(vec1.shape) == 1 and len(vec2.shape) == 1:
-            return 1.0
-        elif len(vec1.shape) == 2 and len(vec2.shape) == 2:
-            return [1.0, 1.0]
-
-
 class VectorSimilarityCosine(VectorSimilarity):
 
     def get_score(self, vec1, vec2):
@@ -138,16 +121,16 @@ class VectorSimilarityCosine(VectorSimilarity):
 
 
 class VectorSimilarityMargin(VectorSimilarity):
-    #实现：边缘分数
+    # 实现：边缘分数
     def __init__(self, index1, index2, k):
-        #index1, index2是annoy索引树的索引，k是计算边缘分数式中的k值
+        # index1, index2是annoy索引树的索引，k是计算边缘分数式中的k值
         self.k = k
         self.index1 = index1
         self.index2 = index2
         self.cos_sim = VectorSimilarityCosine()
 
     def get_score(self, vec1, vec2):
-        #批计算np向量vec1, vec2之间的边缘分数，也兼容单个向量对计算
+        # 批计算np向量vec1, vec2之间的边缘分数，也兼容单个向量对计算
         vec1 = np.atleast_2d(vec1)
         vec2 = np.atleast_2d(vec2)
         cos_xy = self.cos_sim.get_score(vec1, vec2)
@@ -169,7 +152,7 @@ class VectorSimilarityMargin(VectorSimilarity):
 
 
 def build_vec_index(sentence_embeddings, annoy_dir, dim=48, tree_num=10):
-    #建立annoy索引树,num为树个数，load_dir为索引树存储路径
+    # 建立annoy索引树,num为树个数，load_dir为索引树存储路径
     from annoy import AnnoyIndex
 
     t = AnnoyIndex(dim, 'angular')
@@ -192,11 +175,12 @@ def load_vec_index(annoy_dir, dim=48):
 
 if __name__ == '__main__':
     import tensorflow as tf
+
     s1 = ["This is a book", "I am a teacher."]
     t1 = ["这是一本书。", "我是老师。"]
 
     # vector = SentenceVectorizationLaBSE("D:/kidden/mt/open/mt-ex/mt/data/labse1")
-    vector = SentenceVectorizationLaBSE_2(r"C:\Users\Lenovo\Desktop\LaBSE_2", r"C:\Users\Lenovo\Desktop\universal-sentence-encoder-cmlm_multilingual-preprocess_2")
+    vector = SentenceVectorizationLaBSE_2(r"D:\kidden\mt\labse2", preprocessor_url=r"D:\kidden\mt\labse2\preprocess")
     v1 = vector.get_vector(s1)
     print(v1.shape)
 

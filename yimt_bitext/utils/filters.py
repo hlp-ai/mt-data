@@ -140,6 +140,16 @@ class AlphabetRatioFilter(Filter):
         return r
 
 
+def get_lang2script(conf_file=os.path.join(os.path.dirname(__file__), "lang2script.txt")):
+    lang2script = {}
+    with open(conf_file, encoding="utf-8") as f:
+        for line in f:
+            lang, script = line.strip().split()
+            lang2script[lang] = script
+
+    return lang2script
+
+
 class CharacterRatioFilter(Filter):
     """Proportion of alphabetic characters that are in the given script
 
@@ -147,11 +157,6 @@ class CharacterRatioFilter(Filter):
     https://www.regular-expressions.info/unicode.html
 
     """
-    lang2script = {
-        "zh": "Han",
-        "en": "Latin",
-        "ko": "Hangul"
-    }
 
     def __init__(self, scripts, thresholds=None):
         self.scripts = scripts
@@ -376,12 +381,6 @@ if __name__ == "__main__":
     print(alphabet_filter.filter("a b cddd", "啊啊 啊啊啊啊"))
     print(alphabet_filter.filter("a b cddd", "啊啊 啊啊啊啊+++++"))
     print(alphabet_filter.filter("a b cddd09999999555", "啊啊 啊啊啊啊"))
-
-    print()
-
-    char_filter = CharacterRatioFilter(scripts=("Latin", "Han"), thresholds=(0.8, 0.8))
-    print(char_filter.filter("a b cddd", "啊啊 啊啊啊啊+++++++"))
-    print(char_filter.filter("a b cddd啊啊啊啊", "啊啊 啊啊啊啊"))
 
     print()
     t1 = "abc 132"

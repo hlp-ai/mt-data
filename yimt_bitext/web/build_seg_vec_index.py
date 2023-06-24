@@ -1,5 +1,22 @@
 import argparse
-from yimt_bitext.web.sentence_vector import SentenceVectorizationLaBSE_2, build_vec_index, SentenceVectorizationLaBSE
+from yimt_bitext.web.sentence_vector import SentenceVectorizationLaBSE_2, SentenceVectorizationLaBSE
+
+
+def build_vec_index(sentence_embeddings, annoy_dir, dim = 768, tree_num = 10):
+    from annoy import AnnoyIndex
+    t = AnnoyIndex(dim, 'angular')
+    block = 100
+    i = 0
+    print("total sentence_embeddings:{}".format(len(sentence_embeddings)))
+    for s in sentence_embeddings:
+        t.add_item(i, s)
+        i = i + 1
+        if(i%block == 0):
+            print("processed sentence_embeddings:{}".format(i))
+    t.build(tree_num)
+    t.save(annoy_dir)
+    print("vec_index has been built successfully")
+
 
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser()
@@ -25,14 +42,15 @@ if __name__ == "__main__":
     n = len(segs)
     print("Text_file: {}".format(n))
 
-    block = 100   # 句子集太大，分批进行嵌入和建立索引过程，报告进度
+    sentence_embeddings = []
+    block = 100
     t = 0
     for i in range(0, len(segs), block):
         b = segs[i:i + block]
         t += len(b)
-        v = segment_vector.get_vector(b)
-        build_vec_index(v, annoy_dir, dim, tree_num)
-        print("Text_file: {}".format(t))
+        sentence_embeddings.extend(segment_vector.get_vector(b))
+        print("embedded sentences: {}".format(t))
+    print("all sentences have been embedded successfully")
+    build_vec_index(sentence_embeddings, annoy_dir, dim, tree_num)
 
-    print("Annoy index has been built successfully")
 

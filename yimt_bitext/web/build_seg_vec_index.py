@@ -1,5 +1,34 @@
 import argparse
-from yimt_bitext.web.sentence_vector import SentenceVectorizationLaBSE_2, build_vec_index, SentenceVectorizationLaBSE
+
+def build_vec_index(sents_dir, annoy_dir, dim = 768, tree_num = 10):
+    from annoy import AnnoyIndex
+    from yimt_bitext.web.sentence_vector import SentenceVectorizationLaBSE_2
+    segment_vector = SentenceVectorizationLaBSE_2("D:/LaBSE_2",
+                                                  "C:/Users/Lenovo/Desktop/universal-sentence-encoder-cmlm_multilingual-preprocess_2")
+    t = AnnoyIndex(dim, 'angular')
+    block = 100         # 批处理行数
+    segs = []
+    i = 0
+    j = 0
+    with open(sents_dir, encoding="utf-8") as f:     # 迭代器按行读取文本，而不是整个文本
+        for s in f:
+            segs.append(s.strip())
+            i = i + 1
+            if(i % block == 0):         # 把句子集按block分批放入内存，进行句子嵌入向量，加入索引
+                sentence_embeddings = segment_vector.get_vector(segs)
+                segs = []
+                for v in sentence_embeddings:
+                    t.add_item(j, v)
+                    j = j + 1
+                print("processed sentence_embeddings:{}".format(j))
+    sentence_embeddings = segment_vector.get_vector(segs)     # 处理末尾小于block大小的句子集段
+    for v in sentence_embeddings:
+        t.add_item(j, v)
+        j = j + 1
+    print("processed sentence_embeddings:{}".format(j))
+    t.build(tree_num)
+    t.save(annoy_dir)
+    print("vec_index has been built successfully")
 
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser()
@@ -14,25 +43,7 @@ if __name__ == "__main__":
     dim = args.dim
     tree_num = args.tree_num
 
-    segment_vector = SentenceVectorizationLaBSE_2("D:/LaBSE_2",
-                                                  "C:/Users/Lenovo/Desktop/universal-sentence-encoder-cmlm_multilingual-preprocess_2")
-    # segment_vector = SentenceVectorizationLaBSE("D:/kidden/mt/open/mt-ex/mt/data/labse1")
+    build_vec_index(fn, annoy_dir, dim, tree_num)
 
-    segs = []
-    with open(fn, encoding="utf-8") as f:
-        for s in f:
-            segs.append(s.strip())
-    n = len(segs)
-    print("Text_file: {}".format(n))
 
-    block = 100   # 句子集太大，分批进行嵌入和建立索引过程，报告进度
-    t = 0
-    for i in range(0, len(segs), block):
-        b = segs[i:i + block]
-        t += len(b)
-        v = segment_vector.get_vector(b)
-        build_vec_index(v, annoy_dir, dim, tree_num)
-        print("Text_file: {}".format(t))
-
-    print("Annoy index has been built successfully")
 

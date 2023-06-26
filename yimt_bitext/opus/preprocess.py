@@ -92,9 +92,9 @@ if __name__ == "__main__":
 
     root = args.root
     sub = os.listdir(root)
-    contain_langs = all([os.path.isdir(d) for d in sub])
+    contain_langs = all([os.path.isdir(os.path.join(root,d)) for d in sub])
     if not contain_langs:
         preprocess(root, logger=logger_opus)
     else:
         for d in sub:
-            preprocess(d, logger=logger_opus)
+            preprocess(os.path.join(root,d), logger=logger_opus)

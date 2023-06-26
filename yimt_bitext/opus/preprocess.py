@@ -1,7 +1,7 @@
 import os
 import re
 import shutil
-import sys
+from argparse import ArgumentParser
 from pathlib import Path
 
 from yimt_bitext.opus.utils import extract_zips, merge_moses, merge_files, split, score_tsv
@@ -13,7 +13,11 @@ from yimt_bitext.utils.normalizers import ToZhNormalizer, normalize_file
 from yimt_bitext.web.filter_score import filter_tsv
 
 
-def preprocess(in_dir, target_lang="zh", logger=None):
+def preprocess(in_dir, target_lang="zh",
+               labse_model_dir="D:/kidden/mt/open/mt-ex/mt/data/labse1",
+               block=8,
+               min_socre=0.6,
+               logger=None):
     logger.info("***Unzipping***")
     path = extract_zips(in_dir, logger_opus=logger)
 
@@ -50,10 +54,11 @@ def preprocess(in_dir, target_lang="zh", logger=None):
     files = os.listdir(split_dir)
     for f in files:
         if re.match(r".+\d+$", f):
-            score_tsv(os.path.join(split_dir, f), logger=logger)
+            score_tsv(os.path.join(split_dir, f),
+                      labse_model_dir=labse_model_dir,
+                      block=block, logger=logger)
 
     logger.info("***Filtering by score***")
-    min_socre = 0.6
     filter_dir = os.path.join(split_dir, "sfilter")
     if not os.path.exists(filter_dir):
         os.mkdir(filter_dir)
@@ -75,6 +80,21 @@ def preprocess(in_dir, target_lang="zh", logger=None):
 
 
 if __name__ == "__main__":
-    p = sys.argv[1]
-    logger_opus = get_logger("opus.log", "OPUS")
-    preprocess(p, logger=logger_opus)
+    argparser = ArgumentParser()
+    argparser.add_argument("--root", help="Root dir")
+    argparser.add_argument("--tl", default="zh", help="target language")
+    argparser.add_argument("--labse", default="D:/kidden/mt/open/mt-ex/mt/data/labse1", help="directory for labse")
+    argparser.add_argument("--block", type=int, default=8, help="block size for labse")
+    argparser.add_argument("--min", type=float, default=0.6, help="min socre for filtering")
+    args = argparser.parse_args()
+
+    logger_opus = get_logger("./opus.log", "OPUS")
+
+    root = args.root
+    sub = os.listdir(root)
+    contain_langs = all([os.path.isdir(d) for d in sub])
+    if not contain_langs:
+        preprocess(root, logger=logger_opus)
+    else:
+        for d in sub:
+            preprocess(d, logger=logger_opus)

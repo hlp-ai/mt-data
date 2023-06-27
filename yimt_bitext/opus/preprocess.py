@@ -7,10 +7,13 @@ from pathlib import Path
 from yimt_bitext.opus.utils import extract_zips, merge_moses, merge_files, split, score_tsv
 from yimt_bitext.utils.dedup import dedup_bitext_file
 from yimt_bitext.utils.filters import filter_file, EmptyFilter, SameFilter, OverlapFilter, NonZeroNumeralsFilter, \
-    AlphabetRatioFilter, RepetitionFilter
+    AlphabetRatioFilter, RepetitionFilter, CharacterRatioFilter, get_lang2script
 from yimt_bitext.utils.log import get_logger
 from yimt_bitext.utils.normalizers import ToZhNormalizer, normalize_file
 from yimt_bitext.web.filter_score import filter_tsv
+
+
+lang2script = get_lang2script()
 
 
 def preprocess(in_dir, target_lang="zh",
@@ -41,6 +44,14 @@ def preprocess(in_dir, target_lang="zh",
     logger.info("***Filtering***")
     filters = [EmptyFilter(), SameFilter(), OverlapFilter(ratio=0.5), NonZeroNumeralsFilter(threshold=1.0),
                AlphabetRatioFilter(threshold=0.75, exclude_whitespace=True), RepetitionFilter()]
+    langs = dirname.split("-")
+    if len(langs) == 2:
+        sl, tl = langs
+        src_script = lang2script[sl]
+        tgt_script = lang2script[tl]
+        char_filter = CharacterRatioFilter(scripts=(src_script, tgt_script), thresholds=(0.75, 0.75))
+        filters.append(char_filter)
+
     path = filter_file(path, filters=filters, logger=logger)
 
     logger.info("***Splitting***")

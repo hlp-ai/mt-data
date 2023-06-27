@@ -105,7 +105,7 @@ if __name__ == "__main__":
     sub = os.listdir(root)
     contain_langs = all([os.path.isdir(os.path.join(root,d)) for d in sub])
     if not contain_langs:
-        preprocess(root, logger=logger_opus)
+        preprocess(root, labse_model_dir=args.labse, block=args.block, min_socre=args.min, logger=logger_opus)
     else:
         for d in sub:
-            preprocess(os.path.join(root,d), logger=logger_opus)
+            preprocess(os.path.join(root,d), labse_model_dir=args.labse, block=args.block, min_socre=args.min, logger=logger_opus)

@@ -21,6 +21,8 @@ def preprocess(in_dir, target_lang="zh",
                block=8,
                min_socre=0.6,
                logger=None):
+    logger.info("Preprocessing {}".format(in_dir))
+
     logger.info("***Unzipping***")
     path = extract_zips(in_dir, logger_opus=logger)
 

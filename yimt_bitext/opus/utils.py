@@ -67,7 +67,8 @@ def single_to_pair(src_path, tgt_path, pair_path, logger_opus=None):
             logger_opus.info("{}: {}".format(pair_path, cnt))
 
 
-def merge_moses(in_dir, source_lang=None, target_lang=None, out_dir=None, logger_opus=None):
+def merge_moses(in_dir, source_lang=None, target_lang=None, out_dir=None,
+                clean_after_merge=False,logger_opus=None):
     assert source_lang is not None or target_lang is not None
 
     if out_dir is None:
@@ -111,10 +112,14 @@ def merge_moses(in_dir, source_lang=None, target_lang=None, out_dir=None, logger
             elif f2.endswith(target_lang):
                 single_to_pair(f1, f2, outf, logger_opus)
 
+        if clean_after_merge:
+            os.remove(f1)
+            os.remove(f2)
+
     return out_dir
 
 
-def merge_files(data_root, out_fn, logger_opus=None):
+def merge_files(data_root, out_fn, clean_after_merge=False, logger_opus=None):
     """Merge files in a directory into one file"""
     data_files = [os.path.join(data_root, f) for f in os.listdir(data_root)]
 
@@ -126,18 +131,22 @@ def merge_files(data_root, out_fn, logger_opus=None):
     cnt = 0
     with open(out_path, "w", encoding="utf-8") as out_f:
         for f in data_files:
-            in_f = open(f, encoding="utf-8")
-            for line in in_f:
-                line = line.strip()
-                if len(line) > 0:
-                    out_f.write(line + "\n")
-                    cnt += 1
-                    if cnt % 100000 == 0:
-                        if logger_opus:
-                            logger_opus.info("Merging {}: {}".format(out_path, cnt))
+            with open(f, encoding="utf-8") as in_f:
+                for line in in_f:
+                    line = line.strip()
+                    if len(line) > 0:
+                        out_f.write(line + "\n")
+                        cnt += 1
+                        if cnt % 100000 == 0:
+                            if logger_opus:
+                                logger_opus.info("Merging {}: {}".format(out_path, cnt))
 
         if logger_opus:
             logger_opus.info("Merging {}: {}".format(out_path, cnt))
+
+    if clean_after_merge:
+        for f in data_files:
+            os.remove(f)
 
     return out_path
 
@@ -178,8 +187,8 @@ def split(file, num_per_file=500000, logger=None):
 
 def score_tsv(in_path, out_path=None,
          labse_model_dir="D:/kidden/mt/open/mt-ex/mt/data/labse1",
-         block=8,
-         max_seq_len=48, logger=None
+         block=8, max_seq_len=48,
+              clean_after_done=False, logger=None
          ):
     scorer = LaBSEScorer(labse_model_dir, max_seq_len)
 
@@ -191,7 +200,7 @@ def score_tsv(in_path, out_path=None,
         out_path = in_path + ".score"
 
     if os.path.exists(out_path):
-        return
+        return out_path
 
     out_f = open(out_path, "w", encoding="utf-8")
 
@@ -220,3 +229,8 @@ def score_tsv(in_path, out_path=None,
                 logger.info("{}: {:.2f} pairs/sec".format(n, n/t))
 
     out_f.close()
+
+    if clean_after_done:
+        os.remove(in_path)
+
+    return out_path

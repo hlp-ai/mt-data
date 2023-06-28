@@ -288,7 +288,7 @@ class RepetitionFilter(Filter):
             return None
 
 
-def filter_file(in_path, filters, out_path=None, logger=None):
+def filter_file(in_path, filters, out_path=None, clean_after_done=False, logger=None):
     if out_path is None:
         out_path = in_path + ".filtered"
 
@@ -326,6 +326,9 @@ def filter_file(in_path, filters, out_path=None, logger=None):
 
     if logger:
         logger.info("Total: {} Passed: {}".format(total, passed))
+
+    if clean_after_done:
+        os.remove(in_path)
 
     return out_path
 

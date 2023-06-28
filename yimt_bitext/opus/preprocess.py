@@ -20,6 +20,7 @@ def preprocess(in_dir, target_lang="zh",
                labse_model_dir="D:/kidden/mt/open/mt-ex/mt/data/labse1",
                block=8,
                min_socre=0.6,
+               clean_after_done=False,
                logger=None):
     logger.info("Preprocessing {}".format(in_dir))
 
@@ -27,21 +28,21 @@ def preprocess(in_dir, target_lang="zh",
     path = extract_zips(in_dir, logger_opus=logger)
 
     logger.info("***Merging Moses***")
-    path = merge_moses(path, target_lang=target_lang, logger_opus=logger)
+    path = merge_moses(path, target_lang=target_lang, clean_after_merge=clean_after_done, logger_opus=logger)
 
     logger.info("***Merging Files***")
     parts = Path(in_dir).parts
     dirname = parts[-1]
-    path = merge_files(path, dirname + ".tsv", logger_opus=logger)
+    path = merge_files(path, dirname + ".tsv", clean_after_merge=clean_after_done, logger_opus=logger)
 
     logger.info("***Normalizing***")
     normalizers = []
     if target_lang == "zh":
         normalizers = [ToZhNormalizer()]
-    path = normalize_file(path, normalizers, logger=logger)
+    path = normalize_file(path, normalizers, clean_after_done=clean_after_done, logger=logger)
 
     logger.info("***Deduping***")
-    path = dedup_bitext_file(path, dedup_srctgt=True, remove_noletter=False, logger=logger)
+    path = dedup_bitext_file(path, dedup_srctgt=True, remove_noletter=False, clean_after_done=clean_after_done, logger=logger)
 
     logger.info("***Filtering***")
     filters = [EmptyFilter(), SameFilter(), OverlapFilter(ratio=0.5), NonZeroNumeralsFilter(threshold=1.0),
@@ -54,13 +55,13 @@ def preprocess(in_dir, target_lang="zh",
         char_filter = CharacterRatioFilter(scripts=(src_script, tgt_script), thresholds=(0.75, 0.75))
         filters.append(char_filter)
 
-    path = filter_file(path, filters=filters, logger=logger)
+    path = filter_file(path, filters=filters, clean_after_done=clean_after_done, logger=logger)
 
     logger.info("***Splitting***")
     split_dir = os.path.join(os.path.dirname(path), "score")
     if not os.path.exists(split_dir):
         os.mkdir(split_dir)
-        path = shutil.copy(path, split_dir)
+        path = shutil.move(path, split_dir)
         split(path, logger=logger)
 
     logger.info("***Scoring***")
@@ -69,7 +70,7 @@ def preprocess(in_dir, target_lang="zh",
         if re.match(r".+\d+$", f):
             score_tsv(os.path.join(split_dir, f),
                       labse_model_dir=labse_model_dir,
-                      block=block, logger=logger)
+                      block=block, clean_after_done=clean_after_done, logger=logger)
 
     logger.info("***Filtering by score***")
     filter_dir = os.path.join(split_dir, "sfilter")
@@ -87,7 +88,7 @@ def preprocess(in_dir, target_lang="zh",
     logger.info("***Merging Files***")
     out_path = os.path.join(filter_dir, dirname + "-preprocessed.tsv")
     if not os.path.exists(out_path):
-        path = merge_files(filter_dir, out_path, logger_opus=logger)
+        path = merge_files(filter_dir, out_path, clean_after_merge=clean_after_done, logger_opus=logger)
 
     return path
 
@@ -108,7 +109,9 @@ if __name__ == "__main__":
     sub = os.listdir(root)
     contain_langs = all([os.path.isdir(os.path.join(root,d)) for d in sub])
     if not contain_langs:
-        preprocess(root, labse_model_dir=args.labse, block=args.block, min_socre=args.min, logger=logger_opus)
+        preprocess(root, labse_model_dir=args.labse, block=args.block, min_socre=args.min,
+                   clean_after_done=True, logger=logger_opus)
     else:
         for d in sub:
-            preprocess(os.path.join(root,d), labse_model_dir=args.labse, block=args.block, min_socre=args.min, logger=logger_opus)
+            preprocess(os.path.join(root,d), labse_model_dir=args.labse, block=args.block, min_socre=args.min,
+                       clean_after_done=True, logger=logger_opus)

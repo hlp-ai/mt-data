@@ -56,7 +56,7 @@ def dedup_file(in_path, out_path=None, logger=None):
 def dedup_bitext_file(in_path, out_path=None,
                       dedup_src=True, dedup_tgt=False, dedup_srctgt=False,
                       lower=True, remove_noletter=True,
-                      logger=None):
+                      clean_after_done=False, logger=None):
     """Deduplicate bitext file"""
     pairs = set()
     srcs = set()
@@ -121,6 +121,9 @@ def dedup_bitext_file(in_path, out_path=None,
 
     if logger:
         logger.info("Total: {}, Unique: {}".format(total, n))
+
+    if clean_after_done:
+        os.remove(in_path)
 
     return out_path
 

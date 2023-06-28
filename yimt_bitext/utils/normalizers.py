@@ -145,7 +145,7 @@ class ToZhNormalizer(Normalizer):
         return src + "\t" + tgt
 
 
-def normalize_file(in_path, normalizers, out_path=None, logger=None):
+def normalize_file(in_path, normalizers, out_path=None, clean_after_done=False, logger=None):
     if out_path is None:
         out_path = in_path + ".normalized"
 
@@ -168,5 +168,8 @@ def normalize_file(in_path, normalizers, out_path=None, logger=None):
                     logger.info("Normalizing {}".format(n))
     if logger:
         logger.info("Normalizing {}".format(n))
+
+    if clean_after_done:
+        os.remove(in_path)
 
     return out_path

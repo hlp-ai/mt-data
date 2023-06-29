@@ -36,6 +36,7 @@ bn Bengali
 fa Arabic
 hi Devanagari
 th Thai
+tr Latin
 it Latin
 vi Latin
 ko Hangul

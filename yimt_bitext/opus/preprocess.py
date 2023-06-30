@@ -42,17 +42,18 @@ def preprocess_dir(in_dir, target_lang="zh",
     path = normalize_file(path, normalizers, clean_after_done=clean_after_done, logger=logger)
 
     logger.info("***Deduping***")
-    path = dedup_bitext_file(path, dedup_srctgt=True, remove_noletter=False, clean_after_done=clean_after_done, logger=logger)
+    path = dedup_bitext_file(path, dedup_srctgt=True, dedup_src=False, dedup_tgt=False,
+                             remove_noletter=False, clean_after_done=clean_after_done, logger=logger)
 
     logger.info("***Filtering***")
-    filters = [EmptyFilter(), SameFilter(), OverlapFilter(ratio=0.5), NonZeroNumeralsFilter(threshold=1.0),
-               AlphabetRatioFilter(threshold=0.75, exclude_whitespace=True), RepetitionFilter()]
+    filters = [EmptyFilter(), SameFilter(), OverlapFilter(ratio=0.80), NonZeroNumeralsFilter(threshold=1.0),
+               AlphabetRatioFilter(threshold=0.33, exclude_whitespace=True), RepetitionFilter()]
     langs = dirname.split("-")
     if len(langs) == 2:
         sl, tl = langs
         src_script = lang2script[sl]
         tgt_script = lang2script[tl]
-        char_filter = CharacterRatioFilter(scripts=(src_script, tgt_script), thresholds=(0.75, 0.75))
+        char_filter = CharacterRatioFilter(scripts=(src_script, tgt_script), thresholds=(0.33, 0.33))
         filters.append(char_filter)
 
     path = filter_file(path, filters=filters, clean_after_done=clean_after_done, logger=logger)

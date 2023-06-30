@@ -23,14 +23,15 @@ def preprocess_file_ndf(in_file,
     path = normalize_file(in_file, normalizers, clean_after_done=clean_after_done, logger=logger)
 
     logger.info("***Deduping***")
-    path = dedup_bitext_file(path, dedup_srctgt=True, remove_noletter=False, clean_after_done=clean_after_done, logger=logger)
+    path = dedup_bitext_file(path, dedup_srctgt=True, dedup_src=False, dedup_tgt=False,
+                             remove_noletter=False, clean_after_done=clean_after_done, logger=logger)
 
     logger.info("***Filtering***")
-    filters = [EmptyFilter(), SameFilter(), OverlapFilter(ratio=0.5), NonZeroNumeralsFilter(threshold=1.0),
-               AlphabetRatioFilter(threshold=0.75, exclude_whitespace=True), RepetitionFilter()]
+    filters = [EmptyFilter(), SameFilter(), OverlapFilter(ratio=0.80), NonZeroNumeralsFilter(threshold=1.0),
+               AlphabetRatioFilter(threshold=0.33, exclude_whitespace=True), RepetitionFilter()]
     src_script = lang2script[source_lang]
     tgt_script = lang2script[target_lang]
-    char_filter = CharacterRatioFilter(scripts=(src_script, tgt_script), thresholds=(0.75, 0.75))
+    char_filter = CharacterRatioFilter(scripts=(src_script, tgt_script), thresholds=(0.33, 0.33))
     filters.append(char_filter)
 
     path = filter_file(path, filters=filters, clean_after_done=clean_after_done, logger=logger)

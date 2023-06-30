@@ -20,6 +20,7 @@ def dedup_file(in_path, out_path=None, logger=None):
         out_path = in_path + ".deduped"
 
     if os.path.exists(out_path):
+        logger.info("{} exists".format(out_path))
         return out_path
 
     pairs = set()

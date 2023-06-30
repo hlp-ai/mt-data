@@ -293,6 +293,7 @@ def filter_file(in_path, filters, out_path=None, clean_after_done=False, logger=
         out_path = in_path + ".filtered"
 
     if os.path.exists(out_path):
+        logger.info("{} exists".format(out_path))
         return out_path
 
     total = 0

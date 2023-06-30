@@ -16,7 +16,7 @@ from yimt_bitext.web.filter_score import filter_tsv
 lang2script = get_lang2script()
 
 
-def preprocess(in_dir, target_lang="zh",
+def preprocess_dir(in_dir, target_lang="zh",
                labse_model_dir="D:/kidden/mt/open/mt-ex/mt/data/labse1",
                block=8,
                min_socre=0.6,
@@ -109,9 +109,9 @@ if __name__ == "__main__":
     sub = os.listdir(root)
     contain_langs = all([os.path.isdir(os.path.join(root,d)) for d in sub])
     if not contain_langs:
-        preprocess(root, labse_model_dir=args.labse, block=args.block, min_socre=args.min,
+        preprocess_dir(root, labse_model_dir=args.labse, block=args.block, min_socre=args.min,
                    clean_after_done=True, logger=logger_opus)
     else:
         for d in sub:
-            preprocess(os.path.join(root,d), labse_model_dir=args.labse, block=args.block, min_socre=args.min,
+            preprocess_dir(os.path.join(root,d), labse_model_dir=args.labse, block=args.block, min_socre=args.min,
                        clean_after_done=True, logger=logger_opus)

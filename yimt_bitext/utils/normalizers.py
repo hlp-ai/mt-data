@@ -150,6 +150,7 @@ def normalize_file(in_path, normalizers, out_path=None, clean_after_done=False, 
         out_path = in_path + ".normalized"
 
     if os.path.exists(out_path):
+        logger.info("{} exists".format(out_path))
         return out_path
 
     n = 0

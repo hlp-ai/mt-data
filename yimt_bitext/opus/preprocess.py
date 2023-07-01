@@ -42,7 +42,7 @@ def preprocess_dir(in_dir, target_lang="zh",
     path = normalize_file(path, normalizers, clean_after_done=clean_after_done, logger=logger)
 
     logger.info("***Deduping***")
-    path = dedup_bitext_file(path, dedup_srctgt=True, dedup_src=False, dedup_tgt=False,
+    path = dedup_bitext_file(path, dedup_srctgt=False, dedup_src=True, dedup_tgt=False,
                              remove_noletter=False, clean_after_done=clean_after_done, logger=logger)
 
     logger.info("***Filtering***")
@@ -111,8 +111,8 @@ if __name__ == "__main__":
     contain_langs = all([os.path.isdir(os.path.join(root,d)) for d in sub])
     if not contain_langs:
         preprocess_dir(root, labse_model_dir=args.labse, block=args.block, min_socre=args.min,
-                   clean_after_done=True, logger=logger_opus)
+                   clean_after_done=False, logger=logger_opus)
     else:
         for d in sub:
             preprocess_dir(os.path.join(root,d), labse_model_dir=args.labse, block=args.block, min_socre=args.min,
-                       clean_after_done=True, logger=logger_opus)
+                       clean_after_done=False, logger=logger_opus)

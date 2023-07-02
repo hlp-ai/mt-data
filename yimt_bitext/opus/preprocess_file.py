@@ -23,11 +23,11 @@ def preprocess_file_ndf(in_file,
     path = normalize_file(in_file, normalizers, clean_after_done=clean_after_done, logger=logger)
 
     logger.info("***Deduping***")
-    path = dedup_bitext_file(path, dedup_srctgt=True, dedup_src=False, dedup_tgt=False,
+    path = dedup_bitext_file(path, dedup_srctgt=False, dedup_src=True, dedup_tgt=False,
                              remove_noletter=False, clean_after_done=clean_after_done, logger=logger)
 
     logger.info("***Filtering***")
-    filters = [EmptyFilter(), SameFilter(), OverlapFilter(ratio=0.80), NonZeroNumeralsFilter(threshold=1.0),
+    filters = [EmptyFilter(), SameFilter(), OverlapFilter(ratio=0.80),
                AlphabetRatioFilter(threshold=0.33, exclude_whitespace=True), RepetitionFilter()]
     src_script = lang2script[source_lang]
     tgt_script = lang2script[target_lang]

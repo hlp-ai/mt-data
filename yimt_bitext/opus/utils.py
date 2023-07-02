@@ -1,3 +1,4 @@
+import io
 import os
 import time
 import zipfile
@@ -66,6 +67,31 @@ def single_to_pair(src_path, tgt_path, pair_path, logger_opus=None):
 
         if logger_opus:
             logger_opus.info("{}: {}".format(pair_path, cnt))
+
+
+def pair_to_single(pair_path, src_path, tgt_path):
+    """Split a parallel file into source ang target file"""
+    src_f = io.open(src_path, "w", encoding="utf-8")
+    tgt_f = io.open(tgt_path, "w", encoding="utf-8")
+
+    tsv_f = io.open(pair_path, encoding="utf-8")
+    cnt = 0
+    for line in tsv_f:
+        line = line.strip()
+        if len(line) == 0:
+            continue
+        p = line.split("\t")
+        if len(p) >= 2:
+            src_f.write(p[0] + "\n")
+            tgt_f.write(p[1] + "\n")
+
+        cnt += 1
+        if cnt % 500000 == 0:
+            print(cnt)
+
+    print(cnt)
+    src_f.close()
+    tgt_f.close()
 
 
 def merge_moses(in_dir, source_lang=None, target_lang=None, out_dir=None,

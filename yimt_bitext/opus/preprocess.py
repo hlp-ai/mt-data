@@ -33,7 +33,7 @@ def preprocess_dir(in_dir, target_lang="zh",
     logger.info("***Merging Files***")
     parts = Path(in_dir).parts
     dirname = parts[-1]
-    path = merge(path, dirname + ".tsv", clean_after_merge=clean_after_done, logger_opus=logger)
+    path = merge(path, os.path.join(path, dirname + ".tsv"), clean_after_merge=clean_after_done, logger_opus=logger)
 
     logger.info("***Normalizing***")
     normalizers = []

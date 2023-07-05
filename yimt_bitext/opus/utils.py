@@ -190,10 +190,10 @@ def merge_files(data_files, out_path, clean_after_merge=False, logger_opus=None)
                         cnt += 1
                         if total % 100000 == 0:
                             if logger_opus:
-                                logger_opus.info("Merging {} into {}: {cnt}/{}".format(f, out_path, cnt, total))
+                                logger_opus.info("Merging {} into {}: {}/{}".format(f, out_path, cnt, total))
 
         if logger_opus:
-            logger_opus.info("Merged {} into {}: {cnt}/{}".format(f, out_path, cnt, total))
+            logger_opus.info("Merged {} into {}: {}/{}".format(f, out_path, cnt, total))
 
         if logger_opus:
             logger_opus.info("Merged {}: {}".format(out_path, total))

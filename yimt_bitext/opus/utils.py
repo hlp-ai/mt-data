@@ -146,30 +146,57 @@ def merge_moses(in_dir, source_lang=None, target_lang=None, out_dir=None,
     return out_dir
 
 
-def merge_files(data_root, out_fn, clean_after_merge=False, logger_opus=None):
-    """Merge files in a directory into one file"""
-    data_files = [os.path.join(data_root, f) for f in os.listdir(data_root)]
+def get_files(source):
+    if os.path.isdir(source):
+        data_files = [os.path.join(source, f) for f in os.listdir(source)]
+        return data_files
 
-    out_path = os.path.join(data_root, out_fn)
+    if isinstance(source, list):
+        data_files = []
+        for f in source:
+            if os.path.isfile(f):
+                data_files.append(f)
+            else:
+                files = get_files(f)
+                data_files.extend(files)
 
+        return data_files
+
+
+def merge(source, out_fn, clean_after_merge=False, logger_opus=None):
+    data_files = get_files(source)
+
+    out_path = out_fn
     if os.path.exists(out_path):
         return out_path
 
-    cnt = 0
+    out_path = merge_files(data_files, out_path, clean_after_merge=clean_after_merge, logger_opus=logger_opus)
+
+    return out_path
+
+
+def merge_files(data_files, out_path, clean_after_merge=False, logger_opus=None):
+    """Merge files into one file"""
+    total = 0
     with open(out_path, "w", encoding="utf-8") as out_f:
         for f in data_files:
+            cnt = 0
             with open(f, encoding="utf-8") as in_f:
                 for line in in_f:
                     line = line.strip()
                     if len(line) > 0:
                         out_f.write(line + "\n")
+                        total += 1
                         cnt += 1
-                        if cnt % 100000 == 0:
+                        if total % 100000 == 0:
                             if logger_opus:
-                                logger_opus.info("Merging {}: {}".format(out_path, cnt))
+                                logger_opus.info("Merging {} into {}: {cnt}/{}".format(f, out_path, cnt, total))
 
         if logger_opus:
-            logger_opus.info("Merging {}: {}".format(out_path, cnt))
+            logger_opus.info("Merged {} into {}: {cnt}/{}".format(f, out_path, cnt, total))
+
+        if logger_opus:
+            logger_opus.info("Merged {}: {}".format(out_path, total))
 
     if clean_after_merge:
         for f in data_files:

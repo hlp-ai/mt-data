@@ -4,7 +4,7 @@ import shutil
 from argparse import ArgumentParser
 from pathlib import Path
 
-from yimt_bitext.opus.utils import extract_zips, merge_moses, merge_files, split, score_tsv
+from yimt_bitext.opus.utils import extract_zips, merge_moses, split, score_tsv, merge
 from yimt_bitext.utils.dedup import dedup_bitext_file
 from yimt_bitext.utils.filters import filter_file, EmptyFilter, SameFilter, OverlapFilter, NonZeroNumeralsFilter, \
     AlphabetRatioFilter, RepetitionFilter, CharacterRatioFilter, get_lang2script
@@ -33,7 +33,7 @@ def preprocess_dir(in_dir, target_lang="zh",
     logger.info("***Merging Files***")
     parts = Path(in_dir).parts
     dirname = parts[-1]
-    path = merge_files(path, dirname + ".tsv", clean_after_merge=clean_after_done, logger_opus=logger)
+    path = merge(path, dirname + ".tsv", clean_after_merge=clean_after_done, logger_opus=logger)
 
     logger.info("***Normalizing***")
     normalizers = []
@@ -89,7 +89,7 @@ def preprocess_dir(in_dir, target_lang="zh",
     logger.info("***Merging Files***")
     out_path = os.path.join(filter_dir, dirname + "-preprocessed.tsv")
     if not os.path.exists(out_path):
-        path = merge_files(filter_dir, out_path, clean_after_merge=clean_after_done, logger_opus=logger)
+        path = merge(filter_dir, out_path, clean_after_merge=clean_after_done, logger_opus=logger)
 
     return path
 

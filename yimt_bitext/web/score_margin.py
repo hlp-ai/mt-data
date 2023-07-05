@@ -1,4 +1,15 @@
 """Test Margin_score sentence pairs"""
+def build_vec_index_tsv(tsv_file, indexfile1, indexfile2, dim = 768, tree_num = 10):
+    import os
+    from yimt_bitext.opus.utils import pair_to_single
+    from yimt_bitext.web.build_seg_vec_index import build_vec_index
+    dir_name = os.path.dirname(tsv_file)
+    src_file = os.path.join(dir_name, "tsv_src.txt")
+    tar_file = os.path.join(dir_name, "tsv_tar.txt")
+    pair_to_single(tsv_file, src_file, tar_file)
+    build_vec_index(src_file, indexfile1, dim, tree_num)
+    build_vec_index(tar_file, indexfile2, dim, tree_num)
+    print("Both vec_index has been built successfully")
 
 def score_tsv_margin(tsv_file, output_file, annoy_dir1, annoy_dir2, k = 8, dim = 768):
     from yimt_bitext.web.sentence_vector import SentenceVectorizationLaBSE_2, load_vec_index, VectorSimilarityMargin
@@ -44,8 +55,6 @@ if __name__ == "__main__":
     argparser.add_argument("--output_file", required=True, help="Output file includes scores")
     argparser.add_argument("--annoy_dir1", required=True, help="Annoy path for language1")
     argparser.add_argument("--annoy_dir2", required=True, help="Annoy path for language2")
-    argparser.add_argument("--k", default=8, help="The factor 'k' in margin formula")
-    argparser.add_argument("--dim", default=768, help="The dim of sentence embeddings")
     args = argparser.parse_args()
 
     tsv_file = args.tsv_file
@@ -54,4 +63,5 @@ if __name__ == "__main__":
     annoy_dir2 = args.annoy_dir2
     k = args.k
     dim = args.dim
-    score_tsv_margin(tsv_file, output_file, annoy_dir1, annoy_dir2, k, dim)
+    # build_vec_index_tsv(tsv_file, annoy_dir1, annoy_dir2)
+    score_tsv_margin(tsv_file, output_file, annoy_dir1, annoy_dir2)

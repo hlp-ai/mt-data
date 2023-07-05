@@ -40,6 +40,7 @@ tr Latin
 it Latin
 vi Latin
 ko Hangul
+ms Latin
 ja Han
 de Latin
 id Latin

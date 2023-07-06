@@ -11,4 +11,4 @@ if __name__ == "__main__":
 
     logger = get_logger("./log.txt", "corpus")
 
-    merge(args.input, args.output)
+    merge(args.input, args.output, logger_opus=logger)

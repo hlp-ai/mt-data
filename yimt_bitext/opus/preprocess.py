@@ -4,13 +4,12 @@ import shutil
 from argparse import ArgumentParser
 from pathlib import Path
 
-from yimt_bitext.opus.utils import extract_zips, merge_moses, split, score_tsv, merge
+from yimt_bitext.opus.utils import extract_zips, merge_moses, split, score_tsv, merge, filter_tsv
 from yimt_bitext.utils.dedup import dedup_bitext_file
 from yimt_bitext.utils.filters import filter_file, EmptyFilter, SameFilter, OverlapFilter, NonZeroNumeralsFilter, \
     AlphabetRatioFilter, RepetitionFilter, CharacterRatioFilter, get_lang2script
 from yimt_bitext.utils.log import get_logger
 from yimt_bitext.utils.normalizers import ToZhNormalizer, normalize_file
-from yimt_bitext.web.filter_score import filter_tsv
 
 
 lang2script = get_lang2script()

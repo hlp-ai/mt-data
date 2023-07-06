@@ -147,20 +147,20 @@ def merge_moses(in_dir, source_lang=None, target_lang=None, out_dir=None,
 
 
 def get_files(source):
-    if os.path.isdir(source):
-        data_files = [os.path.join(source, f) for f in os.listdir(source)]
-        return data_files
-
     if isinstance(source, list):
         data_files = []
         for f in source:
             if os.path.isfile(f):
                 data_files.append(f)
             else:
-                files = get_files(f)
+                files = [os.path.join(f, sf) for sf in os.listdir(f)]
                 data_files.extend(files)
-
         return data_files
+    elif os.path.isdir(source):
+        data_files = [os.path.join(source, f) for f in os.listdir(source)]
+        return data_files
+    else:
+        return source
 
 
 def merge(source, out_fn, clean_after_merge=False, logger_opus=None):
@@ -369,3 +369,25 @@ def diff_tsv(tsv_file1, tsv_file2, out_file=None, creterion="SRC",
 
     if logger:
         logger.info("Total: {}, Diff: {}".format(total, differed))
+
+
+def filter_tsv(in_path, out_path, min_score, logger=None):
+    total = 0
+    left = 0
+    with open(in_path, encoding="utf-8") as in_f, open(out_path, "w", encoding="utf-8") as out_f:
+        for line in in_f:
+            total += 1
+            if total % 100000 == 0:
+                if logger:
+                    logger.info("Total: {}, Left: {}".format(total, left))
+            line = line.strip()
+            parts = line.split("\t")
+            if len(parts) != 3:
+                continue
+
+            if float(parts[0]) > min_score:
+                out_f.write(parts[1] + "\t" + parts[2] + "\n")
+                left += 1
+
+    if logger:
+        logger.info("Total: {}, Left: {}".format(total, left))

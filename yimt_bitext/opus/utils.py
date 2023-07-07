@@ -301,7 +301,7 @@ def diff_tsv(tsv_file1, tsv_file2, out_file=None, creterion="SRC",
     total = 0
 
     if logger:
-        logger.info("Scanning file2...")
+        logger.info("Scanning {}...".format(tsv_file2))
     with open(tsv_file2, encoding="utf-8") as bf:
         for p in bf:
             total += 1
@@ -333,7 +333,7 @@ def diff_tsv(tsv_file1, tsv_file2, out_file=None, creterion="SRC",
     total = 0
 
     if logger:
-        logger.info("Scanning file1...")
+        logger.info("Scanning {}...".format(tsv_file1))
     with open(tsv_file1, encoding="utf-8") as f, open(out_file, "w", encoding="utf-8") as out_f:
         for p in f:
             p = p.strip()

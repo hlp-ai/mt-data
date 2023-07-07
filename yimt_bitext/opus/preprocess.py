@@ -95,7 +95,7 @@ def preprocess_dir(in_dir, target_lang="zh",
 
 if __name__ == "__main__":
     argparser = ArgumentParser()
-    argparser.add_argument("--root", help="Root dir")
+    argparser.add_argument("--root", required=True, help="Root dir")
     argparser.add_argument("--tl", default="zh", help="target language")
     argparser.add_argument("--labse", default="D:/kidden/mt/open/mt-ex/mt/data/labse1", help="directory for labse")
     argparser.add_argument("--block", type=int, default=8, help="block size for labse")

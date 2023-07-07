@@ -5,7 +5,7 @@ from yimt_bitext.utils.log import get_logger
 
 
 if __name__ == "__main__":
-    argparser = argparse.ArgumentParser()
+    argparser = argparse.ArgumentParser(description="Filter corpus based on score")
     argparser.add_argument("-i", "--input", required=True, help="Bitext file with scores")
     argparser.add_argument("-o", "--output", default=None, help="output file")
     argparser.add_argument("--min", default=0.66, type=float, help="Min socre for bitext")

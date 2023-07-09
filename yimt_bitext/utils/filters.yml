@@ -1,0 +1,9 @@
+filters:
+  - f1:
+      name: EmptyFilter
+      params: null
+
+  - f2:
+      name: SameFilter
+      params:
+        lower: true

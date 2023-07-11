@@ -63,6 +63,8 @@ def preprocess_dir(in_dir, target_lang="zh",
         os.mkdir(split_dir)
         path = shutil.move(path, split_dir)
         split(path, logger=logger)
+    else:
+        logger_opus.info("{} exits".format(split_dir))
 
     logger.info("***Scoring***")
     files = os.listdir(split_dir)
@@ -76,12 +78,15 @@ def preprocess_dir(in_dir, target_lang="zh",
     filter_dir = os.path.join(split_dir, "sfilter")
     if not os.path.exists(filter_dir):
         os.mkdir(filter_dir)
+    else:
+        logger.info("{} exists".format(filter_dir))
     files = os.listdir(split_dir)
     for f in files:
         if f.endswith(".score"):
             logger.info("Filter {} by score".format(f))
             out_path = os.path.join(filter_dir, f+".sfilter")
             if os.path.exists(out_path):
+                logger.info("{} exists".format(out_path))
                 continue
             filter_tsv(os.path.join(split_dir, f), out_path, min_socre, logger=logger)
 
@@ -89,6 +94,8 @@ def preprocess_dir(in_dir, target_lang="zh",
     out_path = os.path.join(filter_dir, dirname + "-preprocessed.tsv")
     if not os.path.exists(out_path):
         path = merge(filter_dir, out_path, clean_after_merge=clean_after_done, logger_opus=logger)
+    else:
+        logger.info("{} exists".format(out_path))
 
     return path
 

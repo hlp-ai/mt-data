@@ -14,6 +14,7 @@ def extract_zips(zips_dir, out_dir=None, logger_opus=None):
         out_dir = os.path.join(zips_dir, "unzip")
 
     if os.path.exists(out_dir):
+        logger_opus.info("{} exits".format(out_dir))
         return out_dir
 
     zips = os.listdir(zips_dir)
@@ -102,6 +103,7 @@ def merge_moses(in_dir, source_lang=None, target_lang=None, out_dir=None,
         out_dir = os.path.join(in_dir, "tsv")
 
     if os.path.exists(out_dir):
+        logger_opus.info("{} exits".format(out_dir))
         return out_dir
 
     files = os.listdir(in_dir)
@@ -168,6 +170,7 @@ def merge(source, out_fn, clean_after_merge=False, logger_opus=None):
 
     out_path = out_fn
     if os.path.exists(out_path):
+        logger_opus.info("{} exits".format(out_path))
         return out_path
 
     out_path = merge_files(data_files, out_path, clean_after_merge=clean_after_merge, logger_opus=logger_opus)
@@ -254,6 +257,7 @@ def score_tsv(in_path, out_path=None,
         out_path = in_path + ".score"
 
     if os.path.exists(out_path):
+        logger.info("{} exists".format(out_path))
         return out_path
 
     out_f = open(out_path, "w", encoding="utf-8")

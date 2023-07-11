@@ -38,7 +38,7 @@ def score_tsv_margin(tsv_file, output_file, segment_vector, annoy_dir1, annoy_di
                 tar_vec_segs = segment_vector.get_vector(tar_segs)
                 for j in range(block):
                     score = vec_scorer.get_score(src_vec_segs[j], tar_vec_segs[j])[0][0]
-                    of.write("{:.4f} {} {}\n".format(score, src_segs[j], tar_segs[j]))
+                    of.write("{:.4f}\t{}\t{}\n".format(score, src_segs[j], tar_segs[j]))
 
                 src_segs = []
                 tar_segs = []
@@ -49,7 +49,7 @@ def score_tsv_margin(tsv_file, output_file, segment_vector, annoy_dir1, annoy_di
             tar_vec_segs = segment_vector.get_vector(tar_segs)
             for j in range(len(src_segs)):
                 score = vec_scorer.get_score(src_vec_segs[j], tar_vec_segs[j])[0][0]
-                of.write("{:.4f} {} {}\n".format(score, src_segs[j], tar_segs[j]))
+                of.write("{:.4f}\t{}\t{}\n".format(score, src_segs[j], tar_segs[j]))
             print(i)
 
 

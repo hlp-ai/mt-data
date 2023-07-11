@@ -28,8 +28,8 @@ if __name__ == "__main__":
     index2 = load_vec_index(args.annoy_dir2, dim)
 
     vec_scorer = VectorSimilarityMargin(index1, index2, k)
-    segment_vector = SentenceVectorizationLaBSE_2("D:/LaBSE_2","C:/Users/Lenovo/Desktop/universal-sentence-encoder-cmlm_multilingual-preprocess_2")
-    # segment_vector = SentenceVectorizationLaBSE("D:/kidden/mt/open/mt-ex/mt/data/labse1")
+    # segment_vector = SentenceVectorizationLaBSE_2("D:/LaBSE_2","C:/Users/Lenovo/Desktop/universal-sentence-encoder-cmlm_multilingual-preprocess_2")
+    segment_vector = SentenceVectorizationLaBSE("D:/kidden/mt/open/mt-ex/mt/data/labse1")
 
     segs1 = []
     segs2 = []

@@ -107,6 +107,7 @@ if __name__ == "__main__":
     argparser.add_argument("--labse", default="D:/kidden/mt/open/mt-ex/mt/data/labse1", help="directory for labse")
     argparser.add_argument("--block", type=int, default=8, help="block size for labse")
     argparser.add_argument("--min", type=float, default=0.6, help="min socre for filtering")
+    argparser.add_argument("--clean", action="store_true", help="min socre for filtering")
     argparser.add_argument("--log_dir", default="./", help="log directory")
     args = argparser.parse_args()
 
@@ -121,4 +122,4 @@ if __name__ == "__main__":
     else:
         for d in sub:
             preprocess_dir(os.path.join(root,d), labse_model_dir=args.labse, block=args.block, min_socre=args.min,
-                       clean_after_done=False, logger=logger_opus)
+                       clean_after_done=args.clean, logger=logger_opus)

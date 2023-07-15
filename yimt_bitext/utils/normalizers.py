@@ -145,6 +145,26 @@ class ToZhNormalizer(Normalizer):
         return src + "\t" + tgt
 
 
+class CleanerTSV(Normalizer):
+
+    def __init__(self):
+        self.cleaner = Cleaner()
+
+    def normalize(self, s):
+        s = s.strip()
+        pair = s.split("\t")
+        if len(pair) != 2:
+            return ""
+
+        src = pair[0]
+        tgt = pair[1]
+
+        src = self.cleaner.normalize(src)
+        tgt = self.cleaner.normalize(tgt)
+
+        return src + "\t" + tgt
+
+
 def normalize_file(in_path, normalizers, out_path=None, clean_after_done=False, logger=None):
     if out_path is None:
         out_path = in_path + ".normalized"

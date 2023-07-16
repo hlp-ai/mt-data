@@ -11,7 +11,7 @@ from yimt_bitext.opus.utils import extract_zips, merge_moses, split, score_tsv, 
     single_to_pair, detok_zh_file
 from yimt_bitext.utils.dedup import dedup_bitext_file
 from yimt_bitext.utils.filters import filter_file, EmptyFilter, SameFilter, OverlapFilter, NonZeroNumeralsFilter, \
-    AlphabetRatioFilter, RepetitionFilter, CharacterRatioFilter, get_lang2script
+    AlphabetRatioFilter, RepetitionFilter, CharacterRatioFilter, get_lang2script, LengthFilter
 from yimt_bitext.utils.log import get_logger
 from yimt_bitext.utils.normalizers import ToZhNormalizer, normalize_file, CleanerTSV
 from yimt_bitext.utils.sp import tokenize_file, detokenize_file, load_spm
@@ -67,6 +67,11 @@ def preprocess_dir(in_dir, sp_en, sp_zh, translator,
         char_filter = CharacterRatioFilter(scripts=(src_script, tgt_script), thresholds=(0.33, 0.33))
         filters.append(char_filter)
 
+        tgt_len = LengthFilter.space_sep_len_f
+        filters.append(LengthFilter(tgt_len_fn=tgt_len, tgt_lens=(1, 128)))
+
+    logger.info(filters)
+
     path = filter_file(path, filters=filters, clean_after_done=clean_after_done, logger=logger)
 
     logger.info("***Splitting***")
@@ -110,7 +115,7 @@ def preprocess_dir(in_dir, sp_en, sp_zh, translator,
     return path
 
 
-def _translate(translator, in_file, out_file, batch_size = 48, logger=None):
+def _translate(translator, in_file, out_file, batch_size=48, logger=None):
     with open(in_file, encoding="utf-8") as f:
         lines = f.readlines()
 

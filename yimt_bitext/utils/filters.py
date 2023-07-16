@@ -86,7 +86,7 @@ class LengthFilter(Filter):
 
     def __init__(self, src_len_fn=len, tgt_len_fn=len,
                  src_lens=(None, None), tgt_lens=(None, None),
-                 ratio=3):
+                 ratio=None):
         self.src_min_len = src_lens[0]
         self.src_max_len = src_lens[1]
         self.tgt_min_len = tgt_lens[0]
@@ -110,10 +110,13 @@ class LengthFilter(Filter):
         if self.tgt_max_len is not None and tgt_len > self.tgt_max_len:
             return None
 
-        if src_len <= self.ratio * tgt_len and tgt_len <= self.ratio * src_len:
-            return src, tgt
+        if self.ratio is not None:
+            if src_len <= self.ratio * tgt_len and tgt_len <= self.ratio * src_len:
+                return src, tgt
+            else:
+                return None
         else:
-            return None
+            return src, tgt
 
 
 class AlphabetRatioFilter(Filter):

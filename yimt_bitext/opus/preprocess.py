@@ -9,8 +9,7 @@ from yimt_bitext.utils.dedup import dedup_bitext_file
 from yimt_bitext.utils.filters import filter_file, EmptyFilter, SameFilter, OverlapFilter, NonZeroNumeralsFilter, \
     AlphabetRatioFilter, RepetitionFilter, CharacterRatioFilter, get_lang2script
 from yimt_bitext.utils.log import get_logger
-from yimt_bitext.utils.normalizers import ToZhNormalizer, normalize_file
-
+from yimt_bitext.utils.normalizers import ToZhNormalizer, normalize_file, CleanerTSV
 
 lang2script = get_lang2script()
 
@@ -20,6 +19,7 @@ def preprocess_dir(in_dir, target_lang="zh",
                block=8,
                min_socre=0.6,
                clean_after_done=False,
+                   max=-1,
                logger=None):
     logger.info("Preprocessing {}".format(in_dir))
 
@@ -32,12 +32,17 @@ def preprocess_dir(in_dir, target_lang="zh",
     logger.info("***Merging Files***")
     parts = Path(in_dir).parts
     dirname = parts[-1]
-    path = merge(path, os.path.join(path, dirname + ".tsv"), clean_after_merge=clean_after_done, logger_opus=logger)
+    langs = dirname.split("-")
+    if len(langs) == 2:
+        sl, tl = langs
+        target_lang = tl
+    path = merge(path, os.path.join(path, dirname + ".tsv"), clean_after_merge=clean_after_done, max=max, logger_opus=logger)
 
     logger.info("***Normalizing***")
-    normalizers = []
     if target_lang == "zh":
         normalizers = [ToZhNormalizer()]
+    else:
+        normalizers = [CleanerTSV()]
     path = normalize_file(path, normalizers, clean_after_done=clean_after_done, logger=logger)
 
     logger.info("***Deduping***")
@@ -108,6 +113,7 @@ if __name__ == "__main__":
     argparser.add_argument("--block", type=int, default=8, help="block size for labse")
     argparser.add_argument("--min", type=float, default=0.6, help="min socre for filtering")
     argparser.add_argument("--clean", action="store_true", help="min socre for filtering")
+    argparser.add_argument("--max_pairs", default=-1, type=int, help="max number of pairs for each corpus")
     argparser.add_argument("--log_dir", default="./", help="log directory")
     args = argparser.parse_args()
 
@@ -118,8 +124,8 @@ if __name__ == "__main__":
     contain_langs = all([os.path.isdir(os.path.join(root,d)) for d in sub])
     if not contain_langs:
         preprocess_dir(root, labse_model_dir=args.labse, block=args.block, min_socre=args.min,
-                   clean_after_done=args.clean, logger=logger_opus)
+                   clean_after_done=args.clean, max=args.max_pairs, logger=logger_opus)
     else:
         for d in sub:
             preprocess_dir(os.path.join(root,d), labse_model_dir=args.labse, block=args.block, min_socre=args.min,
-                       clean_after_done=args.clean, logger=logger_opus)
+                       clean_after_done=args.clean, max=args.max_pairs, logger=logger_opus)

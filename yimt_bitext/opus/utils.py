@@ -165,7 +165,7 @@ def get_files(source):
         return source
 
 
-def merge(source, out_fn, clean_after_merge=False, logger_opus=None):
+def merge(source, out_fn, clean_after_merge=False, max=-1, logger_opus=None):
     data_files = get_files(source)
 
     out_path = out_fn
@@ -173,12 +173,12 @@ def merge(source, out_fn, clean_after_merge=False, logger_opus=None):
         logger_opus.info("{} exits".format(out_path))
         return out_path
 
-    out_path = merge_files(data_files, out_path, clean_after_merge=clean_after_merge, logger_opus=logger_opus)
+    out_path = merge_files(data_files, out_path, clean_after_merge=clean_after_merge, max=max, logger_opus=logger_opus)
 
     return out_path
 
 
-def merge_files(data_files, out_path, clean_after_merge=False, logger_opus=None):
+def merge_files(data_files, out_path, clean_after_merge=False, max=-1, logger_opus=None):
     """Merge files into one file"""
     total = 0
     with open(out_path, "w", encoding="utf-8") as out_f:
@@ -194,12 +194,16 @@ def merge_files(data_files, out_path, clean_after_merge=False, logger_opus=None)
                         if total % 100000 == 0:
                             if logger_opus:
                                 logger_opus.info("Merging {} into {}: {}/{}".format(f, out_path, cnt, total))
+                        if 0 < max <= total:
+                            if logger_opus:
+                                logger_opus.info("Merged {}, reach max".format(total))
+                            break
 
         if logger_opus:
             logger_opus.info("Merged {} into {}: {}/{}".format(f, out_path, cnt, total))
 
-        if logger_opus:
-            logger_opus.info("Merged {}: {}".format(out_path, total))
+    if logger_opus:
+        logger_opus.info("Merged {}: {}".format(out_path, total))
 
     if clean_after_merge:
         for f in data_files:

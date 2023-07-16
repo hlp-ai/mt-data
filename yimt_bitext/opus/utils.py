@@ -1,11 +1,12 @@
 import io
 import os
+import re
 import time
 import zipfile
 
 from yimt_bitext.opus.bitext_scorers import LaBSEScorer
 from yimt_bitext.utils.dedup import norm
-from yimt_bitext.utils.normalizers import detok_zh_file_inplace
+from yimt_bitext.utils.normalizers import detok_zh_file_inplace, detok_zh_str
 
 
 def extract_zips(zips_dir, out_dir=None, logger_opus=None):
@@ -399,3 +400,20 @@ def filter_tsv(in_path, out_path, min_score, logger=None):
 
     if logger:
         logger.info("Total: {}, Left: {}".format(total, left))
+
+
+def detok_zh_file(in_file, out_file=None):
+    if out_file is None:
+        out_file = in_file + ".detok"
+
+    outf = open(out_file, "w", encoding="utf-8")
+
+    with open(in_file, encoding="utf-8") as inf:
+        for line in inf:
+            line = line.strip()
+            line = re.sub(r"\s{2,}", " ", line)
+            line = line.strip()
+            line = detok_zh_str(line)
+            outf.write(line + "\n")
+
+    outf.close()

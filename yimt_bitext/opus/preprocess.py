@@ -23,6 +23,13 @@ def preprocess_dir(in_dir, target_lang="zh",
                logger=None):
     logger.info("Preprocessing {}".format(in_dir))
 
+    parts = Path(in_dir).parts
+    dirname = parts[-1]
+    langs = dirname.split("-")
+    if len(langs) == 2:
+        sl, tl = langs
+        target_lang = tl
+
     logger.info("***Unzipping***")
     path = extract_zips(in_dir, logger_opus=logger)
 
@@ -30,12 +37,6 @@ def preprocess_dir(in_dir, target_lang="zh",
     path = merge_moses(path, target_lang=target_lang, clean_after_merge=clean_after_done, logger_opus=logger)
 
     logger.info("***Merging Files***")
-    parts = Path(in_dir).parts
-    dirname = parts[-1]
-    langs = dirname.split("-")
-    if len(langs) == 2:
-        sl, tl = langs
-        target_lang = tl
     path = merge(path, os.path.join(path, dirname + ".tsv"), clean_after_merge=clean_after_done, max=max, logger_opus=logger)
 
     logger.info("***Normalizing***")

@@ -199,11 +199,11 @@ def merge_files(data_files, out_path, clean_after_merge=False, max=-1, logger_op
                                 logger_opus.info("Merged {}, reach max".format(total))
                             break
 
-        if logger_opus:
-            logger_opus.info("Merged {} into {}: {}/{}".format(f, out_path, cnt, total))
+            if logger_opus:
+                logger_opus.info("Merged {} into {}: {}/{}".format(f, out_path, cnt, total))
 
-    if logger_opus:
-        logger_opus.info("Merged {}: {}".format(out_path, total))
+        if logger_opus:
+            logger_opus.info("Merged {}: {}".format(out_path, total))
 
     if clean_after_merge:
         for f in data_files:

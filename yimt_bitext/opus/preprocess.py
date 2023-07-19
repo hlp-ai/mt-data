@@ -17,7 +17,7 @@ lang2script = get_lang2script()
 def preprocess_dir(in_dir, target_lang="zh",
                labse_model_dir="D:/kidden/mt/open/mt-ex/mt/data/labse1",
                block=8,
-               min_socre=0.6,
+               min_score=0.6,
                clean_after_done=False,
                    max=-1,
                logger=None):
@@ -94,7 +94,7 @@ def preprocess_dir(in_dir, target_lang="zh",
             if os.path.exists(out_path):
                 logger.info("{} exists".format(out_path))
                 continue
-            filter_tsv(os.path.join(split_dir, f), out_path, min_socre, logger=logger)
+            filter_tsv(os.path.join(split_dir, f), out_path, min_score, logger=logger)
 
     logger.info("***Merging Files***")
     out_path = os.path.join(filter_dir, dirname + "-preprocessed.tsv")

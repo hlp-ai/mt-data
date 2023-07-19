@@ -50,6 +50,8 @@ def preprocess_dir(in_dir, sp_en, sp_zh, translator,
         normalizers = [ToZhNormalizer()]
     else:
         normalizers = [CleanerTSV()]
+
+    logger.info(normalizers)
     path = normalize_file(path, normalizers, clean_after_done=clean_after_done, logger=logger)
 
     logger.info("***Deduping***")

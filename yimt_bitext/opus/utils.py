@@ -252,8 +252,6 @@ def score_tsv(in_path, out_path=None,
          block=8, max_seq_len=48,
               clean_after_done=False, logger=None
          ):
-    scorer = LaBSEScorer(labse_model_dir, max_seq_len)
-
     lines = open(in_path, encoding="utf-8").readlines()
     if logger:
         logger.info("# of lines: {}".format(len(lines)))
@@ -264,6 +262,8 @@ def score_tsv(in_path, out_path=None,
     if os.path.exists(out_path):
         logger.info("{} exists".format(out_path))
         return out_path
+
+    scorer = LaBSEScorer(labse_model_dir, max_seq_len)
 
     out_f = open(out_path, "w", encoding="utf-8")
 

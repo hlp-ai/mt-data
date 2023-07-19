@@ -10,7 +10,7 @@ if __name__ == "__main__":
     parser.add_argument("--num", type=int, default=500000, help="the number of samples in each file")
     args = parser.parse_args()
 
-    inputs = args.input
+    input = args.input
     sample_num = args.num
 
     logger = get_logger("./log.txt", "corpus")

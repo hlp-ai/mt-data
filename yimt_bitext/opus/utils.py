@@ -254,7 +254,7 @@ def score_tsv(in_path, out_path=None,
          ):
     lines = open(in_path, encoding="utf-8").readlines()
     if logger:
-        logger.info("# of lines: {}".format(len(lines)))
+        logger.info("{} # of lines: {}".format(in_path, len(lines)))
 
     if out_path is None:
         out_path = in_path + ".score"
@@ -289,7 +289,7 @@ def score_tsv(in_path, out_path=None,
         if n % (40*block) == 0:
             t = time.time() - start
             if logger:
-                logger.info("out_path {}: {:.2f} pairs/sec".format(out_path, n, n/t))
+                logger.info("{} {}: {:.2f} pairs/sec".format(out_path, n, n/t))
 
     out_f.close()
 

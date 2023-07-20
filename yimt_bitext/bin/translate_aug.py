@@ -64,4 +64,4 @@ if __name__ == "__main__":
                 continue
 
             logger.info("**Translating file***")
-            aug_pivot(out_path, sp_en, sp_zh, translator, args.src_lang, logger=logger)
+            aug_pivot(tsv_file, sp_en, sp_zh, translator, args.src_lang, logger=logger)

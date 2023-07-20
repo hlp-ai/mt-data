@@ -190,7 +190,7 @@ def aug_pivot(tsv_file, sp_en, sp_zh, translator, src_lang, tgt_lang="en", logge
     out_file = tok_output + ".tozh"
     if logger:
         logger.info("Translating {} into {}...".format(tok_output, out_file))
-    _translate(translator, tok_output, out_file)
+    _translate(translator, tok_output, out_file, logger=logger)
 
     detok_file = out_file + ".det"
 
@@ -201,7 +201,7 @@ def aug_pivot(tsv_file, sp_en, sp_zh, translator, src_lang, tgt_lang="en", logge
     zh_file = detok_file + ".zh"
     detok_zh_file(detok_file, zh_file)
 
-    single_to_pair(un_translate, zh_file, tsv_file + ".aug2zh")
+    single_to_pair(un_translate, zh_file, tsv_file + ".aug2zh", logger_opus=logger)
 
 
 if __name__ == "__main__":

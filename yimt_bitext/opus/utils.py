@@ -55,7 +55,8 @@ def same_lines(path1, path2):
 
 def single_to_pair(src_path, tgt_path, pair_path, logger_opus=None):
     """Combine source and target file into a parallel one"""
-    logger_opus.info("Merge {} {} into {}".format(src_path, tgt_path, pair_path))
+    if logger_opus:
+        logger_opus.info("Merge {} {} into {}".format(src_path, tgt_path, pair_path))
     assert same_lines(src_path, tgt_path)
 
     cnt = 0

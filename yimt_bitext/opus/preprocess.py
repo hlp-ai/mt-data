@@ -14,13 +14,13 @@ from yimt_bitext.utils.normalizers import ToZhNormalizer, normalize_file, Cleane
 lang2script = get_lang2script()
 
 
-def preprocess_dir(in_dir, target_lang="zh",
-               labse_model_dir="D:/kidden/mt/open/mt-ex/mt/data/labse1",
-               block=8,
-               min_score=0.6,
-               clean_after_done=False,
+def preprocess_dir(in_dir,
+                   labse_model_dir="D:/kidden/mt/open/mt-ex/mt/data/labse1",
+                   block=8,
+                   min_score=0.6,
+                   clean_after_done=False,
                    max=-1,
-               logger=None):
+                   logger=None):
     logger.info("Preprocessing {}".format(in_dir))
 
     parts = Path(in_dir).parts
@@ -29,6 +29,11 @@ def preprocess_dir(in_dir, target_lang="zh",
     if len(langs) == 2:
         sl, tl = langs
         target_lang = tl
+    else:
+        logger.warn("No language pair exist: {}".format(dirname))
+        return in_dir
+
+    logger.info(dirname)
 
     logger.info("***Unzipping***")
     path = extract_zips(in_dir, logger_opus=logger)
@@ -37,13 +42,16 @@ def preprocess_dir(in_dir, target_lang="zh",
     path = merge_moses(path, target_lang=target_lang, clean_after_merge=clean_after_done, logger_opus=logger)
 
     logger.info("***Merging Files***")
-    path = merge(path, os.path.join(path, dirname + ".tsv"), clean_after_merge=clean_after_done, max=max, logger_opus=logger)
+    path = merge(path, os.path.join(path, dirname + ".tsv"), clean_after_merge=clean_after_done, max=max,
+                 logger_opus=logger)
 
     logger.info("***Normalizing***")
     if target_lang == "zh":
         normalizers = [ToZhNormalizer()]
     else:
         normalizers = [CleanerTSV()]
+
+    logger.info(normalizers)
     path = normalize_file(path, normalizers, clean_after_done=clean_after_done, logger=logger)
 
     logger.info("***Deduping***")
@@ -60,6 +68,8 @@ def preprocess_dir(in_dir, target_lang="zh",
         tgt_script = lang2script[tl]
         char_filter = CharacterRatioFilter(scripts=(src_script, tgt_script), thresholds=(0.33, 0.33))
         filters.append(char_filter)
+
+    logger.info(filters)
 
     path = filter_file(path, filters=filters, clean_after_done=clean_after_done, logger=logger)
 
@@ -90,7 +100,7 @@ def preprocess_dir(in_dir, target_lang="zh",
     for f in files:
         if f.endswith(".score"):
             logger.info("Filter {} by score".format(f))
-            out_path = os.path.join(filter_dir, f+".sfilter")
+            out_path = os.path.join(filter_dir, f + ".sfilter")
             if os.path.exists(out_path):
                 logger.info("{} exists".format(out_path))
                 continue
@@ -109,7 +119,6 @@ def preprocess_dir(in_dir, target_lang="zh",
 if __name__ == "__main__":
     argparser = ArgumentParser()
     argparser.add_argument("--root", required=True, help="Root dir")
-    argparser.add_argument("--tl", default="zh", help="target language")
     argparser.add_argument("--labse", default="D:/kidden/mt/open/mt-ex/mt/data/labse1", help="directory for labse")
     argparser.add_argument("--block", type=int, default=8, help="block size for labse")
     argparser.add_argument("--min", type=float, default=0.6, help="min socre for filtering")
@@ -122,11 +131,11 @@ if __name__ == "__main__":
 
     root = args.root
     sub = os.listdir(root)
-    contain_langs = all([os.path.isdir(os.path.join(root,d)) for d in sub])
+    contain_langs = all([os.path.isdir(os.path.join(root, d)) for d in sub])
     if not contain_langs:
-        preprocess_dir(root, labse_model_dir=args.labse, block=args.block, min_socre=args.min,
-                   clean_after_done=args.clean, max=args.max_pairs, logger=logger_opus)
+        preprocess_dir(root, labse_model_dir=args.labse, block=args.block, min_score=args.min,
+                       clean_after_done=args.clean, max=args.max_pairs, logger=logger_opus)
     else:
         for d in sub:
-            preprocess_dir(os.path.join(root,d), labse_model_dir=args.labse, block=args.block, min_socre=args.min,
-                       clean_after_done=args.clean, max=args.max_pairs, logger=logger_opus)
+            preprocess_dir(os.path.join(root, d), labse_model_dir=args.labse, block=args.block, min_score=args.min,
+                           clean_after_done=args.clean, max=args.max_pairs, logger=logger_opus)

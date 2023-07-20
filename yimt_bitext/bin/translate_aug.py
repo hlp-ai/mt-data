@@ -6,7 +6,7 @@ from argparse import ArgumentParser
 import ctranslate2
 
 from yimt_bitext.opus.preprocess_aug import aug_pivot
-from yimt_bitext.opus.utils import split
+from yimt_bitext.opus.utils import split, merge_files
 from yimt_bitext.utils.log import get_logger
 from yimt_bitext.utils.sp import load_spm
 
@@ -65,3 +65,13 @@ if __name__ == "__main__":
 
             logger.info("**Translating file***")
             aug_pivot(tsv_file, sp_en, sp_zh, translator, args.src_lang, logger=logger)
+
+    logger.info("Merging augmented files...")
+    files = os.listdir(split_dir)
+    to_merge = []
+    for f in files:
+        f = os.path.join(split_dir, f)
+        if f.endswith(".aug2zh"):
+            to_merge.append(f)
+    out_file = os.path.join(os.path.join(split_dir, os.path.basename(path) + ".2zh"))
+    merge_files(to_merge, out_file, logger_opus=logger)

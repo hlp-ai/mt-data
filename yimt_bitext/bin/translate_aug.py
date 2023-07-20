@@ -1,16 +1,19 @@
 import os
+import re
+import shutil
 from argparse import ArgumentParser
 
 import ctranslate2
 
 from yimt_bitext.opus.preprocess_aug import aug_pivot
+from yimt_bitext.opus.utils import split
 from yimt_bitext.utils.log import get_logger
 from yimt_bitext.utils.sp import load_spm
 
 
 if __name__ == "__main__":
     argparser = ArgumentParser()
-    argparser.add_argument("--root", required=True, help="Root dir")
+    argparser.add_argument("--input", required=True, help="input file")
     argparser.add_argument("-se", "--sp_en_model",
                            default=r"D:\kidden\mt\mt-exp\sp\opus-enzh-all-sf.en-sp-32000.model",
                            help="EN sp model path")
@@ -25,6 +28,16 @@ if __name__ == "__main__":
     args = argparser.parse_args()
 
     logger = get_logger(os.path.join(args.log_dir, "opus.log"), "OPUS")
+
+    logger.info("***Splitting***")
+    path = args.input
+    split_dir = os.path.join(os.path.dirname(path), "aug")
+    if not os.path.exists(split_dir):
+        os.mkdir(split_dir)
+        path = shutil.move(path, split_dir)
+        split(path, logger=logger)
+    else:
+        logger.info("{} exits".format(split_dir))
 
     logger.info("Loading SP model...")
 
@@ -41,12 +54,10 @@ if __name__ == "__main__":
         device="cuda"
     )
 
-    root = args.root
-
-    files = os.listdir(root)
+    files = os.listdir(split_dir)
     for f in files:
-        if f.endswith(".sfilter"):
-            tsv_file = os.path.join(root, f)
+        if re.match(r".+\d+$", f):
+            tsv_file = os.path.join(split_dir, f)
             out_path = tsv_file + ".aug2zh"
             if os.path.exists(out_path):
                 logger.info("{} exists".format(out_path))

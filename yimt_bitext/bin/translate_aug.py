@@ -24,6 +24,7 @@ if __name__ == "__main__":
                            default=r"D:\kidden\mt\mt-exp\en-zh\opus\ct2",
                            help="en-to-zh ct2 model path")
     argparser.add_argument("--src_lang", required=True, help="source language")
+    argparser.add_argument("--clean", action="store_true", help="clean after processing")
     argparser.add_argument("--log_dir", default="./", help="log directory")
     args = argparser.parse_args()
 
@@ -64,7 +65,9 @@ if __name__ == "__main__":
                 continue
 
             logger.info("**Translating file***")
-            aug_pivot(tsv_file, sp_en, sp_zh, translator, args.src_lang, logger=logger)
+            aug_pivot(tsv_file, sp_en, sp_zh, translator, args.src_lang,
+                      clean_after_done=args.clean,
+                      logger=logger)
 
     logger.info("Merging augmented files...")
     files = os.listdir(split_dir)

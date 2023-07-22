@@ -117,7 +117,7 @@ def preprocess_dir(in_dir, sp_en, sp_zh, translator,
     return path
 
 
-def _translate(translator, in_file, out_file, batch_size=48, logger=None):
+def _translate(translator, in_file, out_file, batch_size=24, logger=None):
     with open(in_file, encoding="utf-8") as f:
         lines = f.readlines()
 
@@ -137,7 +137,7 @@ def _translate(translator, in_file, out_file, batch_size=48, logger=None):
             source=to_translate,
             beam_size=5,
             batch_type="tokens",
-            max_batch_size=1024,
+            max_batch_size=512,
             replace_unknowns=True,
             repetition_penalty=1.2,
             target_prefix=None,

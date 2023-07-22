@@ -165,7 +165,7 @@ def _translate(translator, in_file, out_file, batch_size=48, logger=None):
         logger.info("{} sentences, {:.2f} sentences/sec, {:.2f} sec".format(n, speed, etime))
 
 
-def aug_pivot(tsv_file, sp_en, sp_zh, translator, src_lang, tgt_lang="en", logger=None):
+def aug_pivot(tsv_file, sp_en, sp_zh, translator, src_lang, tgt_lang="en", clean_after_done=False, logger=None):
     if logger:
         logger.info("Processing {}".format(tsv_file))
     src_file = tsv_file + "." + src_lang
@@ -186,22 +186,33 @@ def aug_pivot(tsv_file, sp_en, sp_zh, translator, src_lang, tgt_lang="en", logge
     if logger:
         logger.info("Tokenizing {} into {}...".format(to_translate, tok_output))
     tokenize_file(sp_en, to_translate, tok_output)
+    if clean_after_done:
+        os.remove(to_translate)
 
     out_file = tok_output + ".tozh"
     if logger:
         logger.info("Translating {} into {}...".format(tok_output, out_file))
     _translate(translator, tok_output, out_file, logger=logger)
+    if clean_after_done:
+        os.remove(tok_output)
 
     detok_file = out_file + ".det"
 
     if logger:
         logger.info("Detokenizing {} into {}...".format(out_file, detok_file))
     detokenize_file(sp_zh, out_file, detok_file)
+    if clean_after_done:
+        os.remove(out_file)
 
     zh_file = detok_file + ".zh"
     detok_zh_file(detok_file, zh_file)
+    if clean_after_done:
+        os.remove(detok_file)
 
     single_to_pair(un_translate, zh_file, tsv_file + ".aug2zh", logger_opus=logger)
+    if clean_after_done:
+        os.remove(un_translate)
+        os.remove(zh_file)
 
 
 if __name__ == "__main__":

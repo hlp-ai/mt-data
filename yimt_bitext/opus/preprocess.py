@@ -7,7 +7,7 @@ from pathlib import Path
 from yimt_bitext.opus.utils import extract_zips, merge_moses, split, score_tsv, merge, filter_tsv
 from yimt_bitext.utils.dedup import dedup_bitext_file
 from yimt_bitext.utils.filters import filter_file, EmptyFilter, SameFilter, OverlapFilter, NonZeroNumeralsFilter, \
-    AlphabetRatioFilter, RepetitionFilter, CharacterRatioFilter, get_lang2script
+    AlphabetRatioFilter, RepetitionFilter, CharacterRatioFilter, get_lang2script, LengthFilter
 from yimt_bitext.utils.log import get_logger
 from yimt_bitext.utils.normalizers import ToZhNormalizer, normalize_file, CleanerTSV
 
@@ -68,6 +68,10 @@ def preprocess_dir(in_dir,
         tgt_script = lang2script[tl]
         char_filter = CharacterRatioFilter(scripts=(src_script, tgt_script), thresholds=(0.33, 0.33))
         filters.append(char_filter)
+
+        if target_lang == "en":
+            tgt_len = LengthFilter.space_sep_len_f
+            filters.append(LengthFilter(tgt_len_fn=tgt_len, tgt_lens=(1, 128)))
 
     logger.info(filters)
 

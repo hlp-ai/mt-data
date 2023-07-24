@@ -277,6 +277,8 @@ def score_tsv(in_path, out_path=None,
         for line in buf:
             line = line.strip()
             pair = line.split("\t")
+            if len(pair) != 2:
+                continue
             src = pair[0]
             tgt = pair[1]
             srcs.append(src)

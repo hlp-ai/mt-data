@@ -175,6 +175,11 @@ def merge(source, out_fn, clean_after_merge=False, max=-1, logger_opus=None):
         logger_opus.info("{} exits".format(out_path))
         return out_path
 
+    data_files = list(filter(lambda f: os.path.isfile(f), data_files))
+    if len(data_files) == 0:
+        logger_opus.info("No file to merge")
+        return out_path
+
     out_path = merge_files(data_files, out_path, clean_after_merge=clean_after_merge, max=max, logger_opus=logger_opus)
 
     return out_path

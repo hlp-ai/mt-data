@@ -11,6 +11,54 @@ from yimt_bitext.utils.log import get_logger
 from yimt_bitext.utils.sp import load_spm
 
 
+def aug_from_en(path, sp_en_file, sp_zh_file, ct2_zh_model, src_lang,
+                clean_after_done=True,
+                logger=None):
+    logger.info("***Splitting***")
+    split_dir = os.path.join(os.path.dirname(path), "aug")
+    if not os.path.exists(split_dir):
+        os.mkdir(split_dir)
+        path = shutil.move(path, split_dir)
+        split(path, logger=logger)
+    else:
+        logger.info("{} exits".format(split_dir))
+
+    logger.info("Loading SP model...")
+
+    sp_en = load_spm(sp_en_file)
+    sp_zh = load_spm(sp_zh_file)
+
+    logger.info("Loading ctranslate2 model...")
+
+    translator = ctranslate2.Translator(ct2_zh_model, device="cuda")
+
+    files = os.listdir(split_dir)
+    for f in files:
+        if re.match(r".+\d+$", f):
+            tsv_file = os.path.join(split_dir, f)
+            out_path = tsv_file + ".aug2zh"
+            if os.path.exists(out_path):
+                logger.info("{} exists".format(out_path))
+                continue
+
+            logger.info("**Translating file***")
+            aug_pivot(tsv_file, sp_en, sp_zh, translator, src_lang,
+                      clean_after_done=clean_after_done,
+                      logger=logger)
+
+    logger.info("Merging augmented files...")
+    files = os.listdir(split_dir)
+    to_merge = []
+    for f in files:
+        f = os.path.join(split_dir, f)
+        if f.endswith(".aug2zh"):
+            to_merge.append(f)
+    out_file = os.path.join(os.path.join(split_dir, os.path.basename(path) + ".2zh"))
+    merge_files(to_merge, out_file, logger_opus=logger)
+
+    return out_file
+
+
 if __name__ == "__main__":
     argparser = ArgumentParser()
     argparser.add_argument("--input", required=True, help="input file")
@@ -30,51 +78,4 @@ if __name__ == "__main__":
 
     logger = get_logger(os.path.join(args.log_dir, "opus.log"), "OPUS")
 
-    logger.info("***Splitting***")
-    path = args.input
-    split_dir = os.path.join(os.path.dirname(path), "aug")
-    if not os.path.exists(split_dir):
-        os.mkdir(split_dir)
-        path = shutil.move(path, split_dir)
-        split(path, logger=logger)
-    else:
-        logger.info("{} exits".format(split_dir))
-
-    logger.info("Loading SP model...")
-
-    sp_en_file = args.sp_en_model  # r"/home/liuxf/hdisk/exp/sp/opus-enzh-all-sf.en-sp-32000.model"
-    sp_en = load_spm(sp_en_file)
-
-    sp_zh_file = args.sp_zh_model  # r"/home/liuxf/hdisk/exp/sp/opus-enzh-all-sf.zh.pretok-sp-32000.model"
-    sp_zh = load_spm(sp_zh_file)
-
-    logger.info("Loading ctranslate2 model...")
-
-    translator = ctranslate2.Translator(
-        args.ct2_zh_model,
-        device="cuda"
-    )
-
-    files = os.listdir(split_dir)
-    for f in files:
-        if re.match(r".+\d+$", f):
-            tsv_file = os.path.join(split_dir, f)
-            out_path = tsv_file + ".aug2zh"
-            if os.path.exists(out_path):
-                logger.info("{} exists".format(out_path))
-                continue
-
-            logger.info("**Translating file***")
-            aug_pivot(tsv_file, sp_en, sp_zh, translator, args.src_lang,
-                      clean_after_done=args.clean,
-                      logger=logger)
-
-    logger.info("Merging augmented files...")
-    files = os.listdir(split_dir)
-    to_merge = []
-    for f in files:
-        f = os.path.join(split_dir, f)
-        if f.endswith(".aug2zh"):
-            to_merge.append(f)
-    out_file = os.path.join(os.path.join(split_dir, os.path.basename(path) + ".2zh"))
-    merge_files(to_merge, out_file, logger_opus=logger)
+    aug_from_en(args.input, args.sp_en_model, args.sp_zh_model, args.ct2_zh_model, args.src_lang, args.clean, logger)

@@ -1,7 +1,7 @@
 import argparse
 
 from yimt_bitext.utils.filters import get_lang2script, filter_file, EmptyFilter, SameFilter, OverlapFilter, \
-    NonZeroNumeralsFilter, RepetitionFilter, AlphabetRatioFilter, CharacterRatioFilter
+    NonZeroNumeralsFilter, RepetitionFilter, AlphabetRatioFilter, CharacterRatioFilter, LengthFilter
 from yimt_bitext.utils.log import get_logger
 
 
@@ -25,5 +25,9 @@ if __name__ == "__main__":
     tgt_script = lang2script[tl]
     char_filter = CharacterRatioFilter(scripts=(src_script, tgt_script), thresholds=(0.33, 0.33))
     filters.append(char_filter)
+
+    if tl == "en":
+        tgt_len = LengthFilter.space_sep_len_f
+        filters.append(LengthFilter(tgt_len_fn=tgt_len, tgt_lens=(1, 128)))
 
     filter_file(args.input, filters=filters, out_path=args.output, logger=logger)

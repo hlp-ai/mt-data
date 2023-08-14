@@ -166,6 +166,9 @@ class CleanerTSV(Normalizer):
 
 
 def normalize_file(in_path, normalizers, out_path=None, clean_after_done=False, logger=None):
+    if logger:
+        logger.info(normalizers)
+
     if out_path is None:
         out_path = in_path + ".normalized"
 

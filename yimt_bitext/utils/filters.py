@@ -292,6 +292,9 @@ class RepetitionFilter(Filter):
 
 
 def filter_file(in_path, filters, out_path=None, clean_after_done=False, logger=None):
+    if logger:
+        logger.info(filters)
+
     if out_path is None:
         out_path = in_path + ".filtered"
 

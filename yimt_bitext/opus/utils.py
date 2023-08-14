@@ -307,6 +307,14 @@ def score_tsv(in_path, out_path=None,
     return out_path
 
 
+def score_and_filter_pattern(pattern, start, end, model_path, min_score=0.70, block=16, logger=None):
+    for i in range(start, end):
+        p = pattern.format(i)
+        score_path = score_tsv(p, labse_model_dir=model_path, block=block, logger=logger)
+
+        filter_tsv(score_path, min_score=min_score, logger=logger)
+
+
 def diff_tsv(tsv_file1, tsv_file2, out_file=None, creterion="SRC",
              lower=True, remove_noletter=True,
              logger=None):
@@ -388,7 +396,10 @@ def diff_tsv(tsv_file1, tsv_file2, out_file=None, creterion="SRC",
         logger.info("Total: {}, Diff: {}".format(total, differed))
 
 
-def filter_tsv(in_path, out_path, min_score, logger=None):
+def filter_tsv(in_path, out_path=None, min_score=0.60, logger=None):
+    if out_path is None:
+        out_path = in_path + ".sfilter"
+
     total = 0
     left = 0
     with open(in_path, encoding="utf-8") as in_f, open(out_path, "w", encoding="utf-8") as out_f:

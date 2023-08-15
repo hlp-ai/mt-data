@@ -59,6 +59,9 @@ def dedup_bitext_file(in_path, out_path=None,
                       lower=True, remove_noletter=True,
                       clean_after_done=False, logger=None):
     """Deduplicate bitext file"""
+    if logger:
+        logger.info("dedup_src: {}, dedup_tgt: {}, dedup_srctgt: {}, lower: {}, noletter: {}".format(dedup_src, dedup_tgt, dedup_srctgt, lower, remove_noletter))
+
     pairs = set()
     srcs = set()
     tgts = set()

@@ -27,6 +27,7 @@ if __name__ == "__main__":
     src, tgt = "a b cddd", "A b cddd"
     filtered = False
     for c in cs:
+        print(c)
         r = c.filter(src, tgt)
         if r is None:
             filtered = True

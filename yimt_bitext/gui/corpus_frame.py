@@ -8,6 +8,7 @@ from yimt_bitext.bin import score_and_filter
 from yimt_bitext.gui.win_utils import ask_open_file, ask_save_file, ask_dir
 from yimt_bitext.opus.utils import pair_to_single, single_to_pair, extract_zips, merge_moses, merge, split, \
     score_and_filter_pattern, diff
+from yimt_bitext.utils.count import count
 from yimt_bitext.utils.dedup import dedup_bitext_file
 from yimt_bitext.utils.filters import filter_file, EmptyFilter, SameFilter, OverlapFilter, RepetitionFilter, \
     NonZeroNumeralsFilter, AlphabetRatioFilter, get_lang2script, CharacterRatioFilter, LengthFilter
@@ -635,3 +636,24 @@ def create_detok_zh(parent):
         tk.messagebox.showinfo(title="Info", message="done")
 
     tk.Button(parent, text="Detokenize Chinese Text", command=go).grid(row=2, column=1, padx=10, pady=5)
+
+
+def create_count(parent):
+    tk.Label(parent, text="Input File").grid(row=0, column=0, padx=10, pady=5, sticky="e")
+    entry_corpus_datapath = tk.Entry(parent, width=50)
+    entry_corpus_datapath.grid(row=0, column=1, padx=10, pady=5)
+    tk.Button(parent, text="...", command=partial(ask_open_file, entry=entry_corpus_datapath)).grid(row=0, column=2,
+                                                                                              padx=10, pady=5)
+
+    def go():
+        corpus_datapath = entry_corpus_datapath.get().strip()
+
+        if len(corpus_datapath) == 0:
+            tk.messagebox.showinfo(title="Info", message="Corpus File empty.")
+            return
+
+        count(corpus_datapath, logger=logger_opus)
+
+        tk.messagebox.showinfo(title="Info", message="done")
+
+    tk.Button(parent, text="Count Lines", command=go).grid(row=1, column=1, padx=10, pady=5)

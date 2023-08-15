@@ -6,7 +6,7 @@ from yimt_bitext.gui.corpus_frame import create_tsv2mono_corpus, create_mono2tsv
     create_merge_corpus, create_merge_moses_corpus, create_normalize_corpus, create_filter_corpus, \
     create_score_filter_corpus, create_dedup_corpus, create_han2hans_corpus, \
     create_sample_corpus, create_partition_corpus, create_split_corpus, create_tok_mono, create_detok_zh, \
-    create_diff_corpus
+    create_diff_corpus, create_count
 from yimt_bitext.gui.train_frame import create_sp_train, create_sp_tokenize, create_sp_detokenize
 
 
@@ -122,6 +122,11 @@ if __name__ == "__main__":
     create_sp_detokenize(sp_detokenize_frame)
     frames.append(sp_detokenize_frame)
 
+    count_frame = tk.Frame(win_main)
+    count_frame.pack()
+    create_count(count_frame)
+    frames.append(count_frame)
+
 
     ####################################################################
 
@@ -161,6 +166,11 @@ if __name__ == "__main__":
     tokenize_menu.add_command(label="DeTokenize Chinese Text", command=partial(on_menu, detokenize_frame))
 
     mainmenu.add_cascade(label="Tokenize", menu=tokenize_menu)
+
+    misc_menu = Menu(mainmenu, tearoff=False)
+    misc_menu.add_command(label="Count", command=partial(on_menu, count_frame))
+
+    mainmenu.add_cascade(label="Misc", menu=misc_menu)
 
     win_main.config(menu=mainmenu)
 

@@ -14,7 +14,7 @@ from yimt_bitext.utils.filters import filter_file, EmptyFilter, SameFilter, Over
     NonZeroNumeralsFilter, AlphabetRatioFilter, get_lang2script, CharacterRatioFilter, LengthFilter
 from yimt_bitext.utils.log import get_logger
 from yimt_bitext.utils.normalizers import normalize_file, ToZhNormalizer, CleanerTSV
-from yimt_bitext.utils.tokenize import tokenize_single, detok_zh
+from yimt_bitext.utils.tokenization import tokenize_single, detok_zh
 
 logger_opus = get_logger("./opus.log", "CORPUS")
 

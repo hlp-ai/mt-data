@@ -133,10 +133,25 @@ class PairPunctNormalizer(Normalizer):
 class Hant2Hans(Normalizer):
     """Traditional Chinese to Simplified Chinese"""
 
-    def normalize(self, s):
-        s = hant_2_hans(s)
+    def __init__(self, src=False, tgt=True):
+        self.src = src
+        self.tgt = tgt
 
-        return s
+    def normalize(self, s):
+        s = s.strip()
+        pair = s.split("\t")
+        if len(pair) != 2:
+            return ""
+
+        src = pair[0]
+        tgt = pair[1]
+
+        if self.src:
+            src = hant_2_hans(src)
+        if self.tgt:
+            tgt = hant_2_hans(tgt)
+
+        return src + "\t" + tgt
 
 
 class ToZhNormalizer(Normalizer):

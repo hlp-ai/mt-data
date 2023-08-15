@@ -1,4 +1,4 @@
-from yimt_bitext.utils.filters import get_lang2script, CharacterRatioFilter, AlphabetRatioFilter
+from yimt_bitext.utils.filters import get_lang2script, CharacterRatioFilter, AlphabetRatioFilter, load_filters
 
 if __name__ == "__main__":
     lang2script = get_lang2script()
@@ -20,3 +20,15 @@ if __name__ == "__main__":
 
     alphabet_filter = AlphabetRatioFilter(threshold=0.75, exclude_whitespace=True)
     print(alphabet_filter.filter("2000 나는 왜 권투 심판이 되려하는가", "2000在为什么我想成为一名拳击裁判?"))
+
+    cs = load_filters("../utils/filters.yml")
+    print(cs)
+
+    src, tgt = "a b cddd", "A b cddd"
+    filtered = False
+    for c in cs:
+        r = c.filter(src, tgt)
+        if r is None:
+            filtered = True
+            break
+    print(filtered)

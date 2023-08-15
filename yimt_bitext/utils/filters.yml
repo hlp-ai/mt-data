@@ -1,9 +1,7 @@
 filters:
-  - f1:
-      name: EmptyFilter
+  - EmptyFilter:
       params: null
 
-  - f2:
-      name: SameFilter
+  - SameFilter:
       params:
         lower: true

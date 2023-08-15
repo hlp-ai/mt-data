@@ -4,6 +4,7 @@ import os
 import string
 
 import regex
+import yaml
 
 from yimt_bitext.utils.lang import detect_lang
 
@@ -338,6 +339,36 @@ def filter_file(in_path, filters, out_path=None, clean_after_done=False, logger=
         os.remove(in_path)
 
     return out_path
+
+
+name2filter = {"EmptyFilter": EmptyFilter,
+               "SameFilter": SameFilter,
+               "OverlapFilter": OverlapFilter,
+               "LangFilter": LangFilter,
+               "LengthFilter": LengthFilter,
+               "AlphabetRatioFilter": AlphabetRatioFilter,
+               "CharacterRatioFilter": CharacterRatioFilter,
+               "NonZeroNumeralsFilter": NonZeroNumeralsFilter,
+               "RepetitionFilter": RepetitionFilter,
+               }
+
+
+def load_filters(yml_file):
+    with open(yml_file, encoding="utf-8") as config_file:
+        config = yaml.safe_load(config_file.read())
+
+        filters = []
+
+        for f in config["filters"]:
+            for k, v in f.items():
+                filter_name = k
+                filter_params = v["params"]
+                if filter_params:
+                    filters.append(name2filter[filter_name](**filter_params))
+                else:
+                    filters.append(name2filter[filter_name]())
+
+        return filters
 
 
 if __name__ == "__main__":

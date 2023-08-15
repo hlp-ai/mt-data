@@ -143,7 +143,6 @@ if __name__ == "__main__":
     corpus_menu.add_command(label="Score and Filter", command=partial(on_menu, score_filter_frame))
     corpus_menu.add_separator()
     corpus_menu.add_command(label="Diff", command=partial(on_menu, diff_frame))
-    corpus_menu.add_command(label="Hant2Hans", command=partial(on_menu, han2Hans_frame))
     corpus_menu.add_command(label="Sample", command=partial(on_menu, sample_frame))
     corpus_menu.add_command(label="Partition", command=partial(on_menu, partition_frame))
     corpus_menu.add_separator()
@@ -169,6 +168,7 @@ if __name__ == "__main__":
 
     misc_menu = Menu(mainmenu, tearoff=False)
     misc_menu.add_command(label="Count", command=partial(on_menu, count_frame))
+    misc_menu.add_command(label="Hant2Hans", command=partial(on_menu, han2Hans_frame))
 
     mainmenu.add_cascade(label="Misc", menu=misc_menu)
 

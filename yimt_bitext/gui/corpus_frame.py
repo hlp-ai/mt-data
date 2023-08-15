@@ -464,13 +464,13 @@ def create_mono2tsv_corpus(parent):
 
 
 def create_han2hans_corpus(parent):
-    tk.Label(parent, text="input").grid(row=0, column=0, padx=10, pady=5, sticky="e")
+    tk.Label(parent, text="Input File").grid(row=0, column=0, padx=10, pady=5, sticky="e")
     entry_han2hans_in = tk.Entry(parent, width=50)
     entry_han2hans_in.grid(row=0, column=1, padx=10, pady=5)
     tk.Button(parent, text="...", command=partial(ask_open_file, entry=entry_han2hans_in)).grid(row=0, column=2,
                                                                                                 padx=10, pady=5)
 
-    tk.Label(parent, text="output").grid(row=1, column=0, padx=10, pady=5, sticky="e")
+    tk.Label(parent, text="Output File").grid(row=1, column=0, padx=10, pady=5, sticky="e")
     entry_han2hans_out = tk.Entry(parent, width=50)
     entry_han2hans_out.grid(row=1, column=1, padx=10, pady=5)
     tk.Button(parent, text="...", command=partial(ask_save_file, entry=entry_han2hans_out)).grid(row=1, column=2,
@@ -488,7 +488,7 @@ def create_han2hans_corpus(parent):
 
         tk.messagebox.showinfo(title="Info", message="done")
 
-    tk.Button(parent, text="Convert file in traditional Chinese into file in simplified Chinese", \
+    tk.Button(parent, text="Hant2Hans", \
               command=go).grid(row=5, column=1, padx=10, pady=5)
 
 

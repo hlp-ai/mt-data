@@ -58,6 +58,7 @@ class Normalizer(object):
 
 
 class Cleaner(Normalizer):
+
     def normalize(self, s):
         s = s.strip()
         s = clean_text(s)
@@ -68,10 +69,25 @@ class Cleaner(Normalizer):
 class DeTokenizer(Normalizer):
     """Remove unnecessary spaces"""
 
+    def __init__(self, src=False, tgt=True):
+        self.src = src
+        self.tgt = tgt
+
     def normalize(self, s):
         s = s.strip()
-        s = detok_zh_str(s)
-        return s
+        pair = s.split("\t")
+        if len(pair) != 2:
+            return ""
+
+        src = pair[0]
+        tgt = pair[1]
+
+        if self.src:
+            src = detok_zh_str(src)
+        if self.tgt:
+            tgt = detok_zh_str(tgt)
+
+        return src + "\t" + tgt
 
 
 punct_pairs = [('“', '”'), ('"', '"'), ("‘", "’"), ("（", "）"), ("《", "》"), ("(", ")")]

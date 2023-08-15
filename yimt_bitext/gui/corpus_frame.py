@@ -5,6 +5,7 @@ import tkinter.messagebox
 from functools import partial
 
 from yimt_bitext.bin import score_and_filter
+from yimt_bitext.bin.hant2hans import hant2s_file
 from yimt_bitext.gui.win_utils import ask_open_file, ask_save_file, ask_dir
 from yimt_bitext.opus.utils import pair_to_single, single_to_pair, extract_zips, merge_moses, merge, split, \
     score_and_filter_pattern, diff
@@ -483,13 +484,11 @@ def create_han2hans_corpus(parent):
             tk.messagebox.showinfo(title="Info", message="Some parameter empty.")
             return
 
-        convert_cmd = "python ../corpus/bin/hant2hans.py {} {}"
-        os.popen(convert_cmd.format(corpus_han2hans_in, corpus_han2hans_out)).readlines()
+        hant2s_file(corpus_han2hans_in, corpus_han2hans_out)
 
         tk.messagebox.showinfo(title="Info", message="done")
 
-    tk.Button(parent, text="Hant2Hans", \
-              command=go).grid(row=5, column=1, padx=10, pady=5)
+    tk.Button(parent, text="Hant2Hans", command=go).grid(row=5, column=1, padx=10, pady=5)
 
 
 def create_sample_corpus(parent):

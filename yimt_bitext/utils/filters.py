@@ -225,6 +225,37 @@ class CharacterRatioFilter(Filter):
         return src, tgt
 
 
+class CharacterRatio2Filter(Filter):
+    """Proportion of alphabetic characters that are in the given script
+
+    For a list of valid scripts, see e.g.
+    https://www.regular-expressions.info/unicode.html
+
+    """
+
+    def __init__(self, src_script, tgt_script,
+                 src_threshold=0, tgt_threshold=0):
+        self.scripts = [src_script, tgt_script]
+        self.thresholds = [src_threshold, tgt_threshold]
+        self.re_not_alphas = regex.compile(r'\p{Alphabetic=No}')
+        self.re_not_script = [regex.compile(fr'\p{{^Script={script}}}')
+                              for script in self.scripts]
+
+    def score(self, sent, idx):
+        alphas = self.re_not_alphas.sub('', sent)
+        if alphas:
+            script = self.re_not_script[idx].sub('', alphas)
+            return len(script) / len(alphas)
+        else:
+            return 0.0
+
+    def filter(self, src, tgt):
+        if self.score(src, 0) < self.thresholds[0] or self.score(tgt, 1) < self.thresholds[1]:
+            return None
+
+        return src, tgt
+
+
 class NonZeroNumeralsFilter(Filter):
     """Similarity measure between numerals of the two sentences with zeros removed
 
@@ -278,12 +309,11 @@ class RepetitionFilter(Filter):
 
     """
 
-    def __init__(self, threshold=2, min_length=3, max_length=16, **kwargs):
+    def __init__(self, threshold=2, min_length=3, max_length=16):
         self._threshold = threshold
         self._min_length = min_length
         self._max_length = max_length
         self._regexp = self._get_regexp()
-        super().__init__(**kwargs)
 
     @property
     def min_length(self):
@@ -389,6 +419,7 @@ name2filter = {"EmptyFilter": EmptyFilter,
                "LengthFilter": LengthFilter,
                "AlphabetRatioFilter": AlphabetRatioFilter,
                "CharacterRatioFilter": CharacterRatioFilter,
+               "CharacterRatio2Filter": CharacterRatio2Filter,
                "NonZeroNumeralsFilter": NonZeroNumeralsFilter,
                "RepetitionFilter": RepetitionFilter,
                "LengthUnitFilter": LengthUnitFilter,

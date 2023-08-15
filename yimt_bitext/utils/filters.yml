@@ -5,3 +5,13 @@ filters:
   - SameFilter:
       params:
         lower: true
+
+  - LengthUnitFilter:
+      params:
+        src_unit: word
+        tgt_unit: word
+        src_min_len: 1
+        src_max_len: 20
+        tgt_min_len: 1
+        tgt_max_len: 20
+        ratio: 6

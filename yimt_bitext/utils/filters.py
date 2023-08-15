@@ -120,6 +120,47 @@ class LengthFilter(Filter):
             return src, tgt
 
 
+class LengthUnitFilter(Filter):
+
+    space_sep_len_f = lambda s: len(s.split())
+    char_len_f = lambda s: len(s)
+
+    def __init__(self, src_unit="word", tgt_unit="char",
+                 src_min_len=None, src_max_len=None,
+                 tgt_min_len=None, tgt_max_len=None,
+                 ratio=None):
+        self.src_min_len = src_min_len
+        self.src_max_len = src_max_len
+        self.tgt_min_len = tgt_min_len
+        self.tgt_max_len = tgt_max_len
+
+        self.src_len_fn = LengthUnitFilter.space_sep_len_f if src_unit=="word" else LengthUnitFilter.char_len_f
+        self.tgt_len_fn = LengthUnitFilter.space_sep_len_f if tgt_unit=="word" else LengthUnitFilter.char_len_f
+
+        self.ratio = ratio
+
+    def filter(self, src, tgt):
+        src_len = self.src_len_fn(src)
+        tgt_len = self.tgt_len_fn(tgt)
+
+        if self.src_min_len is not None and src_len < self.src_min_len:
+            return None
+        if self.src_max_len is not None and src_len > self.src_max_len:
+            return None
+        if self.tgt_min_len is not None and tgt_len < self.tgt_min_len:
+            return None
+        if self.tgt_max_len is not None and tgt_len > self.tgt_max_len:
+            return None
+
+        if self.ratio is not None:
+            if src_len <= self.ratio * tgt_len and tgt_len <= self.ratio * src_len:
+                return src, tgt
+            else:
+                return None
+        else:
+            return src, tgt
+
+
 class AlphabetRatioFilter(Filter):
     """Proportion of alphabetic characters in the segment"""
 
@@ -350,6 +391,7 @@ name2filter = {"EmptyFilter": EmptyFilter,
                "CharacterRatioFilter": CharacterRatioFilter,
                "NonZeroNumeralsFilter": NonZeroNumeralsFilter,
                "RepetitionFilter": RepetitionFilter,
+               "LengthUnitFilter": LengthUnitFilter,
                }
 
 

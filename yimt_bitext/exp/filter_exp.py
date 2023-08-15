@@ -24,12 +24,13 @@ if __name__ == "__main__":
     cs = load_filters("../utils/filters.yml")
     print(cs)
 
-    src, tgt = "a b cddd", "A b cddd"
+    src, tgt = "a b", "d d ff gg ee gg f dd ff "
     filtered = False
     for c in cs:
         print(c)
         r = c.filter(src, tgt)
         if r is None:
             filtered = True
+            print("Filtered by", c)
             break
-    print(filtered)
+    print("Filtered:", filtered)

@@ -1,6 +1,7 @@
 import os
 import re
 
+import yaml
 import zhconv
 
 from yimt_bitext.utils.chars import is_ascii_char, is_en_punct
@@ -228,3 +229,31 @@ def normalize_file(in_path, normalizers, out_path=None, clean_after_done=False, 
         os.remove(in_path)
 
     return out_path
+
+
+name2normalizer = {"CleanerTSV": CleanerTSV,
+                   "DeTokenizer": DeTokenizer,
+                   "Hant2Hans": Hant2Hans}
+
+
+def load_normalizers(yml_file):
+    with open(yml_file, encoding="utf-8") as config_file:
+        config = yaml.safe_load(config_file.read())
+
+        normalizers = []
+
+        for f in config["normalizers"]:
+            for k, v in f.items():
+                class_name = k
+                class_params = v["params"]
+                if class_params:
+                    normalizers.append(name2normalizer[class_name](**class_params))
+                else:
+                    normalizers.append(name2normalizer[class_name]())
+
+        return normalizers
+
+
+if __name__ == "__main__":
+    fs = load_normalizers("./normalizers.yml")
+    print(fs)

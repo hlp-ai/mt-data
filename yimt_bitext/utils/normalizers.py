@@ -255,5 +255,10 @@ def load_normalizers(yml_file):
 
 
 if __name__ == "__main__":
-    fs = load_normalizers("./normalizers.yml")
-    print(fs)
+    cs = load_normalizers("./normalizers.yml")
+    print(cs)
+
+    text = "how   are you\t我 喜欢 book ."
+    for c in cs:
+        text = c.normalize(text)
+    print(text)

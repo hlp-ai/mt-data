@@ -1,20 +1,17 @@
-import os
 import tkinter as tk
 from tkinter import *
 import tkinter.messagebox
 from functools import partial
 
-from yimt_bitext.bin import score_and_filter
 from yimt_bitext.bin.hant2hans import hant2s_file
 from yimt_bitext.gui.win_utils import ask_open_file, ask_save_file, ask_dir
 from yimt_bitext.opus.utils import pair_to_single, single_to_pair, extract_zips, merge, split, \
     score_and_filter_pattern, diff, merge_moses_only
 from yimt_bitext.utils.count import count
 from yimt_bitext.utils.dedup import dedup_bitext_file
-from yimt_bitext.utils.filters import filter_file, EmptyFilter, SameFilter, OverlapFilter, RepetitionFilter, \
-    NonZeroNumeralsFilter, AlphabetRatioFilter, get_lang2script, CharacterRatioFilter, LengthFilter
+from yimt_bitext.utils.filters import filter_file, load_filters
 from yimt_bitext.utils.log import get_logger
-from yimt_bitext.utils.normalizers import normalize_file, ToZhNormalizer, CleanerTSV, load_normalizers
+from yimt_bitext.utils.normalizers import normalize_file, load_normalizers
 from yimt_bitext.utils.tokenization import tokenize_single, detok_zh
 
 logger_opus = get_logger("./opus.log", "CORPUS")
@@ -273,38 +270,25 @@ def create_filter_corpus(parent):
     tk.Button(parent, text="...", command=partial(ask_save_file, entry=entry_filter_out)).grid(row=1, column=2,
                                                                                                padx=10, pady=5)
 
-    tk.Label(parent, text="Language Pair").grid(row=2, column=0, padx=10, pady=5, sticky="e")
-    entry_filter_langpair = tk.Entry(parent, width=50)
-    entry_filter_langpair.grid(row=2, column=1, padx=10, pady=5)
-    entry_filter_langpair.insert(0, "en-zh")
+    tk.Label(parent, text="Filters Conf File").grid(row=2, column=0, padx=10, pady=5, sticky="e")
+    entry_filter_conf = tk.Entry(parent, width=50)
+    entry_filter_conf.grid(row=2, column=1, padx=10, pady=5)
+    tk.Button(parent, text="...", command=partial(ask_open_file, entry=entry_filter_conf)).grid(row=2, column=2,
+                                                                                                   padx=10, pady=5)
 
     def go():
         corpus_filter_in = entry_filter_in.get().strip()
         corpus_filter_out = entry_filter_out.get().strip()
-        corpus_filter_langpair = entry_filter_langpair.get().strip()
+        corpus_filter_conf = entry_filter_conf.get().strip()
 
         if len(corpus_filter_out) == 0:
             corpus_filter_out = corpus_filter_in + ".filtered"
 
-        if len(corpus_filter_in) == 0:
+        if len(corpus_filter_in) == 0 or len(corpus_filter_conf)==0:
             tk.messagebox.showinfo(title="Info", message="Input parameter empty.")
             return
 
-        filters = [EmptyFilter(), SameFilter(), OverlapFilter(ratio=0.80), NonZeroNumeralsFilter(threshold=1.0),
-                   AlphabetRatioFilter(threshold=0.33, exclude_whitespace=True), RepetitionFilter()]
-
-        lang2script = get_lang2script()
-
-        lang_pair = corpus_filter_langpair
-        sl, tl = lang_pair.split("-")
-        src_script = lang2script[sl]
-        tgt_script = lang2script[tl]
-        char_filter = CharacterRatioFilter(scripts=(src_script, tgt_script), thresholds=(0.33, 0.33))
-        filters.append(char_filter)
-
-        if tl == "en":
-            tgt_len = LengthFilter.space_sep_len_f
-            filters.append(LengthFilter(tgt_len_fn=tgt_len, tgt_lens=(1, 128)))
+        filters = load_filters(corpus_filter_conf)
 
         filter_file(corpus_filter_in, filters=filters, out_path=corpus_filter_out, logger=logger_opus)
 

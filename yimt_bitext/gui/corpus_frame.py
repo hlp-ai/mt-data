@@ -14,7 +14,7 @@ from yimt_bitext.utils.dedup import dedup_bitext_file
 from yimt_bitext.utils.filters import filter_file, EmptyFilter, SameFilter, OverlapFilter, RepetitionFilter, \
     NonZeroNumeralsFilter, AlphabetRatioFilter, get_lang2script, CharacterRatioFilter, LengthFilter
 from yimt_bitext.utils.log import get_logger
-from yimt_bitext.utils.normalizers import normalize_file, ToZhNormalizer, CleanerTSV
+from yimt_bitext.utils.normalizers import normalize_file, ToZhNormalizer, CleanerTSV, load_normalizers
 from yimt_bitext.utils.tokenization import tokenize_single, detok_zh
 
 logger_opus = get_logger("./opus.log", "CORPUS")
@@ -119,7 +119,7 @@ def create_merge_corpus(parent):
 
 
 def create_normalize_corpus(parent):
-    tk.Label(parent, text="Input TSV file").grid(row=0, column=0, padx=10, pady=5, sticky="e")
+    tk.Label(parent, text="Input TSV File").grid(row=0, column=0, padx=10, pady=5, sticky="e")
     entry_normalize_in = tk.Entry(parent, width=50)
     entry_normalize_in.grid(row=0, column=1, padx=10, pady=5)
     tk.Button(parent, text="...", command=partial(ask_open_file, entry=entry_normalize_in)).grid(row=0, column=2,
@@ -132,10 +132,11 @@ def create_normalize_corpus(parent):
                                                                                                   padx=10,
                                                                                                   pady=5)
 
-    tk.Label(parent, text="About Chinese").grid(row=2, column=0, padx=10, pady=5, sticky="e")
-    entry_zh = tk.Entry(parent, width=50)
-    entry_zh.grid(row=2, column=1, padx=10, pady=5)
-    entry_zh.insert(0, "tozh")
+    tk.Label(parent, text="Normalizers Conf File").grid(row=2, column=0, padx=10, pady=5, sticky="e")
+    entry_normalize_conf = tk.Entry(parent, width=50)
+    entry_normalize_conf.grid(row=2, column=1, padx=10, pady=5)
+    tk.Button(parent, text="...", command=partial(ask_open_file, entry=entry_normalize_conf)).grid(row=2, column=2,
+                                                                                                 padx=10, pady=5)
 
     def go():
         corpus_normalize_in = entry_normalize_in.get().strip()
@@ -143,16 +144,13 @@ def create_normalize_corpus(parent):
         if len(corpus_normalize_out) == 0:
             corpus_normalize_out = corpus_normalize_in + ".normalized"
 
-        zh = entry_zh.get().strip()
+        conf = entry_normalize_conf.get().strip()
 
-        if len(corpus_normalize_in) == 0:
+        if len(corpus_normalize_in) == 0 or len(conf)==0:
             tk.messagebox.showinfo(title="Info", message="Input parameter empty.")
             return
 
-        if zh == "tozh":
-            normalizers = [ToZhNormalizer()]
-        else:
-            normalizers = [CleanerTSV()]
+        normalizers = load_normalizers(conf)
 
         normalize_file(corpus_normalize_in, normalizers, out_path=corpus_normalize_out, logger=logger_opus)
 

@@ -150,6 +150,52 @@ def merge_moses(in_dir, source_lang=None, target_lang=None, out_dir=None,
     return out_dir
 
 
+def merge_moses_only(in_dir, source_lang=None, target_lang=None, out_dir=None,
+                clean_after_merge=False,logger_opus=None):
+    assert source_lang is not None or target_lang is not None
+
+    if out_dir is None:
+        out_dir = os.path.join(in_dir, "tsv")
+
+    if os.path.exists(out_dir):
+        logger_opus.info("{} exits".format(out_dir))
+        return out_dir
+
+    files = os.listdir(in_dir)
+    assert len(files)%2 == 0
+
+    files = list(sorted(files))
+
+    if not os.path.exists(out_dir):
+        os.makedirs(out_dir, exist_ok=True)
+
+    for i in range(0, len(files), 2):
+        f1 = files[i]
+        f2 = files[i+1]
+        idx = f1.rfind(".")
+        bname = f1[:idx]
+        outf = os.path.join(out_dir, bname + ".tsv")
+        f1 = os.path.join(in_dir, f1)
+        f2 = os.path.join(in_dir, f2)
+
+        if source_lang is not None:
+            if f1.endswith(source_lang):
+                single_to_pair(f1, f2, outf, logger_opus)
+            elif f2.endswith(source_lang):
+                single_to_pair(f2, f1, outf, logger_opus)
+        elif target_lang is not None:
+            if f1.endswith(target_lang):
+                single_to_pair(f2, f1, outf, logger_opus)
+            elif f2.endswith(target_lang):
+                single_to_pair(f1, f2, outf, logger_opus)
+
+        if clean_after_merge:
+            os.remove(f1)
+            os.remove(f2)
+
+    return out_dir
+
+
 def get_files(source):
     if isinstance(source, list):
         data_files = []

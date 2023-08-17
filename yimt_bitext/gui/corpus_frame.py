@@ -7,8 +7,8 @@ from functools import partial
 from yimt_bitext.bin import score_and_filter
 from yimt_bitext.bin.hant2hans import hant2s_file
 from yimt_bitext.gui.win_utils import ask_open_file, ask_save_file, ask_dir
-from yimt_bitext.opus.utils import pair_to_single, single_to_pair, extract_zips, merge_moses, merge, split, \
-    score_and_filter_pattern, diff
+from yimt_bitext.opus.utils import pair_to_single, single_to_pair, extract_zips, merge, split, \
+    score_and_filter_pattern, diff, merge_moses_only
 from yimt_bitext.utils.count import count
 from yimt_bitext.utils.dedup import dedup_bitext_file
 from yimt_bitext.utils.filters import filter_file, EmptyFilter, SameFilter, OverlapFilter, RepetitionFilter, \
@@ -83,7 +83,7 @@ def create_merge_moses_corpus(parent):
         if len(corpus_mergemoses_tl) == 0:
             corpus_mergemoses_tl = None
 
-        merge_moses(corpus_mergemoses_datapath, corpus_mergemoses_sl, corpus_mergemoses_tl, corpus_output_path,
+        merge_moses_only(corpus_mergemoses_datapath, corpus_mergemoses_sl, corpus_mergemoses_tl, corpus_output_path,
                     logger_opus=logger_opus)
         tk.messagebox.showinfo(title="Info", message="done")
 

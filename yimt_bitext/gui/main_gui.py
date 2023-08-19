@@ -1,13 +1,4 @@
-import tkinter as tk
-from functools import partial
-from tkinter import *
-
-from yimt_bitext.gui.corpus_frame import create_tsv2mono_corpus, create_mono2tsv_corpus, create_unzip_corpus, \
-    create_merge_corpus, create_merge_moses_corpus, create_normalize_corpus, create_filter_corpus, \
-    create_score_filter_corpus, create_dedup_corpus, create_han2hans_corpus, \
-    create_sample_corpus, create_partition_corpus, create_split_corpus, create_tok_mono, create_detok_zh, \
-    create_diff_corpus, create_count
-from yimt_bitext.gui.train_frame import create_sp_train, create_sp_tokenize, create_sp_detokenize
+from yimt_bitext.gui.frames import *
 
 
 def on_menu(frame):

@@ -4,6 +4,7 @@ from tkinter import *
 import tkinter.messagebox
 from functools import partial
 
+from yimt_bitext.bin.remove_scores import strip_scores
 from yimt_bitext.utils.sp import train_spm, load_spm, tokenize_file, detokenize_file
 
 from yimt_bitext.bin.hant2hans import hant2s_file
@@ -807,3 +808,33 @@ def create_sp_detokenize(parent):
         tk.messagebox.showinfo(title="Info", message="Done")
 
     tk.Button(parent, text="DeTokenize with SP", command=go).grid(row=3, column=1, padx=10, pady=5)
+
+
+def create_noscores_corpus(parent):
+    tk.Label(parent, text="Input File").grid(row=0, column=0, padx=10, pady=5, sticky="e")
+    entry_input = tk.Entry(parent, width=50)
+    entry_input.grid(row=0, column=1, padx=10, pady=5)
+    tk.Button(parent, text="...", command=partial(ask_open_file, entry=entry_input)).grid(row=0, column=2,
+                                                                                                padx=10, pady=5)
+
+    tk.Label(parent, text="Output File").grid(row=1, column=0, padx=10, pady=5, sticky="e")
+    entry_output = tk.Entry(parent, width=50)
+    entry_output.grid(row=1, column=1, padx=10, pady=5)
+    tk.Button(parent, text="...", command=partial(ask_save_file, entry=entry_output)).grid(row=1, column=2,
+                                                                                                 padx=10, pady=5)
+
+    def go():
+        corpus_in = entry_output.get().strip()
+        corpus_out = entry_output.get().strip()
+        if len(corpus_in) == 0:
+            tk.messagebox.showinfo(title="Info", message="Some parameter empty.")
+            return
+
+        if len(corpus_out) == 0:
+            corpus_out = None
+
+        strip_scores(corpus_in, corpus_out, logger=logger_opus)
+
+        tk.messagebox.showinfo(title="Info", message="done")
+
+    tk.Button(parent, text="Strip Scores from Scored TSV", command=go).grid(row=2, column=1, padx=10, pady=5)

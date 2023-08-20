@@ -68,11 +68,6 @@ if __name__ == "__main__":
     create_diff_corpus(diff_frame)
     frames.append(diff_frame)
 
-    han2Hans_frame = tk.Frame(win_main)
-    han2Hans_frame.pack()
-    create_han2hans_corpus(han2Hans_frame)
-    frames.append(han2Hans_frame)
-
     sample_frame = tk.Frame(win_main)
     sample_frame.pack()
     create_sample_corpus(sample_frame)
@@ -118,6 +113,16 @@ if __name__ == "__main__":
     create_count(count_frame)
     frames.append(count_frame)
 
+    han2Hans_frame = tk.Frame(win_main)
+    han2Hans_frame.pack()
+    create_han2hans_corpus(han2Hans_frame)
+    frames.append(han2Hans_frame)
+
+    no_scores_frame = tk.Frame(win_main)
+    no_scores_frame.pack()
+    create_noscores_corpus(no_scores_frame)
+    frames.append(no_scores_frame)
+
 
     ####################################################################
 
@@ -160,6 +165,7 @@ if __name__ == "__main__":
     misc_menu = Menu(mainmenu, tearoff=False)
     misc_menu.add_command(label="Count", command=partial(on_menu, count_frame))
     misc_menu.add_command(label="Hant2Hans", command=partial(on_menu, han2Hans_frame))
+    misc_menu.add_command(label="Strip Scores", command=partial(on_menu, no_scores_frame))
 
     mainmenu.add_cascade(label="Misc", menu=misc_menu)
 

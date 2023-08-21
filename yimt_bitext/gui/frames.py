@@ -824,7 +824,7 @@ def create_noscores_corpus(parent):
                                                                                                  padx=10, pady=5)
 
     def go():
-        corpus_in = entry_output.get().strip()
+        corpus_in = entry_input.get().strip()
         corpus_out = entry_output.get().strip()
         if len(corpus_in) == 0:
             tk.messagebox.showinfo(title="Info", message="Some parameter empty.")

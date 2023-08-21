@@ -487,6 +487,9 @@ def detok_zh_file(in_file, out_file=None):
 def diff(tsv_file1, tsv_file2, out_file=None, creterion="SRC",
              lower=True, remove_noletter=True,
          logger=None):
+    if logger:
+        logger.info("Cond: {} lower: {} no_letter: {}".format(creterion, lower, remove_noletter))
+
     if out_file is None:
         out_file = tsv_file1 + ".diffed"
     pairs = set()

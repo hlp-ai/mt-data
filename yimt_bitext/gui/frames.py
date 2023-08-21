@@ -241,11 +241,18 @@ def create_diff_corpus(parent):
     entry_cond.grid(row=3, column=1, padx=10, pady=5)
     entry_cond.insert(0, "SRC")
 
+    var_noletter = IntVar()
+    check_noletter = Checkbutton(parent, text="No Letter", variable=var_noletter, onvalue=1, offvalue=0)
+    check_noletter.grid(row=4, column=1, padx=10, pady=5)
+    check_noletter.select()
+
     def go():
         corpus_dedup_base = entry_dedup_base.get().strip()
         corpus_dedup_in = entry_dedup_in.get().strip()
         corpus_dedup_out = entry_dedup_out.get().strip()
         diff_cond = entry_cond.get().strip()
+
+        no_letter = True if var_noletter.get() == 1 else False
 
         if len(corpus_dedup_out) == 0:
             corpus_dedup_out = None
@@ -254,11 +261,12 @@ def create_diff_corpus(parent):
             tk.messagebox.showinfo(title="Info", message="Input parameter empty.")
             return
 
-        diff(corpus_dedup_base, corpus_dedup_in, corpus_dedup_out, creterion=diff_cond, logger=logger_opus)
+        diff(corpus_dedup_base, corpus_dedup_in, corpus_dedup_out, creterion=diff_cond,
+             remove_noletter=no_letter, logger=logger_opus)
 
         tk.messagebox.showinfo(title="Info", message="done")
 
-    tk.Button(parent, text="C1-C2", command=go).grid(row=4, column=1, padx=10, pady=5)
+    tk.Button(parent, text="C1-C2", command=go).grid(row=5, column=1, padx=10, pady=5)
 
 
 def create_filter_corpus(parent):

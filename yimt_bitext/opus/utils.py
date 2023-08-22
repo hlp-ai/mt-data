@@ -442,6 +442,84 @@ def diff_tsv(tsv_file1, tsv_file2, out_file=None, creterion="SRC",
         logger.info("Total: {}, Diff: {}".format(total, differed))
 
 
+def intersect(tsv_file1, tsv_file2, out_file, creterion="SRC",
+             lower=True, remove_noletter=True, logger=None):
+    pairs = set()
+    srcs = set()
+    tgts = set()
+    total = 0
+
+    if logger:
+        logger.info("Scanning {}...".format(tsv_file1))
+
+    with open(tsv_file1, encoding="utf-8") as bf:
+        for p in bf:
+            total += 1
+            if total % 100000 == 0:
+                if logger:
+                    logger.info("{}".format(total))
+            p = p.strip()
+            pp = p.split("\t")
+            if len(pp) != 2:
+                continue
+            src = pp[0].strip()
+            tgt = pp[1].strip()
+            src = norm(src, lower, remove_noletter)
+            hs = hash(src)
+            srcs.add(hs)
+
+            tgt = norm(tgt, lower, remove_noletter)
+            ht = hash(tgt)
+            tgts.add(ht)
+
+            p = norm(p, lower, remove_noletter)
+            h = hash(p)
+            pairs.add(h)
+
+    print(total)
+
+    intersected = 0
+    total = 0
+
+    if logger:
+        logger.info("Scanning {}...".format(tsv_file2))
+    with open(tsv_file2, encoding="utf-8") as f, open(out_file, "w", encoding="utf-8") as out_f:
+        for p in f:
+            p = p.strip()
+            total += 1
+            if total % 100000 == 0:
+                if logger:
+                    logger.info("Total: {} Intersected: {}".format(total, intersected))
+
+            if creterion == "SRC" or creterion == "TGT":
+                pp = p.split("\t")
+                if len(pp) != 2:
+                    continue
+                src = pp[0].strip()
+                tgt = pp[1].strip()
+                if creterion == "SRC":
+                    src = norm(src, lower, remove_noletter)
+                    hs = hash(src)
+                    if hs in srcs:
+                        out_f.write(p + "\n")
+                        intersected += 1
+                else:
+                    tgt = norm(tgt, lower, remove_noletter)
+                    ht = hash(tgt)
+                    if ht in tgts:
+                        out_f.write(p + "\n")
+                        intersected += 1
+            else:
+                pn = norm(p, lower, remove_noletter)
+                h = hash(pn)
+                if h in pairs:
+                    out_f.write(p + "\n")
+                    intersected += 1
+
+    if logger:
+        logger.info("Total: {} Intersected: {}".format(total, intersected))
+
+
 def filter_tsv(in_path, out_path=None, min_score=0.60, logger=None):
     if out_path is None:
         out_path = in_path + ".sfilter"

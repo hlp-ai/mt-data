@@ -10,7 +10,7 @@ from yimt_bitext.utils.sp import train_spm, load_spm, tokenize_file, detokenize_
 from yimt_bitext.bin.hant2hans import hant2s_file
 from yimt_bitext.gui.win_utils import ask_open_file, ask_save_file, ask_dir
 from yimt_bitext.opus.utils import pair_to_single, single_to_pair, extract_zips, merge, split, \
-    score_and_filter_pattern, diff, merge_moses_only
+    score_and_filter_pattern, diff, merge_moses_only, intersect
 from yimt_bitext.utils.count import count
 from yimt_bitext.utils.dedup import dedup_bitext_file
 from yimt_bitext.utils.filters import filter_file, load_filters
@@ -267,6 +267,54 @@ def create_diff_corpus(parent):
         tk.messagebox.showinfo(title="Info", message="done")
 
     tk.Button(parent, text="C1-C2", command=go).grid(row=5, column=1, padx=10, pady=5)
+
+
+def create_intersect_corpus(parent):
+    tk.Label(parent, text="Input TSV file1").grid(row=0, column=0, padx=10, pady=5, sticky="e")
+    entry_dedup_base = tk.Entry(parent, width=50)
+    entry_dedup_base.grid(row=0, column=1, padx=10, pady=5)
+    tk.Button(parent, text="...", command=partial(ask_open_file, entry=entry_dedup_base)).grid(row=0, column=2,
+                                                                                             padx=10, pady=5)
+    tk.Label(parent, text="Input TSV file2").grid(row=1, column=0, padx=10, pady=5, sticky="e")
+    entry_dedup_in = tk.Entry(parent, width=50)
+    entry_dedup_in.grid(row=1, column=1, padx=10, pady=5)
+    tk.Button(parent, text="...", command=partial(ask_open_file, entry=entry_dedup_in)).grid(row=1, column=2,
+                                                                                             padx=10, pady=5)
+
+    tk.Label(parent, text="Output file (Optional)").grid(row=2, column=0, padx=10, pady=5, sticky="e")
+    entry_dedup_out = tk.Entry(parent, width=50)
+    entry_dedup_out.grid(row=2, column=1, padx=10, pady=5)
+    tk.Button(parent, text="...", command=partial(ask_save_file, entry=entry_dedup_out)).grid(row=2, column=2,
+                                                                                              padx=10, pady=5)
+
+    tk.Label(parent, text="Intersection Condition").grid(row=3, column=0, padx=10, pady=5, sticky="e")
+    entry_cond = tk.Entry(parent, width=50)
+    entry_cond.grid(row=3, column=1, padx=10, pady=5)
+    entry_cond.insert(0, "SRCTGT")
+
+    var_noletter = IntVar()
+    check_noletter = Checkbutton(parent, text="No Letter", variable=var_noletter, onvalue=1, offvalue=0)
+    check_noletter.grid(row=4, column=1, padx=10, pady=5)
+    check_noletter.select()
+
+    def go():
+        corpus_dedup_base = entry_dedup_base.get().strip()
+        corpus_dedup_in = entry_dedup_in.get().strip()
+        corpus_dedup_out = entry_dedup_out.get().strip()
+        cond = entry_cond.get().strip()
+
+        no_letter = True if var_noletter.get() == 1 else False
+
+        if len(corpus_dedup_in) == 0 or len(corpus_dedup_base)==0 or len(corpus_dedup_out) == 0:
+            tk.messagebox.showinfo(title="Info", message="Input parameter empty.")
+            return
+
+        intersect(corpus_dedup_base, corpus_dedup_in, corpus_dedup_out, creterion=cond,
+             remove_noletter=no_letter, logger=logger_opus)
+
+        tk.messagebox.showinfo(title="Info", message="done")
+
+    tk.Button(parent, text="C1&C2", command=go).grid(row=5, column=1, padx=10, pady=5)
 
 
 def create_filter_corpus(parent):

@@ -68,6 +68,11 @@ if __name__ == "__main__":
     create_diff_corpus(diff_frame)
     frames.append(diff_frame)
 
+    intersect_frame = tk.Frame(win_main)
+    intersect_frame.pack()
+    create_intersect_corpus(intersect_frame)
+    frames.append(intersect_frame)
+
     sample_frame = tk.Frame(win_main)
     sample_frame.pack()
     create_sample_corpus(sample_frame)
@@ -139,6 +144,7 @@ if __name__ == "__main__":
     corpus_menu.add_command(label="Score and Filter", command=partial(on_menu, score_filter_frame))
     corpus_menu.add_separator()
     corpus_menu.add_command(label="Diff", command=partial(on_menu, diff_frame))
+    corpus_menu.add_command(label="Intersect", command=partial(on_menu, intersect_frame))
     corpus_menu.add_command(label="Sample", command=partial(on_menu, sample_frame))
     corpus_menu.add_command(label="Partition", command=partial(on_menu, partition_frame))
     corpus_menu.add_separator()

@@ -59,7 +59,7 @@ def preprocess_dir(in_dir,
                              remove_noletter=False, clean_after_done=clean_after_done, logger=logger)
 
     logger.info("***Filtering***")
-    filters = [EmptyFilter(), SameFilter(), OverlapFilter(ratio=0.80), NonZeroNumeralsFilter(threshold=1.0),
+    filters = [EmptyFilter(), SameFilter(), OverlapFilter(ratio=0.80),
                AlphabetRatioFilter(threshold=0.33, exclude_whitespace=True), RepetitionFilter()]
     langs = dirname.split("-")
     if len(langs) == 2:

@@ -444,6 +444,9 @@ def diff_tsv(tsv_file1, tsv_file2, out_file=None, creterion="SRC",
 
 def intersect(tsv_file1, tsv_file2, out_file, creterion="SRC",
              lower=True, remove_noletter=True, logger=None):
+    if logger:
+        logger.info("Cond: {} lower: {} no_letter: {}".format(creterion, lower, remove_noletter))
+
     pairs = set()
     srcs = set()
     tgts = set()

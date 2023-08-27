@@ -281,7 +281,7 @@ def create_intersect_corpus(parent):
     tk.Button(parent, text="...", command=partial(ask_open_file, entry=entry_dedup_in)).grid(row=1, column=2,
                                                                                              padx=10, pady=5)
 
-    tk.Label(parent, text="Output file (Optional)").grid(row=2, column=0, padx=10, pady=5, sticky="e")
+    tk.Label(parent, text="Output file").grid(row=2, column=0, padx=10, pady=5, sticky="e")
     entry_dedup_out = tk.Entry(parent, width=50)
     entry_dedup_out.grid(row=2, column=1, padx=10, pady=5)
     tk.Button(parent, text="...", command=partial(ask_save_file, entry=entry_dedup_out)).grid(row=2, column=2,

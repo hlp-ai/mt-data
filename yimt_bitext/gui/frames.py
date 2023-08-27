@@ -736,10 +736,10 @@ def create_sp_train(parent):
     entry_model.grid(row=2, column=1, padx=10, pady=5)
     tk.Button(parent, text="...", command=partial(ask_dir, entry_model)).grid(row=2, column=2, padx=10, pady=5)
 
-    tk.Label(parent, text="Max num of sentences").grid(row=3, column=0, padx=10, pady=5, sticky="e")
+    tk.Label(parent, text="Max num of sentences (M)").grid(row=3, column=0, padx=10, pady=5, sticky="e")
     entry_max_sentences = tk.Entry(parent)
     entry_max_sentences.grid(row=3, column=1, padx=10, pady=5, sticky="w")
-    entry_max_sentences.insert(0, "5000000")
+    entry_max_sentences.insert(0, "5")
 
     tk.Label(parent, text="Character coverage").grid(row=4, column=0, padx=10, pady=5, sticky="e")
     entry_coverage = tk.Entry(parent)
@@ -766,8 +766,10 @@ def create_sp_train(parent):
 
         print(corpus_file, vocab_size, sp_model)
 
+        max_sents = int(float(entry_max_sentences.get()) * 1000000)
+
         train_spm(corpus_file, sp_model, vocab_size,
-                  num_sentences=entry_max_sentences.get(),
+                  num_sentences=max_sents,
                   coverage=entry_coverage.get())
 
         tk.messagebox.showinfo(title="Info", message="SentencePiece model created.")

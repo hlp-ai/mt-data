@@ -5,6 +5,7 @@ import tkinter.messagebox
 from functools import partial
 
 from yimt_bitext.bin.remove_scores import strip_scores
+from yimt_bitext.bin.sample import sample
 from yimt_bitext.utils.sp import train_spm, load_spm, tokenize_file, detokenize_file
 
 from yimt_bitext.bin.hant2hans import hant2s_file
@@ -546,7 +547,7 @@ def create_sample_corpus(parent):
     tk.Button(parent, text="...", command=partial(ask_open_file, entry=entry_sample_in2)).grid(row=1, column=2,
                                                                                                padx=10, pady=5)
 
-    tk.Label(parent, text="number of samples").grid(row=2, column=0, padx=10, pady=5, sticky="e")
+    tk.Label(parent, text="Number of samples").grid(row=2, column=0, padx=10, pady=5, sticky="e")
     entry_sample_number = tk.Entry(parent, width=50)
     entry_sample_number.grid(row=2, column=1, padx=10, pady=5)
 

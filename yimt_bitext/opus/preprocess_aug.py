@@ -35,9 +35,9 @@ if __name__ == "__main__":
 
     logger_opus = get_logger(os.path.join(args.log_dir, "opus.log"), "OPUS")
 
-    preprocess_cmd = "python -m yimt_bitext.opus.preprocess --root {} --labse {} --block {} --min {} --max_pairs {} --clean"
-    aug_cmd = "python -m yimt_bitext.bin.translate_aug --input {} --sp_en_model {} --sp_zh_model {} --ct2_zh_model {} --src_lang {} --clean"
-    score_filter_cmd = "python -m yimt_bitext.bin.score_and_filter --input {} --labse {} --block {} --min {} --clean"
+    preprocess_cmd = "python -m yimt_bitext.opus.preprocess --root {} --labse {} --block {} --min {} --max_pairs {} --log_dir {} --clean"
+    aug_cmd = "python -m yimt_bitext.bin.translate_aug --input {} --sp_en_model {} --sp_zh_model {} --ct2_zh_model {} --src_lang {} --log_dir {} --clean"
+    score_filter_cmd = "python -m yimt_bitext.bin.score_and_filter --input {} --labse {} --block {} --min {} --log_dir {} --clean"
 
     root = args.root
     sub = os.listdir(root)
@@ -46,23 +46,23 @@ if __name__ == "__main__":
         in_path = root
         sl, tl = get_langs_from_dir(in_path)
 
-        os.popen(preprocess_cmd.format(in_path, args.labse, args.block, args.min, args.max_pairs)).readlines()
+        os.popen(preprocess_cmd.format(in_path, args.labse, args.block, args.min, args.max_pairs, args.log_dir)).readlines()
 
         out_path = os.path.join(root, "unzip", "tsv", "score", "sfilter", sl + "-" + tl + "-preprocessed.tsv")
-        os.popen(aug_cmd.format(out_path, args.sp_en_model, args.sp_zh_model, args.ct2_zh_model, sl)).readlines()
+        os.popen(aug_cmd.format(out_path, args.sp_en_model, args.sp_zh_model, args.ct2_zh_model, sl, args.log_dir)).readlines()
 
         out_path = os.path.join(in_path, "unzip", "tsv", "score", "sfilter", "aug", sl + "-" + tl + "-preprocessed.tsv.2zh")
-        os.popen(score_filter_cmd.format(out_path, args.labse, args.block, args.min)).readlines()
+        os.popen(score_filter_cmd.format(out_path, args.labse, args.block, args.min, args.log_dir)).readlines()
     else:
         for d in sub:
             in_path = os.path.join(root, d)
             sl, tl = get_langs_from_dir(in_path)
 
-            os.popen(preprocess_cmd.format(root, args.labse, args.block, args.min, args.max_pairs)).readlines()
+            os.popen(preprocess_cmd.format(root, args.labse, args.block, args.min, args.max_pairs, args.log_dir)).readlines()
 
             out_path = os.path.join(in_path, "unzip", "tsv", "score", "sfilter", sl + "-" + tl + "-preprocessed.tsv")
-            os.popen(aug_cmd.format(out_path, args.sp_en_model, args.sp_zh_model, args.ct2_zh_model, sl)).readlines()
+            os.popen(aug_cmd.format(out_path, args.sp_en_model, args.sp_zh_model, args.ct2_zh_model, sl, args.log_dir)).readlines()
 
             out_path = os.path.join(in_path, "unzip", "tsv", "score", "sfilter", "aug",
                                     sl + "-" + tl + "-preprocessed.tsv.2zh")
-            os.popen(score_filter_cmd.format(out_path, args.labse, args.block, args.min)).readlines()
+            os.popen(score_filter_cmd.format(out_path, args.labse, args.block, args.min, args.log_dir)).readlines()

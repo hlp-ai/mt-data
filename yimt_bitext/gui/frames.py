@@ -746,6 +746,12 @@ def create_sp_train(parent):
     entry_coverage.grid(row=4, column=1, padx=10, pady=5, sticky="w")
     entry_coverage.insert(0, "0.9999")
 
+    tk.Label(parent, text="User Defined Symbols File").grid(row=5, column=0, padx=10, pady=5, sticky="e")
+    entry_symbols_file = tk.Entry(parent, width=50)
+    entry_symbols_file.grid(row=5, column=1, padx=10, pady=5)
+    tk.Button(parent, text="...", command=partial(ask_open_file, entry=entry_symbols_file)).grid(row=5, column=2, padx=10,
+                                                                                           pady=5)
+
     def go():
         corpus_file = entry_corpus.get()
         if len(corpus_file.strip()) == 0:
@@ -768,13 +774,18 @@ def create_sp_train(parent):
 
         max_sents = int(float(entry_max_sentences.get()) * 1000000)
 
+        symbols_file = entry_symbols_file.get()
+        if len(symbols_file.strip()) == 0:
+            symbols_file = None
+
         train_spm(corpus_file, sp_model, vocab_size,
                   num_sentences=max_sents,
-                  coverage=entry_coverage.get())
+                  coverage=entry_coverage.get(),
+                  user_defined_symbols_file=symbols_file)
 
         tk.messagebox.showinfo(title="Info", message="SentencePiece model created.")
 
-    tk.Button(parent, text="Train SentencePiece Model", command=go).grid(row=5, column=1, padx=10, pady=5)
+    tk.Button(parent, text="Train SentencePiece Model", command=go).grid(row=6, column=1, padx=10, pady=5)
 
 
 def create_sp_tokenize(parent):

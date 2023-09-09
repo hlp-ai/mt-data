@@ -10,6 +10,7 @@ if __name__ == "__main__":
     argparser.add_argument("--vocab_size", type=int, default=32000, help="Vocab size")
     argparser.add_argument("--max_sentences", type=int, default=5000000, help="Max number of sentences for training")
     argparser.add_argument("--coverage", type=float, default=0.9999, help="Vocab coverage")
+    argparser.add_argument("--custom_symbol_file", default=None, help="user defined symbols file")
     args = argparser.parse_args()
 
     if args.sp_prefix is None:
@@ -17,5 +18,8 @@ if __name__ == "__main__":
     else:
         sp_prefix = args.sp_prefix
 
+    user_defined_symbols =  args.custom_symbol_file
+
     train_spm(args.corpus, sp_prefix, args.vocab_size,
-              coverage=args.coverage, num_sentences=args.max_sentences)
+              coverage=args.coverage, num_sentences=args.max_sentences,
+              user_defined_symbols_file=user_defined_symbols)

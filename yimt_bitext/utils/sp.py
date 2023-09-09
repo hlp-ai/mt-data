@@ -9,9 +9,28 @@ def train_spm(corpus_fn,
               model_type="bpe",
               coverage=0.99995,
               num_sentences=5000000,
-              add_dummy_prefix=False):
+              add_dummy_prefix=False,
+              user_defined_symbols_file=None):
     """Train a SentencePiece model"""
-    spm.SentencePieceTrainer.train(input=corpus_fn,
+    if user_defined_symbols_file is not None:
+        user_defined_symbols = []
+        with open(user_defined_symbols_file) as uf:
+            for line in uf:
+                line = line.strip()
+                if len(line) > 0:
+                    user_defined_symbols.append(line)
+
+        spm.SentencePieceTrainer.train(input=corpus_fn,
+                                       model_prefix=model_prefix,
+                                       vocab_size=vocab_size,
+                                       model_type=model_type,
+                                       character_coverage=coverage,
+                                       input_sentence_size=num_sentences,
+                                       shuffle_input_sentence=True,
+                                       add_dummy_prefix=add_dummy_prefix,
+                                       user_defined_symbols=user_defined_symbols)
+    else:
+        spm.SentencePieceTrainer.train(input=corpus_fn,
                                    model_prefix=model_prefix,
                                    vocab_size=vocab_size,
                                    model_type=model_type,

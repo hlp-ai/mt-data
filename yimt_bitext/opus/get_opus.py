@@ -1,5 +1,6 @@
 import os
 import sys
+from argparse import ArgumentParser
 
 import requests
 
@@ -51,11 +52,18 @@ def download_opus_moses(corpus_name, corpus_version, sl, tl, out_dir="./"):
 
 
 if __name__ == "__main__":
-    corpora_list = sys.argv[1]
-    langs_list = sys.argv[2]
-    out_dir = sys.argv[3]
+    argparser = ArgumentParser()
+    argparser.add_argument("--corpus_file", required=True, help="file for corpus list")
+    argparser.add_argument("--lang_file", required=True, help="file for language list")
+    argparser.add_argument("--tolang", default="zh", help="en or zh")
+    argparser.add_argument("--out", required=True, help="output directory")
+    args = argparser.parse_args()
 
-    to_zh = True
+    corpora_list = args.corpus_file
+    langs_list = args.lang_file
+    out_dir = args.out
+
+    to_lang = args.tolang
 
     langs = []
     with open(langs_list, encoding="utf-8") as f:
@@ -69,12 +77,9 @@ if __name__ == "__main__":
             corpus_version = parts[1]
 
             for lang in langs:
-                if to_zh:
-                    tl = "zh"
-                else:
-                    tl = "en"
-
+                tl = to_lang
                 sl = lang
+
                 p = os.path.join(out_dir, sl + "-" + tl)
                 os.makedirs(p, exist_ok=True)
 

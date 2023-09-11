@@ -27,6 +27,7 @@ def download_opus_moses(corpus_name, corpus_version, sl, tl, out_dir="./"):
     BLOCK_SIZE = 1024 * 1024
     total = 0
 
+    r = None
     try:
         r = requests.get(moses_url, headers=headers, timeout=(20, 20), stream=True, allow_redirects=False)
         if r.status_code != 200:
@@ -46,7 +47,8 @@ def download_opus_moses(corpus_name, corpus_version, sl, tl, out_dir="./"):
     except Exception as e:
         logger_opus.info("{}: {}".format(moses_url, e))
     finally:
-        r.close()
+        if r:
+            r.close()
 
     return False
 

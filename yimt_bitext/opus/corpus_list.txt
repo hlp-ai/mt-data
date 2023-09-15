@@ -1,4 +1,5 @@
 Anuvaad v1
+Bianet v1
 bible-uedin v1
 Books v1
 CCAligned v1
@@ -97,6 +98,7 @@ EuroPat v3
 giga-fren v2
 GlobalVoices v2018q4
 GNOME v1
+GoURMET v
 infopankki v1
 Joshua-IPC v1
 JRC-Acquis v3.0
@@ -118,6 +120,7 @@ QED v2.0a
 RF v1
 Salome v1
 Samanantar v0.2
+SETIMES v2
 SPC v1
 Tanzil v1
 Tatoeba v2023-04-12

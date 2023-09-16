@@ -159,7 +159,6 @@ class ToZhNormalizer(Normalizer):
 
     def __init__(self):
         self.cleaner = Cleaner()
-        self.t2s = Hant2Hans()
 
     def normalize(self, s):
         s = s.strip()
@@ -172,7 +171,7 @@ class ToZhNormalizer(Normalizer):
 
         src = self.cleaner.normalize(src)
         tgt = self.cleaner.normalize(tgt)
-        tgt = self.t2s.normalize(tgt)
+        tgt = hant_2_hans(tgt)
 
         return src + "\t" + tgt
 

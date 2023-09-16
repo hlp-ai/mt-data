@@ -265,7 +265,7 @@ def merge_files(data_files, out_path, clean_after_merge=False, max=-1, logger_op
     return out_path
 
 
-def split(file, num_per_file=500000, logger=None):
+def split(file, num_per_file=1000000, logger=None):
     """Split corpus into multiple files with the same lines"""
     in_file = open(file, encoding="utf-8")
 

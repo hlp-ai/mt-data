@@ -29,7 +29,7 @@ def download_opus_moses(corpus_name, corpus_version, sl, tl, out_dir="./"):
 
     r = None
     try:
-        r = requests.get(moses_url, headers=headers, timeout=(20, 20), stream=True, allow_redirects=False)
+        r = requests.get(moses_url, headers=headers, timeout=(30, 30), stream=True, allow_redirects=False)
         if r.status_code != 200:
             logger_opus.info("{}: {}".format(moses_url, r.status_code))
             return False

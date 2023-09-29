@@ -77,7 +77,7 @@ ka Georgian
 ga Latin
 cy Latin
 mg Latin
-mn Cyrillic
+mn Cyrillic|Mongolian
 lo Lao
 ht Latin
 sr Latin|Cyrillic

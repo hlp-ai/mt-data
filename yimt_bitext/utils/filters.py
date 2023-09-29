@@ -190,7 +190,8 @@ def get_lang2script(conf_file=os.path.join(os.path.dirname(__file__), "lang2scri
     with open(conf_file, encoding="utf-8") as f:
         for line in f:
             lang, script = line.strip().split()
-            lang2script[lang] = script
+            scripts = script.split("|")
+            lang2script[lang] = scripts
 
     return lang2script
 
@@ -207,19 +208,31 @@ class CharacterRatioFilter(Filter):
         self.scripts = scripts
         self.thresholds = [1] * len(scripts) if thresholds is None else thresholds
         self.re_not_alphas = regex.compile(r'\p{Alphabetic=No}')
-        self.re_not_script = [regex.compile(fr'\p{{^Script={script}}}')
-                              for script in self.scripts]
+        self.re_script = []
+        for script in self.scripts:
+            if len(script) == 1:
+                script = script[0]
+                self.re_script.append(regex.compile(fr'\p{{Script={script}}}'))
+            else:
+                p = fr""
+                for i in range(len(script)):
+                    s = script[i]
+                    if i != len(script) - 1:
+                        p += fr'\p{{Script={s}}}|'
+                    else:
+                        p += fr'\p{{Script={s}}}'
+                self.re_script.append(regex.compile(p))
 
     def score(self, sent, idx):
         alphas = self.re_not_alphas.sub('', sent)
         if alphas:
-            script = self.re_not_script[idx].sub('', alphas)
-            return len(script) / len(alphas)
+            no_script = self.re_script[idx].sub('', alphas)
+            return len(no_script) / len(alphas)
         else:
             return 0.0
 
     def filter(self, src, tgt):
-        if self.score(src, 0) < self.thresholds[0] or self.score(tgt, 1) < self.thresholds[1]:
+        if self.score(src, 0) > self.thresholds[0] or self.score(tgt, 1) > self.thresholds[1]:
             return None
 
         return src, tgt
@@ -508,3 +521,15 @@ if __name__ == "__main__":
     rep_filter = RepetitionFilter()
     print(rep_filter.filter("abcd abcd abcd what what", "how are you"))
     print(rep_filter.filter("aaaa", "how are you"))
+
+    print()
+    char_filter = CharacterRatioFilter(scripts=(["Latin"], ["Han"]), thresholds=(0.33, 0.33))
+    print(char_filter.filter("i like it", "中文中文"))
+    print()
+
+    char_filter = CharacterRatioFilter(scripts=(["Latin"], ["Latin", "Han"]), thresholds=(0.33, 0.33))
+    print(char_filter.filter("i like it", "i like中文中文гни"))
+    print()
+
+    char_filter = CharacterRatioFilter(scripts=(["Latin"], ["Latin", "Han"]), thresholds=(0.33, 0.33))
+    print(char_filter.filter("i like it", "кўксингни"))

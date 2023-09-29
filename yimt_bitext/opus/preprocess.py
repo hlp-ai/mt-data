@@ -9,7 +9,7 @@ from yimt_bitext.utils.dedup import dedup_bitext_file
 from yimt_bitext.utils.filters import filter_file, EmptyFilter, SameFilter, OverlapFilter, NonZeroNumeralsFilter, \
     AlphabetRatioFilter, RepetitionFilter, CharacterRatioFilter, get_lang2script, LengthFilter
 from yimt_bitext.utils.log import get_logger
-from yimt_bitext.utils.normalizers import ToZhNormalizer, normalize_file, CleanerTSV
+from yimt_bitext.utils.normalizers import ToZhNormalizer, normalize_file, CleanerTSV, DeTokenizer
 
 lang2script = get_lang2script()
 
@@ -47,7 +47,7 @@ def preprocess_dir(in_dir,
 
     logger.info("***Normalizing***")
     if target_lang == "zh":
-        normalizers = [ToZhNormalizer()]
+        normalizers = [ToZhNormalizer(), DeTokenizer()]
     else:
         normalizers = [CleanerTSV()]
 
@@ -66,7 +66,7 @@ def preprocess_dir(in_dir,
         sl, tl = langs
         src_script = lang2script[sl]
         tgt_script = lang2script[tl]
-        char_filter = CharacterRatioFilter(scripts=(src_script, tgt_script), thresholds=(0.33, 0.33))
+        char_filter = CharacterRatioFilter(scripts=(src_script, tgt_script), thresholds=(0.60, 0.60))
         filters.append(char_filter)
 
         if target_lang == "en":

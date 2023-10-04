@@ -27,10 +27,12 @@ filters:
 
   - CharacterRatio2Filter:
       params:
-        src_script: Latin
-        tgt_script: Latin
-        src_threshold: 0.33
-        tgt_threshold: 0.33
+        src_script:
+          - Latin
+        tgt_script:
+          - Latin
+        src_threshold: 0.50
+        tgt_threshold: 0.50
 
   - AlphabetRatioFilter:
       params:

@@ -251,19 +251,32 @@ class CharacterRatio2Filter(Filter):
         self.scripts = [src_script, tgt_script]
         self.thresholds = [src_threshold, tgt_threshold]
         self.re_not_alphas = regex.compile(r'\p{Alphabetic=No}')
-        self.re_not_script = [regex.compile(fr'\p{{^Script={script}}}')
-                              for script in self.scripts]
+
+        self.re_script = []
+        for script in self.scripts:
+            if len(script) == 1:
+                script = script[0]
+                self.re_script.append(regex.compile(fr'\p{{Script={script}}}'))
+            else:
+                p = fr""
+                for i in range(len(script)):
+                    s = script[i]
+                    if i != len(script) - 1:
+                        p += fr'\p{{Script={s}}}|'
+                    else:
+                        p += fr'\p{{Script={s}}}'
+                self.re_script.append(regex.compile(p))
 
     def score(self, sent, idx):
         alphas = self.re_not_alphas.sub('', sent)
         if alphas:
-            script = self.re_not_script[idx].sub('', alphas)
-            return len(script) / len(alphas)
+            no_script = self.re_script[idx].sub('', alphas)
+            return len(no_script) / len(alphas)
         else:
             return 0.0
 
     def filter(self, src, tgt):
-        if self.score(src, 0) < self.thresholds[0] or self.score(tgt, 1) < self.thresholds[1]:
+        if self.score(src, 0) > self.thresholds[0] or self.score(tgt, 1) > self.thresholds[1]:
             return None
 
         return src, tgt

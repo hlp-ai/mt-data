@@ -41,7 +41,7 @@ it Latin
 vi Latin
 ko Hangul
 ms Latin
-ja Han
+ja Hiragana|Katakana|Han
 de Latin
 id Latin
 pt Latin

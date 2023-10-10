@@ -27,8 +27,12 @@ filters:
 
   - CharacterRatio2Filter:
       params:
-        src_script: Latin
-        tgt_script: Han
+        src_script:
+          - Hiragana
+          - Katakana
+          - Han
+        tgt_script:
+          - Han
         src_threshold: 0.4
         tgt_threshold: 0.4
 

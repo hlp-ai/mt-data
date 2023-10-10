@@ -2,7 +2,12 @@ normalizers:
   - CleanerTSV:
       params: null
 
-  - DeTokenizer:
+  - Hant2Hans:
       params:
         src: False
         tgt: True
+
+#  - DeTokenizer:
+#      params:
+#        src: False
+#        tgt: True

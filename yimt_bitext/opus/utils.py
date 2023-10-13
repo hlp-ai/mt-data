@@ -3,6 +3,7 @@ import os
 import re
 import time
 import zipfile
+from random import random
 
 from yimt_bitext.opus.bitext_scorers import LaBSEScorer
 from yimt_bitext.utils.dedup import norm
@@ -33,6 +34,57 @@ def extract_zips(zips_dir, out_dir=None, logger_opus=None):
         zFile.close()
 
     return out_dir
+
+
+def count_lines(fn):
+    print("Counting lines...")
+    lines = 0
+    interval = 500000
+    with open(fn, encoding="utf-8") as f:
+        for _ in f:
+            lines += 1
+            if lines % interval == 0:
+                print(lines)
+
+    print(lines)
+
+    return lines
+
+
+def partition(files, n):
+    """"Partition a corpus with N sentences into a corpus with n sentences and a corpus with N-n sentences"""
+    in_files = [io.open(f, encoding="utf-8") for f in files]
+    out_files = [io.open("{}-{}".format(f, n), "w", encoding="utf-8") for f in files]
+    new_files = [io.open(f+".new", "w", encoding="utf-8") for f in files]
+
+    total = count_lines(files[0])
+    print(total)
+
+    sampled = 0
+    scanned = 0
+    sample_prob = (1.1*n) / total
+    done = False
+    for p in zip(*in_files):
+        scanned += 1
+        prob = random.uniform(0, 1)
+        if not done and prob < sample_prob:
+            for i in range(len(out_files)):
+                out_files[i].write(p[i].strip() + "\n")
+            sampled += 1
+            if sampled % 10000 == 0:
+                print(scanned, sampled)
+            if sampled >= n:
+                done = True
+        else:
+            for i in range(len(new_files)):
+                new_files[i].write(p[i].strip() + "\n")
+    print(scanned, sampled)
+
+    for f in out_files:
+        f.close()
+
+    for f in new_files:
+        f.close()
 
 
 def same_lines(path1, path2):

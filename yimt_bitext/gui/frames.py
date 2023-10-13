@@ -11,7 +11,7 @@ from yimt_bitext.utils.sp import train_spm, load_spm, tokenize_file, detokenize_
 from yimt_bitext.bin.hant2hans import hant2s_file
 from yimt_bitext.gui.win_utils import ask_open_file, ask_save_file, ask_dir
 from yimt_bitext.opus.utils import pair_to_single, single_to_pair, extract_zips, merge, split, \
-    score_and_filter_pattern, diff, merge_moses_only, intersect
+    score_and_filter_pattern, diff, merge_moses_only, intersect, partition
 from yimt_bitext.utils.count import count
 from yimt_bitext.utils.dedup import dedup_bitext_file
 from yimt_bitext.utils.filters import filter_file, load_filters

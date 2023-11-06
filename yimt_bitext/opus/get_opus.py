@@ -72,24 +72,32 @@ if __name__ == "__main__":
         for line in f:
             langs.append(line.strip())
 
+    copora = []
     with open(corpora_list, encoding="utf-8") as f:
         for line in f:
             parts = line.strip().split()
             corpus_name = parts[0]
             corpus_version = parts[1]
+            copora.append((corpus_name, corpus_version))
 
-            for lang in langs:
-                tl = to_lang
-                sl = lang
+    for lang in langs:
+        tl = to_lang
+        sl = lang
 
-                p = os.path.join(out_dir, sl + "-" + tl)
-                os.makedirs(p, exist_ok=True)
+        p = os.path.join(out_dir, sl + "-" + tl)
+        os.makedirs(p, exist_ok=True)
 
-                success = download_opus_moses(corpus_name, corpus_version, sl, tl, p)
-                logger_opus.info(corpus_name + " " + sl + "-" + tl + " " + str(success))
+        for corpus_name, corpus_version in copora:
+            success = download_opus_moses(corpus_name, corpus_version, sl, tl, p)
+            logger_opus.info(corpus_name + " " + sl + "-" + tl + " " + str(success))
 
-                t = sl
-                sl = tl
-                tl = t
-                success = download_opus_moses(corpus_name, corpus_version, sl, tl, p)
-                logger_opus.info(corpus_name + " " + sl + "-" + tl + " " + str(success))
+        logger_opus.info("Finish {}-{}".format(sl, tl))
+
+        t = sl
+        sl = tl
+        tl = t
+        for corpus_name, corpus_version in copora:
+            success = download_opus_moses(corpus_name, corpus_version, sl, tl, p)
+            logger_opus.info(corpus_name + " " + sl + "-" + tl + " " + str(success))
+
+        logger_opus.info("Finish {}-{}".format(sl, tl))

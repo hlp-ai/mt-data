@@ -11,7 +11,7 @@ from yimt_bitext.utils.log import get_logger
 from yimt_bitext.utils.sp import load_spm, tokenize_file, detokenize_file
 
 
-def _translate(translator, in_file, out_file, batch_size=24, logger=None):
+def _translate(translator, in_file, out_file, batch_size=32, logger=None):
     with open(in_file, encoding="utf-8") as f:
         lines = f.readlines()
 
@@ -31,7 +31,7 @@ def _translate(translator, in_file, out_file, batch_size=24, logger=None):
             source=to_translate,
             beam_size=5,
             batch_type="tokens",
-            max_batch_size=512,
+            max_batch_size=batch_size*20,
             replace_unknowns=True,
             repetition_penalty=1.2,
             target_prefix=None,
@@ -59,7 +59,8 @@ def _translate(translator, in_file, out_file, batch_size=24, logger=None):
         logger.info("{} sentences, {:.2f} sentences/sec, {:.2f} sec".format(n, speed, etime))
 
 
-def aug_pivot(tsv_file, sp_en, sp_zh, translator, src_lang, tgt_lang="en", clean_after_done=False, logger=None):
+def aug_pivot(tsv_file, sp_en, sp_zh, translator, src_lang, tgt_lang="en", clean_after_done=False,
+              batch_size=32, logger=None):
     if logger:
         logger.info("Processing {}".format(tsv_file))
     src_file = tsv_file + "." + src_lang
@@ -86,7 +87,7 @@ def aug_pivot(tsv_file, sp_en, sp_zh, translator, src_lang, tgt_lang="en", clean
     out_file = tok_output + ".tozh"
     if logger:
         logger.info("Translating {} into {}...".format(tok_output, out_file))
-    _translate(translator, tok_output, out_file, logger=logger)
+    _translate(translator, tok_output, out_file, batch_size=batch_size, logger=logger)
     if clean_after_done:
         os.remove(tok_output)
 
@@ -110,7 +111,7 @@ def aug_pivot(tsv_file, sp_en, sp_zh, translator, src_lang, tgt_lang="en", clean
 
 
 def aug_from_en(path, sp_en_file, sp_zh_file, ct2_zh_model, src_lang,
-                clean_after_done=True,
+                clean_after_done=True, batch_size=32,
                 logger=None):
     logger.info("***Translating***")
 
@@ -143,7 +144,7 @@ def aug_from_en(path, sp_en_file, sp_zh_file, ct2_zh_model, src_lang,
 
             logger.info("Translating file...")
             aug_pivot(tsv_file, sp_en, sp_zh, translator, src_lang,
-                      clean_after_done=clean_after_done,
+                      clean_after_done=clean_after_done, batch_size=batch_size,
                       logger=logger)
 
     logger.info("Merging augmented files...")
@@ -172,10 +173,12 @@ if __name__ == "__main__":
                            default=r"D:\kidden\mt\mt-exp\en-zh\opus\ct2",
                            help="en-to-zh ct2 model path")
     argparser.add_argument("--src_lang", required=True, help="source language")
+    argparser.add_argument("--bs", type=int, default=32, help="batch size")
     argparser.add_argument("--clean", action="store_true", help="clean after processing")
     argparser.add_argument("--log_dir", default="./", help="log directory")
     args = argparser.parse_args()
 
     logger = get_logger(os.path.join(args.log_dir, "opus.log"), "OPUS")
 
-    aug_from_en(args.input, args.sp_en_model, args.sp_zh_model, args.ct2_zh_model, args.src_lang, args.clean, logger)
+    aug_from_en(args.input, args.sp_en_model, args.sp_zh_model, args.ct2_zh_model, args.src_lang, args.clean,
+                args.bs, logger)

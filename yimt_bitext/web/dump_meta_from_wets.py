@@ -25,6 +25,7 @@ def iter_metadata_wet(wet_path):
                 if langs is not None:
                     langs = langs.split(",")
                 else:
+                    logger_wet.warning("NO WARC-Identified-Content-Language in WET for {}".format(url))
                     langs = []
 
                 u = URL(url)

@@ -204,6 +204,7 @@ class BasicLangStat(LangStat):
             hosts = []
             host2lang2len = self.stat_by_domain(domain)
             for host, lang2len in host2lang2len.items():
+                # TODO: 根据语言的文本长度比例确定主机是否包括语言
                 for lang in langs:
                     if lang in lang2len.keys():
                         hosts.append(host)

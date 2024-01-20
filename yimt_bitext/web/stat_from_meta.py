@@ -157,4 +157,7 @@ if __name__ == "__main__":
     args = argparser.parse_args()
 
     meta_dir = args.meta_dir
-    stat_from_metadata(meta_dir)
+    if not os.path.exists(meta_dir):
+        print("{} not exist.".format(meta_dir))
+    else:
+        stat_from_metadata(meta_dir)

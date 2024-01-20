@@ -26,8 +26,8 @@ def stat_from_meta_by_host(meta_file):
 
             total += 1
             if total % report_interval == 0:
-                print(" ", total, "urls")
-        print(" ", total, "urls")
+                print(" ", total, "urls processed")
+        print(" ", total, "urls processed")
 
     return host2lang2len
 

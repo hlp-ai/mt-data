@@ -28,12 +28,12 @@ if __name__ == "__main__":
 
     domain2hosts_langs = defaultdict(list)
     for domain, hosts in lang_stat.hosts_for_langs(langs):
-        for h in hosts:
-            lang = url_language.find_language(h)
+        for host in hosts:
+            lang = url_language.find_language(host)
             if lang and lang not in normalized_langs:
-                print(h, "filtered")
+                print(host, "filtered")
                 continue
-            domain2hosts_langs[domain].append(h)
+            domain2hosts_langs[domain].append(host)
 
     with open(out_f, "w", encoding="utf-8") as f:
         json.dump(domain2hosts_langs, f)

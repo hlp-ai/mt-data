@@ -7,6 +7,7 @@ from concurrent.futures.thread import ThreadPoolExecutor
 import requests
 from warcio import ArchiveIterator
 
+from yimt_bitext.utils.lang import detect_lang
 from yimt_bitext.utils.log import get_logger
 from yimt_bitext.web.cc import get_wet_name, download_progress, ungzip, cc_base_url, cc_wet_paths, \
     cc_wet_paths_done
@@ -17,7 +18,7 @@ def iter_metadata_wet(wet_path):
     """Iterate WET record"""
     with open(wet_path, 'rb') as stream:
         for record in ArchiveIterator(stream):
-            if record.rec_type == 'conversion' and record.rec_headers.get_header('Content-Type') == 'text/html':
+            if record.rec_type == 'conversion' and record.rec_headers.get_header('Content-Type').find('text/')==0:
                 # TODO: When WARC-Identified-Content-Language is not available, language identification is needed.
                 langs = record.rec_headers.get_header("WARC-Identified-Content-Language")
                 url = record.rec_headers.get_header("WARC-Target-URI")
@@ -26,7 +27,10 @@ def iter_metadata_wet(wet_path):
                     langs = langs.split(",")
                 else:
                     logger_wet.warning("NO WARC-Identified-Content-Language in WET for {}".format(url))
-                    langs = []
+                    content = record.content_stream().read().decode("utf-8")
+                    lang = detect_lang(content)
+                    logger_wet.warning("{} detected: {}".format(url, lang))
+                    langs = [lang]
 
                 u = URL(url)
                 site = u.scheme + "://" + u.netloc + "/"

@@ -17,7 +17,7 @@ def iter_metadata_wet(wet_path):
     """Iterate WET record"""
     with open(wet_path, 'rb') as stream:
         for record in ArchiveIterator(stream):
-            if record.rec_type == 'conversion':
+            if record.rec_type == 'conversion' and record.rec_headers.get_header('Content-Type') == 'text/html':
                 # TODO: When WARC-Identified-Content-Language is not available, language identification is needed.
                 langs = record.rec_headers.get_header("WARC-Identified-Content-Language")
                 url = record.rec_headers.get_header("WARC-Target-URI")

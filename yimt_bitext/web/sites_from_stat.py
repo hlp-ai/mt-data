@@ -30,7 +30,7 @@ if __name__ == "__main__":
     for domain, hosts in lang_stat.hosts_for_langs(langs):
         for host in hosts:
             lang = url_language.find_language(host)
-            if lang and lang not in normalized_langs:
+            if lang and lang not in normalized_langs:  # 能通过URL启发式语言过滤
                 print(host, "filtered")
                 continue
             domain2hosts_langs[domain].append(host)

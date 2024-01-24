@@ -200,6 +200,7 @@ class BasicLangStat(LangStat):
                 yield domain
 
     def hosts_for_langs(self, langs):
+        """获得包含给定语言列表之一语言的host"""
         for domain in self.domains_for_langs(langs):
             hosts = []
             host2lang2len = self.stat_by_domain(domain)

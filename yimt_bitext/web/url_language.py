@@ -139,6 +139,8 @@ class UrlLanguage(object):
             self.code_to_language[code] = 'sw'
         for code in ['urdu', 'ur', 'urd']:   # 乌尔都语
             self.code_to_language[code] = 'ur'
+        for code in ['lao', 'lo', 'laos', 'la']:   # 乌尔都语
+            self.code_to_language[code] = 'lo'
 
         pairs = list(self.code_to_language.items())
 

@@ -103,7 +103,7 @@ class CrawlManager:
 
         for domain, hosts in domain2hosts_langs.items():
             doamin_dir = os.path.join(self.crawl_dir, domain)
-            if not os.path.exists(doamin_dir):
+            if not os.path.exists(doamin_dir):  # TODO: 多语域名下新发现的站点的添加
                 self.logger.info("Found new domain: {}".format(domain))
                 os.makedirs(doamin_dir, exist_ok=True)
                 with open(os.path.join(doamin_dir, "urls_tocrawl.txt"), "w", encoding="utf-8") as f:

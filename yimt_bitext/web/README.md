@@ -19,3 +19,8 @@ python yimt_bitxt.web.stat_from_meta --meta_dir <元文件路径>
 ```shell script
 python yimt_bitext.web.sites_from_stat --stat_file <统计数据文件路径> --langs <逗号分隔的3字母语言列表> [--out <结果文件路径>]
 ```
+
+## 5. 抓取多语站点
+```shell script
+python yimt_bitext.web.crawl --sites_file <多语站点信息文件> [--crawl_dir <抓取目录>] --langs <逗号分隔的2字母语言列表> [--max_workers <抓取线程数，缺省8>]
+```

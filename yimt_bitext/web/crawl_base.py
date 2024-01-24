@@ -56,6 +56,9 @@ class UrlsCrawled:
         """The url has been crawled"""
         pass
 
+    def close(self):
+        pass
+
 
 class BasicUrlsCrawled(UrlsCrawled):
 
@@ -124,6 +127,9 @@ class UrlsToCrawl:
 
     def next(self):
         """Get url for crawling"""
+        pass
+
+    def close(self):
         pass
 
 

@@ -11,6 +11,7 @@ from yimt_bitext.web.crawl_base import BasicUrlsToCrawl, DiskUrlsCrawled, BasicF
 
 
 def crawl_domain(domain_path, lang_list):
+    """抓取给定域名中接受语言的链接"""
     domain = os.path.basename(domain_path)
     logger = get_logger(os.path.join(domain_path, "logs.txt"), domain)
     logger.info(f"***START CRAWLING {domain}")
@@ -81,6 +82,8 @@ def crawl_domain(domain_path, lang_list):
         except Exception as e:
             logger.warning(url + ": " + str(e))
 
+    crawled.close()
+
     logger.info(f"***FINISH CRAWLING {domain}")
 
 
@@ -94,6 +97,7 @@ class CrawlManager:
         self.logger = get_logger(os.path.join(crawl_dir, "logs.txt"), "CrawlManager")
 
     def update(self, sites_file):
+        """更新待抓取列表"""
         with open(sites_file, encoding="utf-8") as sites_f:
             domain2hosts_langs = json.load(sites_f)
 

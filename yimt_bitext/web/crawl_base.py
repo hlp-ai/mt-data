@@ -9,7 +9,7 @@ from yimt_bitext.web.web import URL
 
 class UrlFilter:
 
-    def filter(self, url):
+    def accept(self, url):
         pass
 
 
@@ -19,7 +19,7 @@ class BasicUrlFilter(UrlFilter):
         self.langs = langs
         self._url_lang = UrlLanguage()
 
-    def filter(self, url):
+    def accept(self, url):
         url = url.lower()
         if url.find(self.domain) < 0:
             return False

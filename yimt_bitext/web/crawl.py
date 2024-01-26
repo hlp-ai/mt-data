@@ -69,7 +69,7 @@ def crawl_domain(domain_path, lang_list):
                     logger.debug("NO sentence found for {}".format(url))
 
                 for ol in outlinks:
-                    if url_filter.filter(ol):
+                    if url_filter.accept(ol):
                         to_crawl.add(ol)
                     else:
                         logger.debug(f"Filtered: {ol}")

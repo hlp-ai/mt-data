@@ -33,6 +33,10 @@ def crawl_domain(domain_path, lang_list):
         url = to_crawl.next()
         if url is None:
             break
+
+        if crawled.exists(url):
+            continue
+
         # print("Fetching", url)
         try:
             logger.info(f"Fetching {url}")

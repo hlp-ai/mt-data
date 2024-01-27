@@ -86,6 +86,7 @@ def crawl_domain(domain_path, lang_list):
             logger.info(f"{domain}: {n_crawled} crawled, {n_tocrawl} to crawl")
         except Exception as e:
             logger.warning(url + ": " + str(e))
+            crawled.add(url)
 
     crawled.close()
 

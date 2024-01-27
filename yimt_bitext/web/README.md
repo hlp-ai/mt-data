@@ -29,3 +29,13 @@ python yimt_bitext.web.crawl --sites_file <多语站点信息文件> [--crawl_di
 ```shell script
 python yimt_bitext.web.preprocess --dir <域抓取目录>
 ```
+
+## 7. 对语言对句子打分
+```shell script
+python yimt_bitext.web.score_segments --file1 <语言1文本文件> --file2 <语言2文本文件> [--out <打分结果文件>]
+```
+
+## 8. 对打分结果进行过滤
+```shell script
+python yimt.bin.filter_score --input <打分结果文件> [--output <过滤结果文件>] [--min <最小分数，缺省0.66>]
+```

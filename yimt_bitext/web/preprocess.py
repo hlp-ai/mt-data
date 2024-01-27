@@ -10,6 +10,7 @@ from yimt_bitext.utils.text_splitter import split_sent_file
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser()
     argparser.add_argument("--dir", required=True, help="Directory for crawled domain")
+    argparser.add_argument("--split", action="store_true", help="split text into sentences or not")
     args = argparser.parse_args()
 
     domain_dir = args.dir
@@ -23,8 +24,9 @@ if __name__ == "__main__":
         print("Cleaning {}...".format(f))
         out = clean_file(f)
 
-        print("Splitting {}...".format(out))
-        out = split_sent_file(out, lang=lang)
+        if args.split:
+            print("Splitting {}...".format(out))
+            out = split_sent_file(out, lang=lang)
 
         print("Deduping {}...".format(out))
         dedup_file(out)

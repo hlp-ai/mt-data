@@ -133,6 +133,60 @@ class UrlsToCrawl:
         pass
 
 
+class BalancedUrlsToCrawl(UrlsToCrawl):
+
+    def __init__(self, path):
+        self._host2urls = []
+        self._ids = set()
+        self._next_host_id = 0
+
+        with open(path, encoding="utf-8") as f:
+            for url in f:
+                url = url.strip()
+                self.add(url)
+
+    def add(self, url):
+        """Add url to crawl"""
+        h = hash(url)
+        if h in self._ids:
+            return
+        self._ids.add(h)
+
+        u = URL(url)
+        host = u.host
+        i = 0
+        found = False
+        while i<len(self._host2urls):
+            if self._host2urls[i][0] == host:
+                self._host2urls[i][1].append(url)
+                found = True
+                break
+            else:
+                i += 1
+
+        if not found:
+            self._host2urls.append((host, [url]))
+
+    def next(self):
+        """Get url for crawling"""
+        if len(self._host2urls) == 0:
+            return None
+
+        if self._next_host_id >= len(self._host2urls):
+            self._next_host_id -= len(self._host2urls)
+
+        if self._next_host_id < len(self._host2urls):
+            url = self._host2urls[self._next_host_id][1].pop()
+            if len(self._host2urls[self._next_host_id][1]) == 0:  # 主机下没有链接了
+                self._host2urls.pop(self._next_host_id)
+
+            self._next_host_id += 1
+            return url
+
+    def close(self):
+        pass
+
+
 class BasicUrlsToCrawl(UrlsToCrawl):
 
     def __init__(self, path):
@@ -167,12 +221,16 @@ class BasicUrlsToCrawl(UrlsToCrawl):
         if len(self._urls) == 0:
             return None
 
-        e = self._urls[0]
-        del self._urls[0]
+        e = self._urls.pop()
         return e
 
     def __len__(self):
         return len(self._urls)
+
+    def close(self):
+        with open(self.ser_path, "w", encoding="utf-8") as f:
+            for u in self._urls:
+                f.write(u + "\n")
 
 
 class Fetcher:

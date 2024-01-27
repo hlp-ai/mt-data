@@ -40,7 +40,10 @@ def crawl_domain(domain_path, lang_list):
         # print("Fetching", url)
         try:
             logger.info(f"Fetching {url}")
+
             r = fetcher.fetch(url)
+            crawled.add(url)
+
             if r.status_code != 200:
                 logger.warning(f"{url}: {r.status_code}")
                 continue
@@ -68,7 +71,7 @@ def crawl_domain(domain_path, lang_list):
 
                 if len(lang2sentenes) > 0:
                     sent_repo.store(lang2sentenes)
-                    logger.info(sent_repo)
+                    logger.info(domain + ": " + str(sent_repo))
                 else:
                     logger.debug("NO sentence found for {}".format(url))
 
@@ -78,11 +81,9 @@ def crawl_domain(domain_path, lang_list):
                     else:
                         logger.debug(f"Filtered: {ol}")
 
-                crawled.add(url)
-
             n_tocrawl = len(to_crawl)
             n_crawled = len(crawled)
-            logger.info(f"{n_crawled} crawled, {n_tocrawl} to crawl")
+            logger.info(f"{domain}: {n_crawled} crawled, {n_tocrawl} to crawl")
         except Exception as e:
             logger.warning(url + ": " + str(e))
 
@@ -123,8 +124,6 @@ class CrawlManager:
         self.logger.info("# of domains: {} to crawl".format(len(domain_paths)))
 
         pool.map(partial(crawl_domain, lang_list=accepted_langs), domain_paths)
-
-        self.logger.info("***All CRAWL DONE.")
 
 
 if __name__ == "__main__":

@@ -24,3 +24,8 @@ python yimt_bitext.web.sites_from_stat --stat_file <统计数据文件路径> --
 ```shell script
 python yimt_bitext.web.crawl --sites_file <多语站点信息文件> [--crawl_dir <抓取目录>] --langs <逗号分隔的2字母语言列表> [--max_workers <抓取线程数，缺省8>]
 ```
+
+## 6. 对单语文进行处理
+```shell script
+python yimt_bitext.web.preprocess --dir <域抓取目录>
+```

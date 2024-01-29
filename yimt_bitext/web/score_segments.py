@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
     n2 = len(segs2)
 
-    print("File-1: {}, File-2: {}".format(n1, n2))
+    print("# of File-1: {}, # of File-2: {}".format(n1, n2))
 
     block = 16
     t1 = 0
@@ -55,4 +55,4 @@ if __name__ == "__main__":
                         of.write("{:.4f}\t{}\t{}\n".format(scores[m, n], s, t))
 
                 t2 += len(b2)
-                print("File-1: {}, File-2: {}".format(t1, t2))
+                print("Scored File-1: {}, File-2: {}".format(t1, t2))

@@ -15,7 +15,7 @@ def norm(s, lower=True, remove_noletter=True):
     return s
 
 
-def dedup_file(in_path, out_path=None, logger=None):
+def dedup_file(in_path, out_path=None, logger=None, lower=True, remove_noletter=True):
     if out_path is None:
         out_path = in_path + ".deduped"
 
@@ -36,7 +36,7 @@ def dedup_file(in_path, out_path=None, logger=None):
                 if logger:
                     logger.info("Total: {}, Unique: {}".format(total, n))
 
-            pn = norm(p)
+            pn = norm(p, lower=lower, remove_noletter=remove_noletter)
             h = hash(pn)
             if h in pairs:
                 if logger:

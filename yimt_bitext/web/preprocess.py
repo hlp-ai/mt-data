@@ -32,4 +32,4 @@ if __name__ == "__main__":
             out = split_sent_file(out, lang=lang)
 
         logger.info("Deduping {}...".format(out))
-        dedup_file(out, logger=logger)
+        dedup_file(out, logger=logger, remove_noletter=False)

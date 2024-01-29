@@ -2,6 +2,7 @@
 import argparse
 import json
 import os
+from concurrent.futures._base import ALL_COMPLETED, wait
 from concurrent.futures.thread import ThreadPoolExecutor
 from functools import partial
 
@@ -104,6 +105,7 @@ class CrawlManager:
 
     def update(self, sites_file):
         """更新待抓取列表"""
+        self.logger.info("Update crawler with {}".format(sites_file))
         with open(sites_file, encoding="utf-8") as sites_f:
             domain2hosts_langs = json.load(sites_f)
 
@@ -115,6 +117,14 @@ class CrawlManager:
                 with open(os.path.join(doamin_dir, "urls_tocrawl.txt"), "w", encoding="utf-8") as f:
                     for s in hosts:
                         f.write(s + "\n")
+            else:
+                crawled_fn = os.path.join(doamin_dir, "crawled.txt")
+                crawled = DiskUrlsCrawled(crawled_fn)
+                with open(os.path.join(doamin_dir, "urls_tocrawl.txt"), "a", encoding="utf-8") as f:
+                    for s in hosts:
+                        if not crawled.exists(s):
+                            self.logger.info("Found new host: {}".format(s))
+                            f.write(s + "\n")
 
     def start_crawl(self, accepted_langs, max_workers=6):
         pool = ThreadPoolExecutor(max_workers=max_workers)
@@ -124,7 +134,8 @@ class CrawlManager:
             domain_paths.append(domain_path)
         self.logger.info("# of domains: {} to crawl".format(len(domain_paths)))
 
-        pool.map(partial(crawl_domain, lang_list=accepted_langs), domain_paths)
+        tasks = pool.map(partial(crawl_domain, lang_list=accepted_langs), domain_paths)
+        wait(tasks, return_when=ALL_COMPLETED)
 
 
 if __name__ == "__main__":

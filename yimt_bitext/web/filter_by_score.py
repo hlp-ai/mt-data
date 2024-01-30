@@ -83,5 +83,8 @@ if __name__ == "__main__":
 
     logger = get_logger(os.path.join(args.log_dir, "opus.log"), "OPUS")
 
+    logger.info("Filtering pairs by score...")
     p = filter_score(in_path, out_path, min_score, logger=logger)
+
+    logger.info("Selecting pairs with max score...")
     filter_max(p, logger=logger)

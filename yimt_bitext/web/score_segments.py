@@ -8,6 +8,7 @@ if __name__ == "__main__":
     argparser.add_argument("--file1", required=True, help="Text file for language1")
     argparser.add_argument("--file2", required=True, help="Text file for language2")
     argparser.add_argument("--out", default=None, help="output file")
+    argparser.add_argument("--block", type=int, default=8, help="size of scoring block")
     args = argparser.parse_args()
 
     fn1 = args.file1
@@ -34,7 +35,7 @@ if __name__ == "__main__":
 
     print("# of File-1: {}, # of File-2: {}".format(n1, n2))
 
-    block = 16
+    block = args.block
     t1 = 0
     t2 = 0
 

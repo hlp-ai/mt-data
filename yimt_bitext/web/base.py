@@ -364,10 +364,11 @@ class BasicSentenceRepo(SentenceRepo):
 
 class SentenceRepoFile(SentenceRepo):
 
-    def __init__(self, path="./lang2sents"):
+    def __init__(self, path="./lang2sents", save_interval=50):
         self.path = path
         self.lang2f = {}
         self.lang2len = {}
+        self._save_interval = save_interval
 
         if not os.path.exists(path):
             os.makedirs(path, exist_ok=True)
@@ -389,7 +390,7 @@ class SentenceRepoFile(SentenceRepo):
             for s in sents:
                 self.lang2f[lang].write(s + "\n")
                 count += 1
-                if count % 50 == 0:
+                if count % self._save_interval == 0:
                     self.lang2f[lang].flush()
             self.lang2len[lang] += len(sents)
 

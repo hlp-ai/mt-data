@@ -342,6 +342,9 @@ class SentenceRepo:
     def store(self, sentences):
         pass
 
+    def sizes(self):
+        pass
+
 
 class BasicSentenceRepo(SentenceRepo):
 
@@ -399,3 +402,9 @@ class SentenceRepoFile(SentenceRepo):
         for lang, count in self.lang2len.items():
             description += lang + ": " + str(count) + "; "
         return description
+
+    def sizes(self):
+        counts = [(count, lang) for lang, count in self.lang2len.items()]
+        counts = list(sorted(counts))
+
+        return counts

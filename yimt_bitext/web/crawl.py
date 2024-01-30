@@ -73,6 +73,13 @@ def crawl_domain(domain_path, lang_list):
                 if len(lang2sentenes) > 0:
                     sent_repo.store(lang2sentenes)
                     logger.info(domain + ": " + str(sent_repo))
+
+                    counts = sent_repo.sizes()
+                    if len(counts) > 1:
+                        min_count = counts[0][0]
+                        max_count = counts[-1][0]
+                        if max_count > 50 * min_count:
+                            logger.warning("{}: language imbalance".format(domain))
                 else:
                     logger.debug("NO sentence found for {}".format(url))
 

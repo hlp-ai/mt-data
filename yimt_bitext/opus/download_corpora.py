@@ -1,5 +1,5 @@
+"""根据给定语言列表和语料列表下载OPUS语料"""
 import os
-import sys
 from argparse import ArgumentParser
 
 import requests

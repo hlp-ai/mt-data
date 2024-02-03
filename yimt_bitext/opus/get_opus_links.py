@@ -1,3 +1,4 @@
+"""从OPUS语言对平行语料列表网页中抽取语料文件URL"""
 import sys
 
 from bs4 import BeautifulSoup
@@ -12,7 +13,7 @@ def get_moses_links(html_file):
     for a in aa:
         if a.has_attr("href"):
             au = a["href"]
-            if "moses/" in au :
+            if "moses/" in au :  # TODO: OPUS网页布局已改变，这个模式匹配有问题
                 urls.append(au)
     return urls
 

@@ -98,7 +98,8 @@ EuroPat v3
 giga-fren v2
 GlobalVoices v2018q4
 GNOME v1
-GoURMET v
+GoURMET v1
+HPLT v1.1
 infopankki v1
 Joshua-IPC v1
 JRC-Acquis v3.0

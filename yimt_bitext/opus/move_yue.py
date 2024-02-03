@@ -1,3 +1,4 @@
+"""移除语料目录中粤语平行语料"""
 import os
 import shutil
 import sys
@@ -11,5 +12,5 @@ if __name__ == "__main__":
     for root, dirs, names in os.walk(to_zh_dir):
         for filename in names:
             corpus = os.path.join(root, filename)
-            if corpus.lower().find("qed") >=0 or corpus.lower().find("ted2020") >= 0:
+            if corpus.lower().find("qed") >=0 or corpus.lower().find("ted2020") >= 0 or corpus.lower().find("neulab-tedtalks") >= 0:
                 shutil.move(corpus, yue_dir)

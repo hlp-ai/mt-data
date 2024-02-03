@@ -41,7 +41,7 @@ class UrlLanguage(object):
         for code in ['tedesco', 'de-de', 'de-ch', 'de-at', 'de-li', 'de-lu',
                      'allemand']:
             self.code_to_language[code] = 'de'
-        for code in ['fr-be', 'fr-ca', 'fr-fr', 'fr-lu', 'fr-ch', 'f']:
+        for code in ['fr-be', 'fr-ca', 'fr-fr', 'fr-lu', 'fr-ch', 'fr']:  # 法语
             self.code_to_language[code] = 'fr'
         for code in ['italian', 'italiano', 'ital', 'ita', 'it-it', 'it-ch',
                      'it']:
@@ -139,7 +139,7 @@ class UrlLanguage(object):
             self.code_to_language[code] = 'sw'
         for code in ['urdu', 'ur', 'urd']:   # 乌尔都语
             self.code_to_language[code] = 'ur'
-        for code in ['lao', 'lo', 'laos', 'la']:   # 乌尔都语
+        for code in ['lao', 'lo', 'laos', 'la']:   # 老挝语
             self.code_to_language[code] = 'lo'
 
         pairs = list(self.code_to_language.items())

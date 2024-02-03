@@ -106,6 +106,7 @@ KDE4 v2
 LinguaTools-WikiTitles v2014
 Mozilla-I10n v1
 MPC1 v1
+MultiParaCrawl v9b
 MultiUN v1
 NeuLab-TedTalks v1
 News-Commentary v16

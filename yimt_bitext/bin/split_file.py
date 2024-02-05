@@ -1,4 +1,4 @@
-"""Split a big corpus into a number of files with fixed length"""
+"""将一个大文件平分成固定大小的多个文件"""
 import argparse
 
 from yimt_bitext.opus.utils import split

@@ -1,4 +1,4 @@
-"""Split TSV file into source and target file"""
+"""将TSV平行语料文件分成两个单语文本文件"""
 import argparse
 
 from yimt_bitext.opus.utils import pair_to_single

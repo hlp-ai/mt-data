@@ -1,4 +1,4 @@
-"""Combine two files with different language into one TSV file"""
+"""将互为翻译的两个单语文本文件合并为TSV格式平行语料文件"""
 import argparse
 import os
 

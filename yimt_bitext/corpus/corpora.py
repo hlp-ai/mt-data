@@ -1,9 +1,5 @@
 
 
-class Corpus:
-    pass
-
-
 class PairFromLine:
     """从文本行构建平行句子"""
 
@@ -55,7 +51,7 @@ class FileIterator:
             return e
 
 
-class MapCorpus(Corpus):
+class MapCorpus:
     """可随机访问语料，支持单语或平行语料"""
 
     def __init__(self, corpus_file, get_item):
@@ -76,7 +72,7 @@ class MapCorpus(Corpus):
         return self._items[item]
 
 
-class IterableCorpus(Corpus):
+class IterableCorpus:
     """可迭代语料，支持单语或平行语料"""
 
     def __init__(self, corpus_file, get_item):

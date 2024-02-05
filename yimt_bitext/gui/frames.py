@@ -4,20 +4,26 @@ from tkinter import *
 import tkinter.messagebox
 from functools import partial
 
-from yimt_bitext.bin.remove_scores import strip_scores
-from yimt_bitext.bin.sample import sample
-from yimt_bitext.utils.sp import train_spm, load_spm, tokenize_file, detokenize_file
+from yimt_bitext.dedup.dedup import dedup_tsv_file
+from yimt_bitext.filter.filters import load_filters, filter_file
+from yimt_bitext.misc.hant2hans import hant2s_file
+from yimt_bitext.misc.sample import sample
+from yimt_bitext.normalize.normalizers import load_normalizers, normalize_file
+from yimt_bitext.opus.merge_moses import merge_moses
 
-from yimt_bitext.bin.hant2hans import hant2s_file
 from yimt_bitext.gui.win_utils import ask_open_file, ask_save_file, ask_dir
-from yimt_bitext.opus.utils import pair_to_single, single_to_pair, extract_zips, merge, split, \
-    score_and_filter_pattern, diff, merge_moses_only, intersect, partition
+from yimt_bitext.opus.unzip_files import extract_zips
+from yimt_bitext.opus.utils import score_and_filter_pattern
+from yimt_bitext.score.remove_scores import strip_scores
+from yimt_bitext.split.merge import merge
+from yimt_bitext.split.sp import detokenize_file, tokenize_file, load_spm, train_spm
+from yimt_bitext.split.split_file import split
+from yimt_bitext.split.to_pair import single_to_pair
+from yimt_bitext.split.to_single import pair_to_single
+from yimt_bitext.split.tokenization import detok_zh, tokenize_single
 from yimt_bitext.utils.count import count
-from yimt_bitext.utils.dedup import dedup_bitext_file
-from yimt_bitext.utils.filters import filter_file, load_filters
 from yimt_bitext.utils.log import get_logger
-from yimt_bitext.utils.normalizers import normalize_file, load_normalizers
-from yimt_bitext.utils.tokenization import tokenize_single, detok_zh
+
 
 logger_opus = get_logger("./opus.log", "CORPUS")
 
@@ -85,7 +91,7 @@ def create_merge_moses_corpus(parent):
         if len(corpus_mergemoses_tl) == 0:
             corpus_mergemoses_tl = None
 
-        merge_moses_only(corpus_mergemoses_datapath, corpus_mergemoses_sl, corpus_mergemoses_tl, corpus_output_path,
+        merge_moses(corpus_mergemoses_datapath, corpus_mergemoses_sl, corpus_mergemoses_tl, corpus_output_path,
                     logger_opus=logger_opus)
         tk.messagebox.showinfo(title="Info", message="done")
 
@@ -209,10 +215,10 @@ def create_dedup_corpus(parent):
         dedup_tgt = True if var_tgt.get() == 1 else False
         no_letter = True if var_noletter.get() == 1 else False
 
-        dedup_bitext_file(corpus_dedup_in, corpus_dedup_out,
-                          dedup_srctgt=dedup_srctgt, dedup_src=dedup_src, dedup_tgt=dedup_tgt,
-                          remove_noletter=no_letter,
-                          logger=logger_opus)
+        dedup_tsv_file(corpus_dedup_in, corpus_dedup_out,
+                       dedup_srctgt=dedup_srctgt, dedup_src=dedup_src, dedup_tgt=dedup_tgt,
+                       remove_noletter=no_letter,
+                       logger=logger_opus)
 
         tk.messagebox.showinfo(title="Info", message="done")
 

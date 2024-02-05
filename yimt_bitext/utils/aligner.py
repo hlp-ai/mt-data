@@ -1,5 +1,5 @@
 """Sentence alignment based on LaBSE sentence embedding"""
-from yimt_bitext.opus.bitext_scorers import LaBSEScorer
+from yimt_bitext.score.bitext_scorers import LaBSEScorer
 
 
 class SentenceEmbeddingAligner(object):

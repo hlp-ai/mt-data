@@ -2,9 +2,9 @@
 import argparse
 import os
 
-from yimt_bitext.opus.utils import single_to_pair
+from yimt_bitext.split.to_pair import single_to_pair
 from yimt_bitext.utils.log import get_logger
-from yimt_bitext.utils.normalizers import detok_zh_file_inplace
+from yimt_bitext.normalize.normalizers import detok_zh_file_inplace
 
 
 def merge_moses(in_dir, source_lang=None, target_lang=None, out_dir=None,

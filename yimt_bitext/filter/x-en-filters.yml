@@ -1,0 +1,47 @@
+filters:
+  - EmptyFilter:
+      params: null
+
+  - SameFilter:
+      params:
+        lower: true
+
+  - OverlapFilter:
+      params:
+        ratio: 0.80
+
+  - LengthUnitFilter:
+      params:
+        src_unit: word
+        tgt_unit: word
+        src_min_len: 1
+        src_max_len: 128
+        tgt_min_len: 1
+        tgt_max_len: 128
+        ratio: 3
+
+  #- NonZeroNumeralsFilter:
+  #    params:
+  #      threshold: 0.5
+  #      require_all: True
+
+  - CharacterRatio2Filter:
+      params:
+        src_script:
+          - Latin
+        tgt_script:
+          - Latin
+        src_threshold: 0.50
+        tgt_threshold: 0.50
+
+  - AlphabetRatioFilter:
+      params:
+        threshold: 0.33
+        exclude_whitespace: True
+
+  - RepetitionFilter:
+      params:
+        threshold: 3
+        min_length: 3
+        max_length: 16
+

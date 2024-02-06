@@ -34,10 +34,10 @@ def extract_zips(zips_dir, out_dir=None, logger_opus=None):
 
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser()
-    argparser.add_argument("--in_dir", type=str, required=True, help="zip file dir")
-    argparser.add_argument("--out_dir", type=str, default=None, help="output dir")
+    argparser.add_argument("-i", "--input", type=str, required=True, help="zip file dir")
+    argparser.add_argument("-o", "--output", type=str, default=None, help="output dir")
     args = argparser.parse_args()
 
-    logger = get_logger("./log.txt", "corpus")
+    logger = get_logger("./log.txt", "OPUS")
 
-    extract_zips(args.in_dir, args.out_dir, logger_opus=logger)
+    extract_zips(args.input, args.output, logger_opus=logger)

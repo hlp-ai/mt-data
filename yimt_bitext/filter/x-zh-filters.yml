@@ -10,15 +10,23 @@ filters:
       params:
         ratio: 0.66
 
-  - LengthUnitFilter:
+#  - LengthUnitFilter:
+#      params:
+#        src_unit: word
+#        tgt_unit: char
+#        src_min_len: 1
+#        src_max_len: 128
+#        tgt_min_len: 1
+#        tgt_max_len: 256
+#        ratio: 5
+
+  - LengthSubwordFilter:
       params:
-        src_unit: word
-        tgt_unit: char
         src_min_len: 1
         src_max_len: 128
         tgt_min_len: 1
-        tgt_max_len: 256
-        ratio: 5
+        tgt_max_len: 128
+        ratio: 3
 
   #- NonZeroNumeralsFilter:
   #    params:

@@ -82,6 +82,6 @@ if __name__ == "__main__":
     parser.add_argument("--log_dir", default="./", help="log directory")
     args = parser.parse_args()
 
-    logger_opus = get_logger(os.path.join(args.log_dir, "opus.log"), "OPUS")
+    logger_opus = get_logger(os.path.join(args.log_dir, "opus.log"), "Merge")
 
     merge(args.input, args.output, logger_opus=logger_opus)

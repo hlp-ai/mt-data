@@ -16,9 +16,7 @@ if __name__ == "__main__":
     corpus_fn = args.input
     out_fn = args.output
 
-    logger = get_logger("./log.txt", "corpus")
-
-    logger.info("SRC: {}, TGT: {}， SRC_TGT: {}".format(args.dedup_src, args.dedup_tgt, args.dedup_srctgt))
+    logger = get_logger("./log.txt", "Dedup")
 
     if args.dedup_srctgt or args.dedup_src or args.dedup_tgt:
         dedup_tsv_file(corpus_fn, out_fn, args.dedup_src, args.dedup_tgt, args.dedup_srctgt, logger=logger)

@@ -1,17 +1,4 @@
 import os
-import regex
-
-
-# not_letter = regex.compile(r'[^\p{L}]')
-#
-#
-# def norm(s, lower=True, remove_noletter=True):
-#     if lower:
-#         s = s.lower()
-#
-#     if remove_noletter:
-#         s = regex.sub(not_letter, "", s)
-#     return s
 from yimt_bitext.normalize.normalizers import norm
 
 

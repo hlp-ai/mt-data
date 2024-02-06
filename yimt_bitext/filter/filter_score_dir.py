@@ -9,14 +9,14 @@ from yimt_bitext.utils.log import get_logger
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser(description="Filter corpus based on score")
     argparser.add_argument("-i", "--input", required=True, help="input directory")
-    argparser.add_argument("--min", default=0.66, type=float, help="Min socre for bitext")
+    argparser.add_argument("--min", default=0.66, type=float, help="Min score for bitext")
     argparser.add_argument("--log_dir", default="./", help="log directory")
     args = argparser.parse_args()
 
     in_path = args.input
     min_score = args.min
 
-    logger_opus = get_logger(os.path.join(args.log_dir, "opus.log"), "OPUS")
+    logger_opus = get_logger(os.path.join(args.log_dir, "opus.log"), "Filter-Score")
 
     filter_dir = os.path.join(in_path, "sfilter")
     if not os.path.exists(filter_dir):

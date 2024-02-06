@@ -14,3 +14,4 @@ def length_subword(txt):
 if __name__ == "__main__":
     print(length_subword("今天下好大的雪呀。"))
     print(length_subword("This is a book."))
+    print(length_subword("ກ່າວໃນສະຫນັບສະຫນູນຂອງຊາວມຸດສະລິມຫຼັງຈາກອາທິດຂອງ"))

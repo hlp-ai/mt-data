@@ -1,4 +1,3 @@
-import os
 import re
 
 import yaml
@@ -207,40 +206,6 @@ class CleanerTSV(Normalizer):
         tgt = self.cleaner.normalize(tgt)
 
         return src + "\t" + tgt
-
-
-def normalize_file(in_path, normalizers, out_path=None, clean_after_done=False, logger=None):
-    if logger:
-        logger.info(normalizers)
-
-    if out_path is None:
-        out_path = in_path + ".normalized"
-
-    if os.path.exists(out_path):
-        logger.info("{} exists".format(out_path))
-        return out_path
-
-    n = 0
-    with open(in_path, encoding="utf-8") as in_f, open(out_path, "w", encoding="utf-8") as out_f:
-        for line in in_f:
-            for normalizer in normalizers:
-                line = normalizer.normalize(line)
-
-            if len(line) > 0:
-                out_f.write(line + "\n")
-
-            n += 1
-
-            if n % 100000 == 0:
-                if logger:
-                    logger.info("Normalizing {}".format(n))
-    if logger:
-        logger.info("Normalizing {}".format(n))
-
-    if clean_after_done:
-        os.remove(in_path)
-
-    return out_path
 
 
 name2normalizer = {"CleanerTSV": CleanerTSV,

@@ -1,3 +1,4 @@
+"""对平行文件中句对进行打分"""
 import os
 import time
 from argparse import ArgumentParser

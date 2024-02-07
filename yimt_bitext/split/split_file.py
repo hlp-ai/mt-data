@@ -39,13 +39,13 @@ def split(file, num_per_file=1000000, logger=None):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input", type=str, required=True, help="input file")
-    parser.add_argument("--num", type=int, default=500000, help="the number of samples in each file")
+    parser.add_argument("-i", "--input", type=str, required=True, help="input file")
+    parser.add_argument("-n", "--num", type=int, default=500000, help="the number of samples in each file")
     args = parser.parse_args()
 
     input = args.input
     sample_num = args.num
 
-    logger = get_logger("./log.txt", "corpus")
+    logger = get_logger("./log.txt", "Split")
 
     split(input, num_per_file=sample_num, logger=logger)

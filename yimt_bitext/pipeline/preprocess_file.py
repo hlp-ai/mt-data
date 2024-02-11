@@ -3,8 +3,10 @@ from argparse import ArgumentParser
 
 from yimt_bitext.dedup.dedup import dedup_tsv_file
 from yimt_bitext.filter.filters import get_lang2script, EmptyFilter, SameFilter, OverlapFilter, AlphabetRatioFilter, \
-    RepetitionFilter, CharacterRatioFilter, filter_file
-from yimt_bitext.normalize.normalizers import ToZhNormalizer, normalize_file
+    RepetitionFilter, CharacterRatioFilter
+from yimt_bitext.filter.filter import filter_file
+from yimt_bitext.normalize.normalizers import ToZhNormalizer
+from yimt_bitext.normalize.normalize import normalize_file
 from yimt_bitext.utils.log import get_logger
 
 

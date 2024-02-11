@@ -4,8 +4,10 @@ from pathlib import Path
 
 from yimt_bitext.dedup.dedup import dedup_tsv_file
 from yimt_bitext.filter.filters import get_lang2script, EmptyFilter, SameFilter, OverlapFilter, NonZeroNumeralsFilter, \
-    AlphabetRatioFilter, RepetitionFilter, CharacterRatioFilter, filter_file
-from yimt_bitext.normalize.normalizers import ToZhNormalizer, normalize_file
+    AlphabetRatioFilter, RepetitionFilter, CharacterRatioFilter
+from yimt_bitext.filter.filter import filter_file
+from yimt_bitext.normalize.normalizers import ToZhNormalizer
+from yimt_bitext.normalize.normalize import normalize_file
 from yimt_bitext.opus.merge_moses import merge_moses
 from yimt_bitext.opus.unzip_files import extract_zips
 from yimt_bitext.split.merge import merge

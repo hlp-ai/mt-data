@@ -9,7 +9,7 @@ def process(raw_filter_path, min_score, model_path, block):
     path_sf = raw_filter_path + ".sfilter"
 
     print("Scoring {} into {}...".format(raw_filter_path, path_s))
-    score_bitext.main(raw_filter_path, path_s, model_path, block)
+    score_bitext.score_tsv(raw_filter_path, path_s, model_path, block)
     print()
 
     print("Filtering-by-socre {} into {}...".format(path_s, path_sf))

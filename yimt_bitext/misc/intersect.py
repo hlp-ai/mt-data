@@ -3,7 +3,7 @@ import sys
 from yimt_bitext.normalize.normalizers import norm
 
 
-def interset(tsv_file1, tsv_file2, out_file, creterion="SRC",
+def intersect(tsv_file1, tsv_file2, out_file, creterion="SRC",
              lower=True, remove_noletter=True):
     pairs = set()
     srcs = set()
@@ -79,4 +79,4 @@ if __name__ == "__main__":
     f2 = sys.argv[2]
     out = sys.argv[3]
 
-    interset(f1, f2, out, "SRCTGT")
+    intersect(f1, f2, out, "SRCTGT")

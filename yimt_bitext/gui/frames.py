@@ -5,10 +5,14 @@ import tkinter.messagebox
 from functools import partial
 
 from yimt_bitext.dedup.dedup import dedup_tsv_file
-from yimt_bitext.filter.filters import load_filters, filter_file
+from yimt_bitext.filter.filters import load_filters
+from yimt_bitext.filter.filter import filter_file
+from yimt_bitext.misc.diff import diff_tsv
 from yimt_bitext.misc.hant2hans import hant2s_file
 from yimt_bitext.misc.sample import sample
-from yimt_bitext.normalize.normalizers import load_normalizers, normalize_file
+from yimt_bitext.misc.intersect import intersect
+from yimt_bitext.normalize.normalizers import load_normalizers
+from yimt_bitext.normalize.normalize import normalize_file
 from yimt_bitext.opus.merge_moses import merge_moses
 
 from yimt_bitext.gui.win_utils import ask_open_file, ask_save_file, ask_dir
@@ -268,7 +272,7 @@ def create_diff_corpus(parent):
             tk.messagebox.showinfo(title="Info", message="Input parameter empty.")
             return
 
-        diff(corpus_dedup_base, corpus_dedup_in, corpus_dedup_out, creterion=diff_cond,
+        diff_tsv(corpus_dedup_base, corpus_dedup_in, corpus_dedup_out, creterion=diff_cond,
              remove_noletter=no_letter, logger=logger_opus)
 
         tk.messagebox.showinfo(title="Info", message="done")

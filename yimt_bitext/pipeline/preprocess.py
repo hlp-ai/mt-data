@@ -1,3 +1,4 @@
+"""对OPUS语料进行预处理：解压、合并、规范化、去重、过滤、打分过滤"""
 import os
 import re
 import shutil
@@ -138,7 +139,7 @@ if __name__ == "__main__":
     argparser.add_argument("--log_dir", default="./", help="log directory")
     args = argparser.parse_args()
 
-    logger_opus = get_logger(os.path.join(args.log_dir, "opus.log"), "OPUS")
+    logger_opus = get_logger(os.path.join(args.log_dir, "opus.log"), "Pipeline")
 
     root = args.root
     sub = os.listdir(root)

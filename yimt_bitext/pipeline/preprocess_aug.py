@@ -1,3 +1,4 @@
+"""将原始X-EN平行语料预处理为X-ZH平行语料"""
 import os
 from argparse import ArgumentParser
 from pathlib import Path
@@ -34,11 +35,11 @@ if __name__ == "__main__":
     argparser.add_argument("--log_dir", default="./", help="log directory")
     args = argparser.parse_args()
 
-    logger_opus = get_logger(os.path.join(args.log_dir, "opus.log"), "OPUS")
+    logger_opus = get_logger(os.path.join(args.log_dir, "opus.log"), "Pipeline")
 
-    preprocess_cmd = "python -m yimt_bitext.opus.preprocess --root {} --labse {} --block {} --min {} --max_pairs {} --log_dir {} --clean"
-    aug_cmd = "python -m yimt_bitext.bin.translate_aug --input {} --sp_en_model {} --sp_zh_model {} --ct2_zh_model {} --src_lang {} --log_dir {} --clean --bs {}"
-    score_filter_cmd = "python -m yimt_bitext.bin.score_and_filter --input {} --labse {} --block {} --min {} --log_dir {} --clean"
+    preprocess_cmd = "python -m yimt_bitext.pipeline.preprocess --root {} --labse {} --block {} --min {} --max_pairs {} --log_dir {} --clean"
+    aug_cmd = "python -m yimt_bitext.pipeline.translate_aug --input {} --sp_en_model {} --sp_zh_model {} --ct2_zh_model {} --src_lang {} --log_dir {} --clean --bs {}"
+    score_filter_cmd = "python -m yimt_bitext.pipeline.score_and_filter --input {} --labse {} --block {} --min {} --log_dir {} --clean"
 
     root = args.root
     sub = os.listdir(root)

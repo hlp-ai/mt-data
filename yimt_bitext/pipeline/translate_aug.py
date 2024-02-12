@@ -1,3 +1,4 @@
+"""将X-EN语料通过EN-ZH翻译转换成X-ZH平行语料"""
 import os
 import re
 import shutil
@@ -182,7 +183,7 @@ if __name__ == "__main__":
     argparser.add_argument("--log_dir", default="./", help="log directory")
     args = argparser.parse_args()
 
-    logger = get_logger(os.path.join(args.log_dir, "opus.log"), "OPUS")
+    logger = get_logger(os.path.join(args.log_dir, "opus.log"), "Pipeline")
 
     aug_from_en(args.input, args.sp_en_model, args.sp_zh_model, args.ct2_zh_model, args.src_lang, args.clean,
                 args.bs, logger)

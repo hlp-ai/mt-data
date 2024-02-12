@@ -1,3 +1,4 @@
+"""对单个TSV平行语料文件进行打分和过滤"""
 import os
 import re
 import shutil
@@ -62,7 +63,7 @@ if __name__ == "__main__":
     argparser.add_argument("--log_dir", default="./", help="log directory")
     args = argparser.parse_args()
 
-    logger_opus = get_logger(os.path.join(args.log_dir, "opus.log"), "OPUS")
+    logger_opus = get_logger(os.path.join(args.log_dir, "opus.log"), "Pipeline")
 
     p = args.input
     score_and_filter(p, labse_model_dir=args.labse, block=args.block, min_socre=args.min,

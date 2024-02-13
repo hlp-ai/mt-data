@@ -1,11 +1,11 @@
-"""5. Preprocess sentence files"""
+"""5. 对单语文本文件进行清理和去重，可选分句"""
 import argparse
 import os
 
+from yimt_bitext.dedup.dedup import dedup_file
+from yimt_bitext.split.text_splitter import split_sent_file
 from yimt_bitext.utils.clean import clean_file
-from yimt_bitext.utils.dedup import dedup_file
 from yimt_bitext.utils.log import get_logger
-from yimt_bitext.utils.text_splitter import split_sent_file
 
 
 if __name__ == "__main__":

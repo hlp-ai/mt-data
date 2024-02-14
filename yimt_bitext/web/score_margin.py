@@ -1,5 +1,6 @@
 import argparse
-from yimt_bitext.opus.utils import pair_to_single
+
+from yimt_bitext.split.to_single import pair_to_single
 from yimt_bitext.web.build_seg_vec_index import build_vec_index
 from yimt_bitext.web.sentence_vector import SentenceVectorizationLaBSE_2, load_vec_index, VectorSimilarityMargin, \
     SentenceVectorizationLaBSE

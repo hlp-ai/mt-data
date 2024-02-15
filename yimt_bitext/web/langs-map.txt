@@ -1,3 +1,5 @@
 # 只允许单行注释，可以空行,小写
-# 规范化语言代码,逗号分隔的列表,列表中可以包括语言名，国家区域名,语言代码别称等
-zh,chinese,china,cn,zh,zho,zh-cn,zh-tw
+# 规范化语言代码,逗号分隔的列表,列表中可以包括语言名，国家区域名,语言代码别称等,不需要重复
+zh,chinese,china,cn,zho,zh-cn,zh-tw
+lo,lao,laos,la
+en,english,us,gb,ca,uk,en-us,en-gb,en-ca

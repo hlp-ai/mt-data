@@ -8,6 +8,7 @@ from yimt_bitext.web.web import URL
 class LangStat:
 
     def update(self, host, lang2len):
+        """更新主机下语言分布数据"""
         pass
 
     def stat_by_domain(self, domain):
@@ -53,7 +54,7 @@ class LangStat:
         avg_len = total_lens / total_langs
         ret = []
         for lang in lang2len.keys():
-            if lang2len[lang] > avg_len/5:
+            if lang2len[lang] > avg_len / 5:
                 ret.append(lang)
 
         return ret
@@ -88,12 +89,13 @@ class BasicLangStat(LangStat):
             self.stat = {}
 
     def update(self, host, lang2len):
+        """更新主机下语言分布数据"""
         domain = get_domain(host)
-        if domain not in self.stat:
+        if domain not in self.stat:  # 新域名
             self.stat[domain] = {host: lang2len}
         else:
             host2lang2len = self.stat[domain]
-            if host not in host2lang2len:
+            if host not in host2lang2len:  # 新主机
                 host2lang2len[host] = lang2len
             else:
                 old_lang2len = host2lang2len[host]
@@ -168,17 +170,18 @@ class BasicLangStat(LangStat):
                         break
             yield domain, hosts
 
+
 class SqliteLangStat(LangStat):
     def __init__(self, db_file):
-        self.db_file=db_file
+        self.db_file = db_file
         if os.path.exists(self.db_file):
             print("connecting", self.db_file)
             self.con = sqlite3.connect(db_file)
-            self.cur=self.con.cursor()
-        else:
-            self.con = sqlite3.connect('%s'%db_file)
             self.cur = self.con.cursor()
-            self.cur.execute("CREATE TABLE language(\
+        else:
+            self.con = sqlite3.connect('%s' % db_file)
+            self.cur = self.con.cursor()
+            self.cur.execute("CREATE TABLE lang_stat(\
                        host CHAR NOT NULL,\
                        domain CHAR NOT NULL,\
                        lang CHAR NOT NULL,\
@@ -188,50 +191,50 @@ class SqliteLangStat(LangStat):
 
     def update(self, host, lang2len):
         for key in lang2len:
-            self.cur.execute("SELECT host,lang From language WHERE host='%s' AND lang ='%s'"\
-                             %(host,key))
-            f=self.cur.fetchone()
+            self.cur.execute("SELECT host,lang From lang_stat WHERE host='%s' AND lang ='%s'" \
+                             % (host, key))
+            f = self.cur.fetchone()
             if f:
-                self.cur.execute("UPDATE language SET lang2len = lang2len+%d WHERE host = '%s' AND lang ='%s';" \
-                                 % (lang2len[key],host, key))
+                self.cur.execute("UPDATE lang_stat SET lang2len = lang2len+%d WHERE host = '%s' AND lang ='%s';" \
+                                 % (lang2len[key], host, key))
                 self.con.commit()
             else:
                 domain = get_domain(host)
-                self.cur.execute("INSERT INTO language VALUES ('%s','%s','%s','%d')"\
-                                 %(host,domain,key,lang2len[key]))
+                self.cur.execute("INSERT INTO lang_stat VALUES ('%s','%s','%s','%d')" \
+                                 % (host, domain, key, lang2len[key]))
                 self.con.commit()
 
     def stat_by_domain(self, domain):
-        self.cur.execute("SELECT host,lang,lang2len From language WHERE domain ='%s'" \
+        self.cur.execute("SELECT host,lang,lang2len From lang_stat WHERE domain ='%s'" \
                          % (domain))
         f = self.cur.fetchall()
         if f:
             statdomain = {}
-            statdomain[domain]={}
+            statdomain[domain] = {}
             for a in f:
-                domain_lang2len={a[1]:a[2]}
+                domain_lang2len = {a[1]: a[2]}
                 if a[0] not in statdomain[domain]:
-                    statdomain[domain][a[0]]=domain_lang2len
+                    statdomain[domain][a[0]] = domain_lang2len
                 else:
-                    merge_lang2len(statdomain[domain][a[0]],domain_lang2len)
+                    merge_lang2len(statdomain[domain][a[0]], domain_lang2len)
             return statdomain[domain]
         else:
             return None
 
     def stat_by_host(self, host):
         domain = get_domain(host)
-        self.cur.execute("SELECT host,domain,lang,lang2len From language WHERE host ='%s'" \
+        self.cur.execute("SELECT host,domain,lang,lang2len From lang_stat WHERE host ='%s'" \
                          % (host))
         f = self.cur.fetchall()
         if f:
             stathost = {}
             stathost[domain] = {}
             for a in f:
-                domain_lang2len={a[2]:a[3]}
+                domain_lang2len = {a[2]: a[3]}
                 if a[0] not in stathost[domain]:
-                    stathost[domain][a[0]]=domain_lang2len
+                    stathost[domain][a[0]] = domain_lang2len
                 else:
-                    merge_lang2len(stathost[domain][a[0]],domain_lang2len)
+                    merge_lang2len(stathost[domain][a[0]], domain_lang2len)
             return stathost[domain][host]
         else:
             return None
@@ -246,21 +249,21 @@ class SqliteLangStat(LangStat):
         return lang2len_ret
 
     def domains(self):
-        self.cur.execute("SELECT domain From language")
+        self.cur.execute("SELECT domain From lang_stat")
         f = self.cur.fetchall()
-        domainslist={}
+        domainslist = {}
         for a in f:
             if a[0] not in domainslist:
-                domainslist[a[0]]={}
+                domainslist[a[0]] = {}
         return domainslist.keys()
 
     def hosts(self, domain):
-        self.cur.execute("SELECT host From language WHERE domain = '%s'"%domain)
+        self.cur.execute("SELECT host From lang_stat WHERE domain = '%s'" % domain)
         f = self.cur.fetchall()
-        hostslist={}
+        hostslist = {}
         for a in f:
             if a[0] not in hostslist:
-                hostslist[a[0]]={}
+                hostslist[a[0]] = {}
         return hostslist.keys()
 
     def size(self):

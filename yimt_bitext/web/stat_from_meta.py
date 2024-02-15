@@ -1,12 +1,11 @@
 """"2. Calculate statistics on languages of text from metadata file"""
 import argparse
 import glob
-import json
 import os
 import shutil
 
-from yimt_bitext.web.base import BasicLangStat
 from yimt_bitext.web.cc import update_k2dict
+from yimt_bitext.web.lang_stat import BasicLangStat
 
 
 def stat_from_meta_by_host(meta_file):

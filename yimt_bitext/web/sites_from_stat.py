@@ -4,7 +4,7 @@ import json
 import os
 from collections import defaultdict
 
-from yimt_bitext.web.base import BasicLangStat
+from yimt_bitext.web.lang_stat import BasicLangStat
 from yimt_bitext.web.url_language import UrlLanguage
 
 if __name__ == "__main__":

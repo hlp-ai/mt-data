@@ -3,3 +3,8 @@
 zh,chinese,china,cn,zho,zh-cn,zh-tw
 lo,lao,laos,la
 en,english,us,gb,ca,uk,en-us,en-gb,en-ca
+ar,arabic,ara
+bg,bulgarian,bul
+br,breton,bre
+cs,czech,cze,cz
+da,danish,da-dk,dan

@@ -1,4 +1,4 @@
-from yimt_bitext.web.base import LangStat
+from yimt_bitext.web.lang_stat import LangStat
 
 if __name__ == "__main__":
     lang2len = {"zh": 1000, "en": 20, "ko": 300}

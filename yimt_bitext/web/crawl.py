@@ -31,21 +31,20 @@ def crawl_domain(domain_path, lang_list):
     url_filter = BasicUrlFilter(domain, lang_list)
 
     while True:
-        url = to_crawl.next()
+        url = to_crawl.next()  # 下一个待抓取链接
         if url is None:
             break
 
-        if crawled.exists(url):
+        if crawled.exists(url):  # 已经抓取过
             continue
 
-        # print("Fetching", url)
         try:
             logger.info(f"Fetching {url}")
 
-            r = fetcher.fetch(url)
-            crawled.add(url)
+            r = fetcher.fetch(url)  # 抓取
+            crawled.add(url)  # 链接添加到已抓取列表中
 
-            if r.status_code != 200:
+            if r.status_code != 200:  # 非成功抓取
                 logger.warning(f"{url}: {r.status_code}")
                 continue
             if r.encoding is None:
@@ -57,34 +56,37 @@ def crawl_domain(domain_path, lang_list):
             if html_content is not None:
                 # print("Parsing", url)
                 logger.debug(f"Parsing {url}")
-                txt, outlinks = parser.parse(html_content, url)
+                txt, outlinks = parser.parse(html_content, url)  # 提取文本和出链
 
-                sentences = sentence_splitter.split(txt)
+                sentences = sentence_splitter.split(txt)  # 获取非空文本段落列表
                 lang2sentenes = {}
                 for s in sentences:
-                    lang = langid.detect(s)
-                    if lang_list is not None and lang not in lang_list:
+                    lang = langid.detect(s)  # 检测段落语言
+                    if lang_list is not None and lang not in lang_list:  # 非期望语言文本
                         continue
+
                     if lang in lang2sentenes:
                         lang2sentenes[lang].append(s)
                     else:
                         lang2sentenes[lang] = [s]
 
                 if len(lang2sentenes) > 0:
-                    sent_repo.store(lang2sentenes)
+                    sent_repo.store(lang2sentenes)  # 保存各语言文本
                     logger.info(domain + ": " + str(sent_repo))
 
+                    # 检测当前各语言文本数量分布
                     counts = sent_repo.sizes()
                     if len(counts) > 1:
                         min_count = counts[0][0]
                         max_count = counts[-1][0]
-                        if max_count > 50 * min_count:
-                            logger.warning("{}: language imbalance".format(domain))
+                        if max_count > 50 * min_count:  # 最少和最多语言文本数量相差过大，50倍
+                            logger.warning("{}: 多语域名下语言分布相差过大！".format(domain))
                 else:
                     logger.debug("NO sentence found for {}".format(url))
 
+                # 将出链添加到待抓取列表
                 for ol in outlinks:
-                    if url_filter.accept(ol):
+                    if url_filter.accept(ol):  # 过滤出链
                         to_crawl.add(ol)
                     else:
                         logger.debug(f"Filtered: {ol}")
@@ -118,7 +120,7 @@ class CrawlManager:
 
         for domain, hosts in domain2hosts_langs.items():
             doamin_dir = os.path.join(self.crawl_dir, domain)
-            if not os.path.exists(doamin_dir):  # TODO: 多语域名下新发现的站点的添加
+            if not os.path.exists(doamin_dir):
                 self.logger.info("Found new domain: {}".format(domain))
                 os.makedirs(doamin_dir, exist_ok=True)
                 with open(os.path.join(doamin_dir, "urls_tocrawl.txt"), "w", encoding="utf-8") as f:

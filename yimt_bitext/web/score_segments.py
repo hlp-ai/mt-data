@@ -1,4 +1,4 @@
-"""6. Score sentence pairs"""
+"""6. 对两个语言的文本进行逐对打分"""
 import argparse
 
 from yimt_bitext.web.sentence_vector import VectorSimilarityCosine, SentenceVectorizationLaBSE

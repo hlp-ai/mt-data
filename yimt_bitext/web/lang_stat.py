@@ -133,6 +133,7 @@ class BasicLangStat(LangStat):
         return lang2len_ret
 
     def domains(self):
+        """所有域名"""
         return self.stat.keys()
 
     def hosts(self, domain):

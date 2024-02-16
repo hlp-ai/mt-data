@@ -1,4 +1,4 @@
-"""1. Download, parse WET files from CommonCrawl and dump metadata for each WET file"""
+"""1. 下载解析WET文件，并转储每个链接的语言信息到元数据文件"""
 import argparse
 import os
 import time

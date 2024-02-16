@@ -1,4 +1,4 @@
-""""2. Calculate statistics on languages of text from metadata file"""
+""""2. 根据元数据文件统计每个域名下每个主机的语言分布"""
 import argparse
 import glob
 import os

@@ -46,4 +46,4 @@ if __name__ == "__main__":
     with open(out_f, "w", encoding="utf-8") as f:
         json.dump(domain2hosts_langs, f)
 
-    print("# of domains: {}".format(len(domain2hosts_langs)))
+    print("# of domains found: {}".format(len(domain2hosts_langs)))

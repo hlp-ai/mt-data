@@ -1,4 +1,4 @@
-from yimt_bitext.web.base import BasicLangStat
+from yimt_bitext.web.lang_stat import BasicLangStat
 
 if __name__ == "__main__":
     stat_f = "./d2h2lang2len.json"

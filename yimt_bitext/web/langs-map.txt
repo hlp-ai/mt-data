@@ -8,3 +8,8 @@ bg,bulgarian,bul
 br,breton,bre
 cs,czech,cze,cz
 da,danish,da-dk,dan
+de,german,deutsch,ger,deu
+es,spanish,espanol,spa,esp
+fr,french,francais,fra,fre,fran
+ja,japanese,ja-jp,jpn
+vi,vietnamese,vi-vn,vie

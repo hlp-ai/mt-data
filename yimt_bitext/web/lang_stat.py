@@ -147,7 +147,7 @@ class BasicLangStat(LangStat):
 
     def save(self):
         with open(self.stat_file, "w", encoding="utf-8") as stream:
-            json.dump(self.stat, stream)
+            json.dump(self.stat, stream, indent=2)
 
     def domains_for_langs(self, langs):
         """获得包含给定语言列表的多语域名"""

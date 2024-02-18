@@ -13,3 +13,7 @@ es,spanish,espanol,spa,esp
 fr,french,francais,fra,fre,fran
 ja,japanese,ja-jp,jpn
 vi,vietnamese,vi-vn,vie
+ko,korean,kor,kr,ko-kr
+ms,malay,msa,may,my
+it,italian,ita,italiano
+pt,portuguese,por,

@@ -11,9 +11,9 @@ da,danish,da-dk,dan
 de,german,deutsch,ger,deu
 es,spanish,espanol,spa,esp
 fr,french,francais,fra,fre,fran
-ja,japanese,ja-jp,jpn
-vi,vietnamese,vi-vn,vie
+ja,japanese,ja-jp,jpn,jp
+vi,vietnamese,vi-vn,vie,vn
 ko,korean,kor,kr,ko-kr
 ms,malay,msa,may,my
 it,italian,ita,italiano
-pt,portuguese,por,
+pt,portuguese,por

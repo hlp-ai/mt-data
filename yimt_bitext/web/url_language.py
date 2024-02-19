@@ -23,33 +23,8 @@ class UrlLanguage(object):
         #     self.code_to_language[code] = 'bg'
         # for code in ['breton', 'bre', 'br']:
         #     self.code_to_language[code] = 'br'
-        # for code in ['czech', 'cze', 'cz', 'cs']:
-        #     self.code_to_language[code] = 'cs'
-        # for code in ['danish', 'da-dk', 'dan', 'da']:
-        #     self.code_to_language[code] = 'da'
-        # for code in ['deutsch', 'german', 'ger', 'deu', 'de-at', 'de-ch', 'de-de', 'de-lu', 'de']:
-        #     self.code_to_language[code] = 'de'
-        # for code in ['english', 'eng', 'en']:
-        #     self.code_to_language[code] = 'en'
-        # for code in ['espanol', 'spanish', 'spa', 'esp', 'es']:
-        #     self.code_to_language[code] = 'es'
-        # for code in ['french', 'francais', 'fran', 'fra', 'fre', 'fr']:
-        #     self.code_to_language[code] = 'fr'
-        # for code in ['chinese', 'chi', 'zh', "zho", "zh-cn", "zh-tw", "cn"]:
-        #     self.code_to_language[code] = 'zh'
-        # for code in ['japanese', 'ja', 'ja-jp', 'jpn', 'jp']:
-        #     self.code_to_language[code] = 'ja'
-        # for code in ['vietnamese', 'vi', 'vi-vn']:
-        #     self.code_to_language[code] = 'vi'
-        # for code in ['korean', 'ko', 'ko-kr', "kor"]:
-        #     self.code_to_language[code] = 'ko'
         # for code in ['malay', 'ms']:
         #     self.code_to_language[code] = 'ms'
-        # for code in ['tedesco', 'de-de', 'de-ch', 'de-at', 'de-li', 'de-lu',
-        #              'allemand']:
-        #     self.code_to_language[code] = 'de'
-        # for code in ['fr-be', 'fr-ca', 'fr-fr', 'fr-lu', 'fr-ch', 'fr']:  # 法语
-        #     self.code_to_language[code] = 'fr'
         # for code in ['italian', 'italiano', 'ital', 'ita', 'it-it', 'it-ch',
         #              'it']:
         #     self.code_to_language[code] = 'it'
@@ -59,10 +34,6 @@ class UrlLanguage(object):
         #     self.code_to_language[code] = 'ru'
         # for code in ['dutch', 'nederlands', 'nl-nl', 'nld', 'dut', 'nl']:
         #     self.code_to_language[code] = 'nl'
-        # for code in ['en-en', 'en-us', 'en-uk', 'en-ca', 'en-bz', 'en-ab',
-        #              'en-in', 'en-ie', 'en-jm', 'en-nz', 'en-ph', 'en-za',
-        #              'en-tt', 'gb', 'en-gb', 'inglese', 'english', 'us']:
-        #     self.code_to_language[code] = 'en'
         # for code in ['romanian', 'romana', 'romlang', 'rom', 'ro-ro', 'ro']:
         #     self.code_to_language[code] = 'ro'
         # for code in ['soma', 'som', 'so', 'somal', 'somali', 'so-so',
@@ -73,8 +44,6 @@ class UrlLanguage(object):
         # for code in ['finnish', 'finnisch', 'fin', 'suomi', 'suomeksi',
         #              'suominen', 'suomija', 'fi-fi', 'fi']:
         #     self.code_to_language[code] = 'fi'
-        # for code in ['thailand', 'th-th', 'thai', 'th']:
-        #     self.code_to_language[code] = 'th'
         # for code in ['greek', 'el', 'ell', 'gre', 'el_gr']:  # 现代希腊语
         #     self.code_to_language[code] = 'el'
         # for code in ['latin', 'la', 'lat']:  # 拉丁语
@@ -132,22 +101,10 @@ class UrlLanguage(object):
         #     self.code_to_language[code] = 'tl'
         # for code in ['malagasy', 'ml', 'mlg']:   # 马达加斯加语
         #     self.code_to_language[code] = 'ml'
-        # for code in ['hausa', 'ha', 'hau']:   # 豪萨语
-        #     self.code_to_language[code] = 'ha'
-        # for code in ['tamil', 'ta', 'tam']:   # 泰米尔语
-        #     self.code_to_language[code] = 'ta'
         # for code in ['panjabi', 'pa', 'pan']:   # 旁遮普语
         #     self.code_to_language[code] = 'pa'
         # for code in ['tegula', 'te', 'tel']:   # 泰卢固语
         #     self.code_to_language[code] = 'te'
-        # for code in ['marathi', 'mr', 'mar']:   # 马拉提语
-        #     self.code_to_language[code] = 'mr'
-        # for code in ['swahili', 'sw', 'swa']:   # 斯瓦西里语
-        #     self.code_to_language[code] = 'sw'
-        # for code in ['urdu', 'ur', 'urd']:   # 乌尔都语
-        #     self.code_to_language[code] = 'ur'
-        # for code in ['lao', 'lo', 'laos', 'la']:   # 老挝语
-        #     self.code_to_language[code] = 'lo'
 
         pairs = list(self.code_to_language.items())
 

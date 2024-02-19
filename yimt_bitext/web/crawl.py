@@ -12,7 +12,7 @@ from yimt_bitext.web.crawl_base import BasicUrlsToCrawl, DiskUrlsCrawled, BasicF
 
 
 LANG_BALANCE_RATIO = 100  # 语言文本最大相差倍数
-MAX_SINGLE_COUNT = 1000  # 域名只有单个语言文本时，单个文本允许的上限
+MAX_SINGLE_COUNT = 5000  # 域名只有单个语言文本时，单个文本允许的上限
 STOP_WHEN_IMBALANCE = True  # 语言分布失衡时是否终止抓取
 
 

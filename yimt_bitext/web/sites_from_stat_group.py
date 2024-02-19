@@ -31,7 +31,7 @@ if __name__ == "__main__":
         with open(out_f, "w", encoding="utf-8") as f:
             json.dump(domain2hosts_langs, f, indent=2)
 
-        print("# of domains found: {}".format(len(domain2hosts_langs)))
+        print("发现符合条件的多语域名数: {}".format(len(domain2hosts_langs)))
 
         for domain, hosts in domain2hosts_langs.items():
             if domain not in domain2hosts_langs_total:

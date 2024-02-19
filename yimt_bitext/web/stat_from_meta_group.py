@@ -10,7 +10,11 @@ if __name__ == "__main__":
 
     group_meta_dir = args.group_meta_dir
     dirs = os.listdir(group_meta_dir)
+    total_domains = 0
     for d in dirs:
         meta_dir = os.path.join(group_meta_dir, d)
         print("Stat_from_medata", meta_dir)
-        stat_from_metadata(meta_dir)
+        n = stat_from_metadata(meta_dir)
+        total_domains += n
+
+    print("总共发现域名数:", total_domains)

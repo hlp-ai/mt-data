@@ -46,7 +46,7 @@ def stat_from_metadata(meta_dir):
     total = len(meta_files)
     done = 0
     for f in meta_files:
-        print("Stating from metadata file {}: {}/{}".format(f, done, total))
+        print("统计{}: {}/{}".format(f, done, total))
         host2lang2len_local = stat_from_meta_by_host(f)
         for host, lang2len in host2lang2len_local.items():
             lang_stat.update(host, lang2len)
@@ -57,7 +57,9 @@ def stat_from_metadata(meta_dir):
 
         done += 1
 
+    n_domains = lang_stat.size()
     lang_stat.save()
+    return n_domains
 
 
 if __name__ == "__main__":

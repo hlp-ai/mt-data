@@ -1,4 +1,5 @@
 import os
+import random
 from urllib.parse import urljoin
 import requests
 from bs4 import BeautifulSoup
@@ -226,7 +227,9 @@ class BasicUrlsToCrawl(UrlsToCrawl):
         if len(self._urls) == 0:
             return None
 
-        e = self._urls.pop()
+        idx = random.randint(0, len(self._urls)-1)
+
+        e = self._urls.pop(idx)
         return e
 
     def __len__(self):

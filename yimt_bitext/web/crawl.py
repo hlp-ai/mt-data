@@ -11,6 +11,11 @@ from yimt_bitext.web.base import  BasicSentenceSplitter, BasicLangID, SentenceRe
 from yimt_bitext.web.crawl_base import BasicUrlsToCrawl, DiskUrlsCrawled, BasicFetcher, BasicPageParser, BasicUrlFilter
 
 
+LANG_BALANCE_RATIO = 100  # 语言文本最大相差倍数
+MAX_SINGLE_COUNT = 1000  # 域名只有单个语言文本时，单个文本允许的上限
+STOP_WHEN_IMBALANCE = True  # 语言分布失衡时是否终止抓取
+
+
 def crawl_domain(domain_path, lang_list):
     """抓取给定域名中接受语言的链接"""
     domain = os.path.basename(domain_path)
@@ -30,7 +35,13 @@ def crawl_domain(domain_path, lang_list):
     sent_repo = SentenceRepoFile(sent_dir)
     url_filter = BasicUrlFilter(domain, lang_list)
 
+    imbalanced = False
+
     while True:
+        if STOP_WHEN_IMBALANCE and imbalanced:
+            logger.info(f"***由于语言分布极度失衡，停止抓取{domain}")
+            break
+
         url = to_crawl.next()  # 下一个待抓取链接
         if url is None:
             break
@@ -79,10 +90,20 @@ def crawl_domain(domain_path, lang_list):
                     if len(counts) > 1:
                         min_count = counts[0][0]
                         max_count = counts[-1][0]
-                        if max_count > 50 * min_count:  # 最少和最多语言文本数量相差过大，50倍
+                        if max_count > LANG_BALANCE_RATIO * min_count:  # 最少和最多语言文本数量相差过大，50倍
                             logger.warning("{}: 多语域名下语言分布相差过大！".format(domain))
+                            imbalanced = True
+                        else:
+                            imbalanced = False
+                    else:
+                        count = counts[0][0]
+                        if count > MAX_SINGLE_COUNT:
+                            logger.warning("{}: 多语域名下语言分布相差过大！".format(domain))
+                            imbalanced = True
+                        else:
+                            imbalanced = False
                 else:
-                    logger.debug("NO sentence found for {}".format(url))
+                    logger.debug("网页没有抽取到句子: {}".format(url))
 
                 # 将出链添加到待抓取列表
                 for ol in outlinks:

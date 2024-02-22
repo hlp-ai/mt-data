@@ -26,8 +26,8 @@ def flush_meta(records, group_dir, g_id):
     meta_files = glob.glob(os.path.join(g_dir, "*.meta"))
     f_no = 0
     if len(meta_files) > 0:
-        meta_files = list(sorted(meta_files))
-        f_no = int(os.path.basename(meta_files[-1]).split(".")[0]) + 1
+        fnos = list(sorted([int(os.path.basename(mf).split(".")[0]) for mf in meta_files]))
+        f_no = fnos[-1] + 1
 
     g_file = os.path.join(g_dir, "{}.meta".format(f_no))
 

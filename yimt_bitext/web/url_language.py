@@ -13,6 +13,8 @@ class UrlLanguage(object):
         with open(map_file, encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
+                if line.startswith("#"):
+                    continue
                 parts = line.split(",")
                 for i in range(len(parts)):
                     self.code_to_language[parts[i]] = parts[0]

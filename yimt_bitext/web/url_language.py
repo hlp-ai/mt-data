@@ -39,8 +39,6 @@ class UrlLanguage(object):
         # for code in ['soma', 'som', 'so', 'somal', 'somali', 'so-so',
         #              'af-soomaali', 'soomaali']:
         #     self.code_to_language[code] = 'so'
-        # for code in ['turkish', 'tur', 'turkic', 'tr-tr', 'tr']:
-        #     self.code_to_language[code] = 'tr'
         # for code in ['finnish', 'finnisch', 'fin', 'suomi', 'suomeksi',
         #              'suominen', 'suomija', 'fi-fi', 'fi']:
         #     self.code_to_language[code] = 'fi'
@@ -54,8 +52,6 @@ class UrlLanguage(object):
         #     self.code_to_language[code] = 'pl'
         # for code in ['swedish', 'svenska', 'sv', 'swe', 'sv_se']:  # 瑞典语
         #     self.code_to_language[code] = 'sv'
-        # for code in ['ukrainian', 'uk', 'ukr', 'uk_ua']:  # 乌克兰语
-        #     self.code_to_language[code] = 'uk'
         # for code in ['burmese', 'my', 'mya', 'bur']:  # 缅甸语
         #     self.code_to_language[code] = 'my'
         # for code in ['tibetan', 'bo', 'bod', 'tib']:  # 藏语
@@ -68,8 +64,6 @@ class UrlLanguage(object):
         #     self.code_to_language[code] = 'mn'
         # for code in ['belarusian', 'be', 'bel', 'be_by']:  # 白俄罗斯语
         #     self.code_to_language[code] = 'be'
-        # for code in ['bengali', 'bn', 'ben']:  # 孟加拉语
-        #     self.code_to_language[code] = 'bn'
         # for code in ['croatian', 'hr', 'hrv', 'hr_hr']:  # 克罗地亚语
         #     self.code_to_language[code] = 'hr'
         #
@@ -101,8 +95,6 @@ class UrlLanguage(object):
         #     self.code_to_language[code] = 'tl'
         # for code in ['malagasy', 'ml', 'mlg']:   # 马达加斯加语
         #     self.code_to_language[code] = 'ml'
-        # for code in ['panjabi', 'pa', 'pan']:   # 旁遮普语
-        #     self.code_to_language[code] = 'pa'
         # for code in ['tegula', 'te', 'tel']:   # 泰卢固语
         #     self.code_to_language[code] = 'te'
 

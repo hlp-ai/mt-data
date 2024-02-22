@@ -26,7 +26,7 @@ el,ell
 hu,hun
 fi,fin
 bg,bul
-tr,tur
+tr,tur,turkish,turkic
 sk,slk
 no,nor
 sl,slv
@@ -39,8 +39,8 @@ sq,sqi
 bs,bos
 he,heb
 lv,lav
-bn,ben
-uk,ukr
+bn,ben,bengali,bd
+uk,ukr,ukrainian,ua
 tl,tgl
 hi,hin
 fa,fas
@@ -68,7 +68,7 @@ lb,ltz
 ne,nep
 cy,cym
 jv,jav
-pa,pan
+pa,pan,panjabi
 mn,mon
 th,tha,thailand,thai
 hy,hye

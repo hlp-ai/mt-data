@@ -31,7 +31,7 @@ def stat_from_meta_by_host(meta_file):
     return host2lang2len
 
 
-def stat_from_metadata(meta_dir):
+def stat_from_metadata(meta_dir, remove=False):
     processed_meta_dir = os.path.join(meta_dir, "processed_meta")
     if not os.path.exists(processed_meta_dir):
         os.mkdir(processed_meta_dir)
@@ -51,7 +51,10 @@ def stat_from_metadata(meta_dir):
         for host, lang2len in host2lang2len_local.items():
             lang_stat.update(host, lang2len)
 
-        shutil.move(f, processed_meta_dir)
+        if remove:
+            os.remove(f)
+        else:
+            shutil.move(f, processed_meta_dir)
 
         print("# of domains after:", lang_stat.size())
 

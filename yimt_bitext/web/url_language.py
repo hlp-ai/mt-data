@@ -19,8 +19,6 @@ class UrlLanguage(object):
                 for i in range(len(parts)):
                     self.code_to_language[parts[i]] = parts[0]
         # # These should all be lower-case, matching is case-insensitive
-        # for code in ['arabic', 'ara', 'ar']:
-        #     self.code_to_language[code] = 'ar'
         # for code in ['bulgarian', 'bul', 'bg']:
         #     self.code_to_language[code] = 'bg'
         # for code in ['breton', 'bre', 'br']:
@@ -58,12 +56,8 @@ class UrlLanguage(object):
         #     self.code_to_language[code] = 'my'
         # for code in ['tibetan', 'bo', 'bod', 'tib']:  # 藏语
         #     self.code_to_language[code] = 'bo'
-        # for code in ['hungarian', 'hu', 'hun']:  # 匈牙利语
-        #     self.code_to_language[code] = 'hu'
         # for code in ['indonesian', 'id', 'ind']:  # 印尼语
         #     self.code_to_language[code] = 'id'
-        # for code in ['mongolian', 'mn', 'mon']:  # 蒙古语
-        #     self.code_to_language[code] = 'mn'
         # for code in ['belarusian', 'be', 'bel', 'be_by']:  # 白俄罗斯语
         #     self.code_to_language[code] = 'be'
         # for code in ['croatian', 'hr', 'hrv', 'hr_hr']:  # 克罗地亚语

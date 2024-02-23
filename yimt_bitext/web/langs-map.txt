@@ -23,7 +23,7 @@ pl,pol
 sv,swe
 ro,ron
 el,ell
-hu,hun
+hu,hun,hungarian
 fi,fin
 bg,bul
 tr,tur,turkish,turkic
@@ -69,7 +69,7 @@ ne,nep
 cy,cym
 jv,jav
 pa,pan,panjabi
-mn,mon
+mn,mon,mongolian
 th,tha,thailand,thai
 hy,hye
 or,ori

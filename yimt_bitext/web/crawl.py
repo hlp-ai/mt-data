@@ -7,13 +7,31 @@ from concurrent.futures.thread import ThreadPoolExecutor
 from functools import partial
 
 from yimt_bitext.utils.log import get_logger
-from yimt_bitext.web.base import  BasicSentenceSplitter, BasicLangID, SentenceRepoFile
+from yimt_bitext.web.base import BasicSentenceSplitter, BasicLangID, SentenceRepoFile, BasicSentenceRepo
 from yimt_bitext.web.crawl_base import BasicUrlsToCrawl, DiskUrlsCrawled, BasicFetcher, BasicPageParser, BasicUrlFilter
 
 
-LANG_BALANCE_RATIO = 100  # 语言文本最大相差倍数
-MAX_SINGLE_COUNT = 5000  # 域名只有单个语言文本时，单个文本允许的上限
+LANG_BALANCE_RATIO = 150  # 语言文本最大相差倍数
+CHECK_BALANCE_AFTER = 50  # 抓取多少个链接后检查语言不平衡
+MAX_SINGLE_COUNT = 2000  # 域名只有单个语言文本时，单个文本允许的上限
 STOP_WHEN_IMBALANCE = True  # 语言分布失衡时是否终止抓取
+SENT_REPO_FLUSH_INTERVAL = 50
+
+
+def is_imbalanced(counts, crawled):
+    if len(counts) > 1:
+        min_count = counts[0][0]
+        max_count = counts[-1][0]
+        if crawled > CHECK_BALANCE_AFTER and max_count > LANG_BALANCE_RATIO * min_count:  # 最少和最多语言文本数量相差过大
+            return True
+        else:
+            return False
+    else:
+        count = counts[0][0]
+        if crawled > CHECK_BALANCE_AFTER and count > MAX_SINGLE_COUNT:
+            return True
+        else:
+            return False
 
 
 def crawl_domain(domain_path, lang_list):
@@ -32,7 +50,7 @@ def crawl_domain(domain_path, lang_list):
     parser = BasicPageParser()
     sentence_splitter = BasicSentenceSplitter()
     langid = BasicLangID()
-    sent_repo = SentenceRepoFile(sent_dir)
+    sent_repo = BasicSentenceRepo(sent_dir)
     url_filter = BasicUrlFilter(domain, lang_list)
 
     imbalanced = False
@@ -70,38 +88,42 @@ def crawl_domain(domain_path, lang_list):
                 txt, outlinks = parser.parse(html_content, url)  # 提取文本和出链
 
                 sentences = sentence_splitter.split(txt)  # 获取非空文本段落列表
-                lang2sentenes = {}
+                lang2sentences = {}
                 for s in sentences:
                     lang = langid.detect(s)  # 检测段落语言
                     if lang_list is not None and lang not in lang_list:  # 非期望语言文本
                         continue
 
-                    if lang in lang2sentenes:
-                        lang2sentenes[lang].append(s)
+                    if lang in lang2sentences:
+                        lang2sentences[lang].append(s)
                     else:
-                        lang2sentenes[lang] = [s]
+                        lang2sentences[lang] = [s]
 
-                if len(lang2sentenes) > 0:
-                    sent_repo.store(lang2sentenes)  # 保存各语言文本
+                if len(lang2sentences) > 0:
+                    sent_repo.store(lang2sentences)  # 保存各语言文本
                     logger.info(domain + ": " + str(sent_repo))
 
                     # 检测当前各语言文本数量分布
                     counts = sent_repo.sizes()
-                    if len(counts) > 1:
-                        min_count = counts[0][0]
-                        max_count = counts[-1][0]
-                        if max_count > LANG_BALANCE_RATIO * min_count:  # 最少和最多语言文本数量相差过大，50倍
-                            logger.warning("{}: 多语域名下语言分布相差过大！".format(domain))
-                            imbalanced = True
-                        else:
-                            imbalanced = False
-                    else:
-                        count = counts[0][0]
-                        if count > MAX_SINGLE_COUNT:
-                            logger.warning("{}: 多语域名下语言分布相差过大！".format(domain))
-                            imbalanced = True
-                        else:
-                            imbalanced = False
+
+                    imbalanced = is_imbalanced(counts, len(crawled))
+                    if imbalanced:
+                        logger.warning("{}: 多语域名下语言分布相差过大！".format(domain))
+                    # if len(counts) > 1:
+                    #     min_count = counts[0][0]
+                    #     max_count = counts[-1][0]
+                    #     if max_count > LANG_BALANCE_RATIO * min_count:  # 最少和最多语言文本数量相差过大，50倍
+                    #         logger.warning("{}: 多语域名下语言分布相差过大！".format(domain))
+                    #         imbalanced = True
+                    #     else:
+                    #         imbalanced = False
+                    # else:
+                    #     count = counts[0][0]
+                    #     if count > MAX_SINGLE_COUNT:
+                    #         logger.warning("{}: 多语域名下语言分布相差过大！".format(domain))
+                    #         imbalanced = True
+                    #     else:
+                    #         imbalanced = False
                 else:
                     logger.debug("网页没有抽取到句子: {}".format(url))
 
@@ -115,11 +137,15 @@ def crawl_domain(domain_path, lang_list):
             n_tocrawl = len(to_crawl)
             n_crawled = len(crawled)
             logger.info(f"{domain}: {n_crawled} crawled, {n_tocrawl} to crawl")
+
+            if n_crawled % SENT_REPO_FLUSH_INTERVAL == 0:
+                sent_repo.flush()
         except Exception as e:
             logger.warning(url + ": " + str(e))
             crawled.add(url)
 
     crawled.close()
+    sent_repo.close()
 
     logger.info(f"***FINISH CRAWLING {domain}")
 

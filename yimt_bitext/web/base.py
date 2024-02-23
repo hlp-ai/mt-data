@@ -51,30 +51,64 @@ class BasicSentenceSplitter(SentenceSplitter):
 
 class SentenceRepo:
 
-    def store(self, sentences):
+    def store(self, lang2sentences):
         pass
 
     def sizes(self):
         pass
 
+    def flush(self):
+        pass
+
+    def close(self):
+        self.flush()
+
 
 class BasicSentenceRepo(SentenceRepo):
 
-    def __init__(self, path="./"):
+    def __init__(self, path="./lang2sents"):
         self.path = path
         self.repo = {}
+
+        if not os.path.exists(path):
+            os.makedirs(path, exist_ok=True)
+        else:
+            lang_files = os.listdir(path)
+            for f in lang_files:
+                if f.endswith(".txt"):
+                    lang = f[0:f.find(".txt")]
+                    sentences = set()
+                    with open(os.path.join(path, f), encoding="utf-8") as stream:
+                        for line in stream:
+                            line = line.strip()
+                            sentences.add(line)
+                    self.repo[lang] = sentences
+
 
     def store(self, lang2sentences):
         for lang, sents in lang2sentences.items():
             if lang not in self.repo:
-                self.repo[lang] = []
-            self.repo[lang] += sents
+                self.repo[lang] = set()
+            self.repo[lang].update(sents)
 
     def __str__(self):
         description= "# of sentences extracted for languages: "
         for lang, sents in self.repo.items():
             description += lang + ": " + str(len(sents)) + "; "
         return description
+
+    def flush(self):
+        for lang, sents in self.repo.items():
+            with open(os.path.join(self.path, lang + ".txt"), "w", encoding="utf-8") as f:
+                for s in sents:
+                    f.write(s + "\n")
+
+    def sizes(self):
+        counts = [(len(sents), lang) for lang, sents in self.repo.items()]
+        counts = list(sorted(counts))
+
+        return counts
+
 
 
 class SentenceRepoFile(SentenceRepo):

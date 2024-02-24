@@ -11,11 +11,15 @@ from yimt_bitext.web.base import BasicSentenceSplitter, BasicLangID, SentenceRep
 from yimt_bitext.web.crawl_base import BasicUrlsToCrawl, DiskUrlsCrawled, BasicFetcher, BasicPageParser, BasicUrlFilter
 
 
-LANG_BALANCE_RATIO = 150  # 语言文本最大相差倍数
-CHECK_BALANCE_AFTER = 50  # 抓取多少个链接后检查语言不平衡
-MAX_SINGLE_COUNT = 2000  # 域名只有单个语言文本时，单个文本允许的上限
-STOP_WHEN_IMBALANCE = True  # 语言分布失衡时是否终止抓取
-SENT_REPO_FLUSH_INTERVAL = 50
+crawl_conf_fn = "./crawl.json"
+with open(crawl_conf_fn, encoding="utf-8") as f:
+    crawl_conf = json.load(f)
+
+LANG_BALANCE_RATIO = crawl_conf["lang_balance_ratio"]  # 语言文本最大相差倍数
+CHECK_BALANCE_AFTER = crawl_conf["check_balance_after"]  # 抓取多少个链接后检查语言不平衡
+MAX_SINGLE_COUNT = crawl_conf["max_single_count"]  # 域名只有单个语言文本时，单个文本允许的上限
+STOP_WHEN_IMBALANCE = crawl_conf["stop_when_imbalance"]  # 语言分布失衡时是否终止抓取
+SENT_REPO_FLUSH_INTERVAL = crawl_conf["sent_repo_flush_interval"]  # 每抓取多少个链接保存一次句子
 
 
 def is_imbalanced(counts, crawled):
@@ -38,7 +42,7 @@ def crawl_domain(domain_path, lang_list):
     """抓取给定域名中接受语言的链接"""
     domain = os.path.basename(domain_path)
     logger = get_logger(os.path.join(domain_path, "logs.txt"), domain)
-    logger.info(f"***START CRAWLING {domain}")
+    logger.info(f"开始抓取域名: {domain}")
 
     to_crawl_fn = os.path.join(domain_path, "urls_tocrawl.txt")
     crawled_fn = os.path.join(domain_path, "crawled.txt")
@@ -57,7 +61,7 @@ def crawl_domain(domain_path, lang_list):
 
     while True:
         if STOP_WHEN_IMBALANCE and imbalanced:
-            logger.info(f"***由于语言分布极度失衡，停止抓取{domain}")
+            logger.info(f"由于语言分布极度失衡，停止抓取: {domain}")
             break
 
         url = to_crawl.next()  # 下一个待抓取链接
@@ -68,7 +72,7 @@ def crawl_domain(domain_path, lang_list):
             continue
 
         try:
-            logger.info(f"Fetching {url}")
+            logger.info(f"抓取: {url}")
 
             r = fetcher.fetch(url)  # 抓取
             crawled.add(url)  # 链接添加到已抓取列表中
@@ -84,7 +88,7 @@ def crawl_domain(domain_path, lang_list):
             html_content = r.text
             if html_content is not None:
                 # print("Parsing", url)
-                logger.debug(f"Parsing {url}")
+                logger.debug(f"解析网页: {url}")
                 txt, outlinks = parser.parse(html_content, url)  # 提取文本和出链
 
                 sentences = sentence_splitter.split(txt)  # 获取非空文本段落列表
@@ -109,21 +113,6 @@ def crawl_domain(domain_path, lang_list):
                     imbalanced = is_imbalanced(counts, len(crawled))
                     if imbalanced:
                         logger.warning("{}: 多语域名下语言分布相差过大！".format(domain))
-                    # if len(counts) > 1:
-                    #     min_count = counts[0][0]
-                    #     max_count = counts[-1][0]
-                    #     if max_count > LANG_BALANCE_RATIO * min_count:  # 最少和最多语言文本数量相差过大，50倍
-                    #         logger.warning("{}: 多语域名下语言分布相差过大！".format(domain))
-                    #         imbalanced = True
-                    #     else:
-                    #         imbalanced = False
-                    # else:
-                    #     count = counts[0][0]
-                    #     if count > MAX_SINGLE_COUNT:
-                    #         logger.warning("{}: 多语域名下语言分布相差过大！".format(domain))
-                    #         imbalanced = True
-                    #     else:
-                    #         imbalanced = False
                 else:
                     logger.debug("网页没有抽取到句子: {}".format(url))
 
@@ -132,7 +121,7 @@ def crawl_domain(domain_path, lang_list):
                     if url_filter.accept(ol):  # 过滤出链
                         to_crawl.add(ol)
                     else:
-                        logger.debug(f"Filtered: {ol}")
+                        logger.debug(f"过滤: {ol}")
 
             n_tocrawl = len(to_crawl)
             n_crawled = len(crawled)
@@ -147,7 +136,7 @@ def crawl_domain(domain_path, lang_list):
     crawled.close()
     sent_repo.close()
 
-    logger.info(f"***FINISH CRAWLING {domain}")
+    logger.info(f"抓取结束: {domain}")
 
 
 class CrawlManager:
@@ -168,7 +157,7 @@ class CrawlManager:
         for domain, hosts in domain2hosts_langs.items():
             doamin_dir = os.path.join(self.crawl_dir, domain)
             if not os.path.exists(doamin_dir):
-                self.logger.info("Found new domain: {}".format(domain))
+                self.logger.info("发现新域名: {}".format(domain))
                 os.makedirs(doamin_dir, exist_ok=True)
                 with open(os.path.join(doamin_dir, "urls_tocrawl.txt"), "w", encoding="utf-8") as f:
                     for s in hosts:
@@ -179,7 +168,7 @@ class CrawlManager:
                 with open(os.path.join(doamin_dir, "urls_tocrawl.txt"), "a", encoding="utf-8") as f:
                     for s in hosts:
                         if not crawled.exists(s):
-                            self.logger.info("Found new host: {}".format(s))
+                            self.logger.info("发现新主机: {}".format(s))
                             f.write(s + "\n")
 
     def start_crawl(self, accepted_langs, max_workers=6):
@@ -188,7 +177,7 @@ class CrawlManager:
         for domain in os.listdir(self.crawl_dir):
             domain_path = os.path.join(self.crawl_dir, domain)
             domain_paths.append(domain_path)
-        self.logger.info("# of domains: {} to crawl".format(len(domain_paths)))
+        self.logger.info("抓取域名数: {}".format(len(domain_paths)))
 
         tasks = pool.map(partial(crawl_domain, lang_list=accepted_langs), domain_paths)
         wait(tasks, return_when=ALL_COMPLETED)

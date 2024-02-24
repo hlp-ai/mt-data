@@ -1,0 +1,7 @@
+{
+  "lang_balance_ratio": 150,
+  "check_balance_after": 100,
+  "max_single_count": 2000,
+  "stop_when_imbalance": true,
+  "sent_repo_flush_interval": 20
+}

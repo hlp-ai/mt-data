@@ -30,11 +30,11 @@ class BasicUrlFilter(UrlFilter):
 
         u = URL(url)
         path = u.path
-        filtered_type = [".pdf", ".doc", ".docx", ".ppt", ".pptx",
-                         "xls", ".xlsx",
-                         ".zip", ".gzip", ".rar", ".tar",
-                         ".jpg", ".jpeg", ".gif", "png",
-                         ".bin", ".exe"]
+        filtered_type = [".pdf", ".doc", ".docx", ".ppt", ".pptx", ".xls", ".xlsx",
+                         ".mp4", ".mp3", ".wav", ".mov", ".avi", ".rm", ".rmvb", ".mpeg",
+                         ".zip", ".gzip", ".rar", ".tar", ".gz", ".7z", ".bz2", ".iso",
+                         ".jpg", ".jpeg", ".gif", "png", ".bmp", ".tiff", ".webp",
+                         ".bin", ".exe", ".so"]
         if len(path) > 0:
             for t in filtered_type:
                 if path.endswith(t):

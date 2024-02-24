@@ -19,7 +19,7 @@ it,italian,ita,italiano
 pt,portuguese,por
 nl,nld
 ru,rus
-pl,pol
+pl,pol,polish
 sv,swe
 ro,ron
 el,ell
@@ -31,14 +31,14 @@ sk,slk
 no,nor
 sl,slv
 hr,hrv
-et,est
+et,est,estonian
 sr,srp
-id,ind
-lt,lit
+id,ind,indonesian
+lt,lit,lithuanian
 sq,sqi
 bs,bos
-he,heb
-lv,lav
+he,heb,hebrew
+lv,lav,latvian
 bn,ben,bengali,bd
 uk,ukr,ukrainian,ua
 tl,tgl
@@ -62,7 +62,7 @@ si,sin
 sw,swa,swahili
 uz,uzb
 gl,glg
-xh,xho
+xh,xho,xhosa
 ga,gle
 lb,ltz
 ne,nep

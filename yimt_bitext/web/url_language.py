@@ -48,16 +48,12 @@ class UrlLanguage(object):
         #     self.code_to_language[code] = 'la'
         # for code in ['norwegian', 'Norsk', 'no', 'nor', 'no_no', 'no_no_ny']:
         #     self.code_to_language[code] = 'no'
-        # for code in ['polish', 'pl', 'pol', 'pl_pl']:  # 波兰语
-        #     self.code_to_language[code] = 'pl'
         # for code in ['swedish', 'svenska', 'sv', 'swe', 'sv_se']:  # 瑞典语
         #     self.code_to_language[code] = 'sv'
         # for code in ['burmese', 'my', 'mya', 'bur']:  # 缅甸语
         #     self.code_to_language[code] = 'my'
         # for code in ['tibetan', 'bo', 'bod', 'tib']:  # 藏语
         #     self.code_to_language[code] = 'bo'
-        # for code in ['indonesian', 'id', 'ind']:  # 印尼语
-        #     self.code_to_language[code] = 'id'
         # for code in ['belarusian', 'be', 'bel', 'be_by']:  # 白俄罗斯语
         #     self.code_to_language[code] = 'be'
         # for code in ['croatian', 'hr', 'hrv', 'hr_hr']:  # 克罗地亚语
@@ -65,28 +61,16 @@ class UrlLanguage(object):
         #
         # for code in ['macedonian', 'mk', 'mkd', 'mac']:  # 马其顿语
         #     self.code_to_language[code] = 'mk'
-        # for code in ['lithuanian', 'lt', 'lit']:  # 立陶宛语
-        #     self.code_to_language[code] = 'lt'
-        # for code in ['estonian', 'et', 'est']:  # 爱沙尼亚语
-        #     self.code_to_language[code] = 'et'
-        # for code in ['latvian', 'lv', 'lav']:   # 拉脱维亚语
-        #     self.code_to_language[code] = 'lv'
-        # for code in ['bulgarian', 'bg', 'bul']:   # 保加利亚语
-        #     self.code_to_language[code] = 'bg'
         # for code in ['icelandic', 'is', 'isl', 'ice']:   # 冰岛语
         #     self.code_to_language[code] = 'is'
         # for code in ['slovenian', 'sl', 'slv']:   # 斯洛文尼亚语
         #     self.code_to_language[code] = 'sl'
         # for code in ['slovak', 'sl', 'slk', 'slo']:   # 斯洛伐克语
         #     self.code_to_language[code] = 'sk'
-        # for code in ['hebrew', 'he', 'heb']:   # 希伯来语
-        #     self.code_to_language[code] = 'he'
         # for code in ['sinhala', 'sinhalese', 'si', 'sin']:   # 僧加罗语
         #     self.code_to_language[code] = 'si'
         # for code in ['afrikaans', 'af', 'afr']:   # 南非语
         #     self.code_to_language[code] = 'af'
-        # for code in ['xhosa', 'xh', 'xho']:   # 科撒语
-        #     self.code_to_language[code] = 'xh'
         # for code in ['tagalog', 'tl', 'tgl']:   # 他加禄语
         #     self.code_to_language[code] = 'tl'
         # for code in ['malagasy', 'ml', 'mlg']:   # 马达加斯加语

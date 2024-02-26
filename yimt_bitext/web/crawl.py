@@ -21,6 +21,8 @@ MAX_SINGLE_COUNT = crawl_conf["max_single_count"]  # 域名只有单个语言文
 STOP_WHEN_IMBALANCE = crawl_conf["stop_when_imbalance"]  # 语言分布失衡时是否终止抓取
 SENT_REPO_FLUSH_INTERVAL = crawl_conf["sent_repo_flush_interval"]  # 每抓取多少个链接保存一次句子
 
+MAX_URLS_PER_DOMAIN = crawl_conf["max_urls_per_domain"]  # 每个域名最大抓取链接数
+
 
 def is_imbalanced(counts, crawled):
     if len(counts) > 1:
@@ -129,6 +131,10 @@ def crawl_domain(domain_path, lang_list):
 
             if n_crawled % SENT_REPO_FLUSH_INTERVAL == 0:
                 sent_repo.flush()
+
+            if n_crawled > MAX_URLS_PER_DOMAIN:
+                imbalanced = True
+                logger.info(f"{domain}: 达到最大抓取链接数")
         except Exception as e:
             logger.warning(url + ": " + str(e))
             crawled.add(url)

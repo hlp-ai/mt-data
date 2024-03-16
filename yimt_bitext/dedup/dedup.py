@@ -47,7 +47,7 @@ def dedup_tsv_file(in_path, out_path=None,
                    dedup_src=True, dedup_tgt=False, dedup_srctgt=False,
                    lower=True, remove_noletter=True,
                    clean_after_done=False, logger=None):
-    """Deduplicate bitext file"""
+    """平行语料TSV去重"""
     if logger:
         logger.info("dedup_src: {}, dedup_tgt: {}, dedup_srctgt: {}, lower: {}, noletter: {}".format(dedup_src, dedup_tgt, dedup_srctgt, lower, remove_noletter))
 

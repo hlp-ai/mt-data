@@ -11,7 +11,7 @@ from yimt_bitext.utils.lang import detect_lang
 
 
 class Filter(object):
-    """Parallel corpus filter base class"""
+    """平行语料过滤基类"""
 
     def filter(self, src, tgt):
         """
@@ -26,7 +26,7 @@ class Filter(object):
 
 
 class EmptyFilter(Filter):
-    """Filter pair whose source or target is empty"""
+    """源句或目标句为空过滤"""
 
     def filter(self, src, tgt):
         if len(src.strip()) == 0 or len(tgt.strip()) == 0:
@@ -36,7 +36,7 @@ class EmptyFilter(Filter):
 
 
 class SameFilter(Filter):
-    """Filter pair with same source and target"""
+    """源句和目标句相同过滤"""
 
     def __init__(self, lower=True):
         self._lower = lower
@@ -53,7 +53,7 @@ class SameFilter(Filter):
 
 
 class OverlapFilter(Filter):
-    """Filter pair whose source and target have too much overlap"""
+    """源句和目标句重叠过大过滤"""
 
     def __init__(self, ratio=0.8):
         self._ratio = ratio
@@ -322,7 +322,7 @@ class CharacterRatio2Filter(Filter):
 
 
 class NonZeroNumeralsFilter(Filter):
-    """Similarity measure between numerals of the two sentences with zeros removed
+    """非0数字太少相同过滤
 
     If require_all is True, all scores (for pairs of n segments) have
     to be equal or above the threshold; otherwise at least one the
@@ -334,7 +334,7 @@ class NonZeroNumeralsFilter(Filter):
     """
 
     def __init__(self, threshold=0.5, require_all=True):
-        self.threshold = threshold
+        self.threshold = threshold  # 非0数字最小相同比例
         self.require_all = require_all
 
     def score(self, pair):
@@ -347,20 +347,20 @@ class NonZeroNumeralsFilter(Filter):
         return ratios
 
     def filter(self, src, tgt):
-        score = self.score((src, tgt))
+        scores = self.score((src, tgt))
         if self.require_all:
-            if all(ratio >= self.threshold for ratio in score):
+            if all(ratio >= self.threshold for ratio in scores):
                 return src, tgt
             else:
                 return None
-        if any(ratio >= self.threshold for ratio in score):
+        if any(ratio >= self.threshold for ratio in scores):
             return src, tgt
         else:
             return None
 
 
 class RepetitionFilter(Filter):
-    """Filter segments with repeated content
+    """重复字符串过多过滤
 
     Filter segments with substrings of min_length to max_length
     characters that are repeated at least threshold number of times.
@@ -375,24 +375,24 @@ class RepetitionFilter(Filter):
     """
 
     def __init__(self, threshold=2, min_length=3, max_length=16):
-        self._threshold = threshold
+        self._threshold = threshold  # 最多允许重复次数
         self._min_length = min_length
         self._max_length = max_length
         self._regexp = self._get_regexp()
 
     @property
     def min_length(self):
-        """Minimum number of characters in pattern"""
+        """重复模式最短字符数"""
         return self._min_length
 
     @property
     def max_length(self):
-        """Maximum number of characters in pattern"""
+        """重复模式最长字符数"""
         return self._max_length
 
     @property
     def threshold(self):
-        """Threshold for the number of repetitions"""
+        """重复次数上限"""
         return self._threshold
 
     def _get_regexp(self):
@@ -421,8 +421,8 @@ class RepetitionFilter(Filter):
         return [self.get_repetitions(sent)[0] for sent in pair]
 
     def filter(self, src, tgt):
-        score = self.score((src, tgt))
-        if all(repetitions < self.threshold for repetitions in score):
+        scores = self.score((src, tgt))
+        if all(repetitions < self.threshold for repetitions in scores):  # 都无大量重复
             return src, tgt
         else:
             return None

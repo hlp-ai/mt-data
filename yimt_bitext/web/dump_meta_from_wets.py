@@ -61,7 +61,7 @@ def download_wet(url, filepath):
     start = time.time()
     header = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.117 Safari/537.36'}
-    response = requests.get(url, header, stream=True)
+    response = requests.get(url, header, stream=True, timeout=(15, 15))
     size = 0
     chunk_size = 4096 * 16
     n_read = 0

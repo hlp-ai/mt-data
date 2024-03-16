@@ -1,5 +1,7 @@
+import argparse
 import os
 from yimt_bitext.normalize.normalizers import norm
+from yimt_bitext.utils.log import get_logger
 
 
 def dedup_file(in_path, out_path=None, logger=None, lower=True, remove_noletter=True):
@@ -203,7 +205,12 @@ def dedup_rel(base_path, in_path, out_path,
 
 
 if __name__ == "__main__":
-    import sys
-    in_fn = sys.argv[1]
+    argparser = argparse.ArgumentParser()
+    argparser.add_argument("-i", "--input", required=True, help="Input file path")
+    argparser.add_argument("-o", "--output", default=None, help="Ouput file path")
+    argparser.add_argument("--noletter", action="store_true", help="remove noletter")
+    args = argparser.parse_args()
 
-    dedup_file(in_fn)
+    logger = get_logger("./log.txt", "Normalize")
+
+    dedup_file(args.input, out_path=args.output, logger=logger, lower=True, remove_noletter=args.noletter)

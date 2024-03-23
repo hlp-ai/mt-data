@@ -163,6 +163,7 @@ class LengthUnitFilter(Filter):
 
 
 class LengthSubwordFilter(Filter):
+    """子词长度过滤器"""
 
     def __init__(self,
                  src_min_len=None, src_max_len=None,
@@ -201,10 +202,10 @@ class LengthSubwordFilter(Filter):
 
 
 class AlphabetRatioFilter(Filter):
-    """Proportion of alphabetic characters in the segment"""
+    """字母比率过滤器"""
 
     def __init__(self, threshold=0.75, exclude_whitespace=False):
-        self.threshold = threshold
+        self.threshold = threshold  # 最小字母比率
         self.exclude_whitespace = exclude_whitespace
         self.re_whitespace = regex.compile(r'\s')
         self.re_not_alphas = regex.compile(r'\p{Alphabetic=No}')
@@ -219,20 +220,9 @@ class AlphabetRatioFilter(Filter):
         segment = s
         if self.exclude_whitespace:
             segment = self.re_whitespace.sub('', s)
-        alphas = self.re_not_alphas.sub('', s)
+        alphas = self.re_not_alphas.sub('', s)  # 去掉非字母，得到字母串
         r = len(alphas) / len(segment)
         return r
-
-
-def get_lang2script(conf_file=os.path.join(os.path.dirname(__file__), "lang2script.txt")):
-    lang2script = {}
-    with open(conf_file, encoding="utf-8") as f:
-        for line in f:
-            lang, script = line.strip().split()
-            scripts = script.split("|")
-            lang2script[lang] = scripts
-
-    return lang2script
 
 
 class CharacterRatioFilter(Filter):
@@ -278,7 +268,7 @@ class CharacterRatioFilter(Filter):
 
 
 class CharacterRatio2Filter(Filter):
-    """Proportion of alphabetic characters that are in the given script
+    """（书写系统script中）非字母和字母比例过滤器
 
     For a list of valid scripts, see e.g.
     https://www.regular-expressions.info/unicode.html
@@ -286,19 +276,19 @@ class CharacterRatio2Filter(Filter):
     """
 
     def __init__(self, src_script, tgt_script,
-                 src_threshold=0, tgt_threshold=0):
+                 src_threshold=0.5, tgt_threshold=0.5):
         self.scripts = [src_script, tgt_script]
-        self.thresholds = [src_threshold, tgt_threshold]
+        self.thresholds = [src_threshold, tgt_threshold]  # 非字母对字母的最大比率
         self.re_not_alphas = regex.compile(r'\p{Alphabetic=No}')
 
         self.re_script = []
         for script in self.scripts:
-            if len(script) == 1:
+            if len(script) == 1:  # 语言只有1种script
                 script = script[0]
                 self.re_script.append(regex.compile(fr'\p{{Script={script}}}'))
             else:
                 p = fr""
-                for i in range(len(script)):
+                for i in range(len(script)):  # 语言有多种script
                     s = script[i]
                     if i != len(script) - 1:
                         p += fr'\p{{Script={s}}}|'
@@ -307,12 +297,12 @@ class CharacterRatio2Filter(Filter):
                 self.re_script.append(regex.compile(p))
 
     def score(self, sent, idx):
-        alphas = self.re_not_alphas.sub('', sent)
+        alphas = self.re_not_alphas.sub('', sent)  # 字母串
         if alphas:
-            no_script = self.re_script[idx].sub('', alphas)
-            return len(no_script) / len(alphas)
+            no_script = self.re_script[idx].sub('', alphas)  # 非字母串
+            return len(no_script) / len(alphas)  # 非字母比率
         else:
-            return 0.0
+            return 1.0
 
     def filter(self, src, tgt):
         if self.score(src, 0) > self.thresholds[0] or self.score(tgt, 1) > self.thresholds[1]:
@@ -537,3 +527,12 @@ if __name__ == "__main__":
 
     char_filter = CharacterRatioFilter(scripts=(["Latin"], ["Latin", "Han"]), thresholds=(0.33, 0.33))
     print(char_filter.filter("i like it", "кўксингни"))
+
+    print()
+    char_filter = CharacterRatio2Filter(src_script=["Latin"], tgt_script=["Latin", "Han"], src_threshold=0.33, tgt_threshold=0.33)
+    print(char_filter.filter("i like it", "i like中文中文гни"))
+
+    print()
+
+    length_sub_filter = LengthSubwordFilter(1, 10, 1, 10, 3)
+    print(length_sub_filter.filter("ພຽງພາຍຫຼັງເວລາ", "这个句子的长度是多少？"))

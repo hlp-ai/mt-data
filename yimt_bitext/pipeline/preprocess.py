@@ -6,7 +6,7 @@ from argparse import ArgumentParser
 from pathlib import Path
 
 from yimt_bitext.dedup.dedup import dedup_tsv_file
-from yimt_bitext.filter.filters import get_lang2script, EmptyFilter, SameFilter, OverlapFilter, AlphabetRatioFilter, \
+from yimt_bitext.filter.filters import EmptyFilter, SameFilter, OverlapFilter, AlphabetRatioFilter, \
     RepetitionFilter, LengthFilter, CharacterRatioFilter
 from yimt_bitext.filter.filter import filter_file
 from yimt_bitext.normalize.normalizers import ToZhNormalizer, CleanerTSV, DeTokenizer
@@ -17,6 +17,7 @@ from yimt_bitext.opus.merge_moses import merge_moses
 from yimt_bitext.opus.unzip_files import extract_zips
 from yimt_bitext.split.merge import merge
 from yimt_bitext.split.split_file import split
+from yimt_bitext.utils.chars import get_lang2script
 from yimt_bitext.utils.log import get_logger
 
 lang2script = get_lang2script()

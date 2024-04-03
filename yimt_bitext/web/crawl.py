@@ -21,6 +21,9 @@ MAX_SINGLE_COUNT = crawl_conf["max_single_count"]  # 域名只有单个语言文
 STOP_WHEN_IMBALANCE = crawl_conf["stop_when_imbalance"]  # 语言分布失衡时是否终止抓取
 SENT_REPO_FLUSH_INTERVAL = crawl_conf["sent_repo_flush_interval"]  # 每抓取多少个链接保存一次句子
 
+MAX_URL_LENGTH = 512
+MAX_PAGE_LENGTH = 1024 * 1024 * 16
+
 MAX_URLS_PER_DOMAIN = crawl_conf["max_urls_per_domain"]  # 每个域名最大抓取链接数
 
 
@@ -89,41 +92,48 @@ def crawl_domain(domain_path, lang_list):
 
             html_content = r.text
             if html_content is not None:
-                # print("Parsing", url)
-                logger.debug(f"解析网页: {url}")
-                txt, outlinks = parser.parse(html_content, url)  # 提取文本和出链
+                if len(html_content)<MAX_PAGE_LENGTH:
+                    # print("Parsing", url)
+                    logger.debug(f"解析网页: {url}")
+                    txt, outlinks = parser.parse(html_content, url)  # 提取文本和出链
 
-                sentences = sentence_splitter.split(txt)  # 获取非空文本段落列表
-                lang2sentences = {}
-                for s in sentences:
-                    lang = langid.detect(s)  # 检测段落语言
-                    if lang_list is not None and lang not in lang_list:  # 非期望语言文本
-                        continue
+                    sentences = sentence_splitter.split(txt)  # 获取非空文本段落列表
+                    lang2sentences = {}
+                    for s in sentences:
+                        lang = langid.detect(s)  # 检测段落语言
+                        if lang_list is not None and lang not in lang_list:  # 非期望语言文本
+                            continue
 
-                    if lang in lang2sentences:
-                        lang2sentences[lang].append(s)
+                        if lang in lang2sentences:
+                            lang2sentences[lang].append(s)
+                        else:
+                            lang2sentences[lang] = [s]
+
+                    if len(lang2sentences) > 0:
+                        sent_repo.store(lang2sentences)  # 保存各语言文本
+                        logger.info(domain + ": " + str(sent_repo))
+
+                        # 检测当前各语言文本数量分布
+                        counts = sent_repo.sizes()
+
+                        imbalanced = is_imbalanced(counts, len(crawled))
+                        if imbalanced:
+                            logger.warning("{}: 多语域名下语言分布相差过大！".format(domain))
                     else:
-                        lang2sentences[lang] = [s]
+                        logger.debug("网页没有抽取到句子: {}".format(url))
 
-                if len(lang2sentences) > 0:
-                    sent_repo.store(lang2sentences)  # 保存各语言文本
-                    logger.info(domain + ": " + str(sent_repo))
+                    # 将出链添加到待抓取列表
+                    for ol in outlinks:
+                        if len(ol) > MAX_URL_LENGTH:
+                            logger.warning(f"太长URL过滤: {ol}")
+                            continue
 
-                    # 检测当前各语言文本数量分布
-                    counts = sent_repo.sizes()
-
-                    imbalanced = is_imbalanced(counts, len(crawled))
-                    if imbalanced:
-                        logger.warning("{}: 多语域名下语言分布相差过大！".format(domain))
+                        if url_filter.accept(ol):  # 过滤出链
+                            to_crawl.add(ol)
+                        else:
+                            logger.debug(f"过滤: {ol}")
                 else:
-                    logger.debug("网页没有抽取到句子: {}".format(url))
-
-                # 将出链添加到待抓取列表
-                for ol in outlinks:
-                    if url_filter.accept(ol):  # 过滤出链
-                        to_crawl.add(ol)
-                    else:
-                        logger.debug(f"过滤: {ol}")
+                    logger.warning(f"太长内容: {url}")
 
             n_tocrawl = len(to_crawl)
             n_crawled = len(crawled)
@@ -134,7 +144,7 @@ def crawl_domain(domain_path, lang_list):
 
             if n_crawled > MAX_URLS_PER_DOMAIN:
                 imbalanced = True
-                logger.info(f"{domain}: 达到最大抓取链接数")
+                logger.warning(f"{domain}: 达到最大抓取链接数")
         except Exception as e:
             logger.warning(url + ": " + str(e))
             crawled.add(url)

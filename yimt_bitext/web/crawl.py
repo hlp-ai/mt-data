@@ -53,14 +53,19 @@ def crawl_domain(domain_path, lang_list):
     crawled_fn = os.path.join(domain_path, "crawled.txt")
     sent_dir = os.path.join(domain_path, "lang2sents")
 
-    to_crawl = BasicUrlsToCrawl(to_crawl_fn)
-    crawled = DiskUrlsCrawled(crawled_fn)
-    fetcher = BasicFetcher()
-    parser = BasicPageParser()
-    sentence_splitter = BasicSentenceSplitter()
-    langid = BasicLangID()
-    sent_repo = BasicSentenceRepo(sent_dir)
-    url_filter = BasicUrlFilter(domain, lang_list)
+    try:
+        to_crawl = BasicUrlsToCrawl(to_crawl_fn)
+        crawled = DiskUrlsCrawled(crawled_fn)
+        fetcher = BasicFetcher()
+        parser = BasicPageParser()
+        sentence_splitter = BasicSentenceSplitter()
+        langid = BasicLangID()
+        sent_repo = BasicSentenceRepo(sent_dir)
+        url_filter = BasicUrlFilter(domain, lang_list)
+    except Exception as e:
+        logger.warning(str(e))
+        logger.info(f"由于初始化问题，抓取结束: {domain}")
+        return
 
     imbalanced = False
 

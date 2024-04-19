@@ -197,7 +197,8 @@ class CrawlManager:
         domain_paths = []
         for domain in os.listdir(self.crawl_dir):
             domain_path = os.path.join(self.crawl_dir, domain)
-            domain_paths.append(domain_path)
+            if os.path.isdir(domain_path):
+                domain_paths.append(domain_path)
         self.logger.info("抓取域名数: {}".format(len(domain_paths)))
 
         tasks = pool.map(partial(crawl_domain, lang_list=accepted_langs), domain_paths)

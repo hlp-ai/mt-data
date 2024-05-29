@@ -321,7 +321,7 @@ def create_intersect_corpus(parent):
             return
 
         intersect(corpus_dedup_base, corpus_dedup_in, corpus_dedup_out, creterion=cond,
-             remove_noletter=no_letter, logger=logger_opus)
+             remove_noletter=no_letter)
 
         tk.messagebox.showinfo(title="Info", message="done")
 

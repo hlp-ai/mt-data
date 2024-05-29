@@ -218,6 +218,8 @@
 #
 #     if logger:
 #         logger.info("Split {}: {}".format(file, cnt))
+from yimt_bitext.filter.filter_score import filter_tsv_score
+from yimt_bitext.score.score_bitext import score_tsv
 
 
 def score_and_filter_pattern(pattern, start, end, model_path, min_score=0.70, block=16, logger=None):

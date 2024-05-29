@@ -11,7 +11,7 @@ def on_menu(frame):
 
 if __name__ == "__main__":
     win_main = tk.Tk()
-    win_main.title("MT Pipeline")
+    win_main.title("平行语料处理软件")
     win_main.geometry("800x700")
 
     ##########################################################
@@ -134,46 +134,46 @@ if __name__ == "__main__":
     mainmenu = Menu(win_main)
 
     corpus_menu = Menu(mainmenu, tearoff=False)
-    corpus_menu.add_command(label="Unzip Files", command=partial(on_menu, unzip_frame))
-    corpus_menu.add_command(label="Merge Moses Files", command=partial(on_menu, merge_moses_frame))
-    corpus_menu.add_command(label="Merge Files", command=partial(on_menu, merge_frame))
-    corpus_menu.add_command(label="Normalize",command=partial(on_menu,normalize_frame))
-    corpus_menu.add_command(label="Dedup", command=partial(on_menu, dedup_frame))
-    corpus_menu.add_command(label="Filter",command=partial(on_menu,filter_frame))
-    corpus_menu.add_command(label="Split", command=partial(on_menu, split_frame))
-    corpus_menu.add_command(label="Score and Filter", command=partial(on_menu, score_filter_frame))
+    corpus_menu.add_command(label="解压", command=partial(on_menu, unzip_frame))
+    corpus_menu.add_command(label="合并单语文件", command=partial(on_menu, merge_moses_frame))
+    corpus_menu.add_command(label="合并平行语料", command=partial(on_menu, merge_frame))
+    corpus_menu.add_command(label="规范化",command=partial(on_menu,normalize_frame))
+    corpus_menu.add_command(label="去重", command=partial(on_menu, dedup_frame))
+    corpus_menu.add_command(label="过滤",command=partial(on_menu,filter_frame))
+    corpus_menu.add_command(label="分割语料文件", command=partial(on_menu, split_frame))
+    corpus_menu.add_command(label="打分和过滤", command=partial(on_menu, score_filter_frame))
     corpus_menu.add_separator()
-    corpus_menu.add_command(label="Diff", command=partial(on_menu, diff_frame))
-    corpus_menu.add_command(label="Intersect", command=partial(on_menu, intersect_frame))
-    corpus_menu.add_command(label="Sample", command=partial(on_menu, sample_frame))
-    corpus_menu.add_command(label="Partition", command=partial(on_menu, partition_frame))
+    corpus_menu.add_command(label="语料差异", command=partial(on_menu, diff_frame))
+    corpus_menu.add_command(label="语料相交", command=partial(on_menu, intersect_frame))
+    corpus_menu.add_command(label="取样", command=partial(on_menu, sample_frame))
+    corpus_menu.add_command(label="划分语料", command=partial(on_menu, partition_frame))
     corpus_menu.add_separator()
-    corpus_menu.add_command(label="Exit", command=win_main.quit)
+    corpus_menu.add_command(label="退出", command=win_main.quit)
 
-    mainmenu.add_cascade(label="Opus", menu=corpus_menu)
+    mainmenu.add_cascade(label="处理管道", menu=corpus_menu)
 
     tsv_mono_menu = Menu(mainmenu, tearoff=False)
-    tsv_mono_menu.add_command(label="TSV2Mono", command=partial(on_menu, tsv2mono_frame))
-    tsv_mono_menu.add_command(label="Mono2TSV", command=partial(on_menu, mono2tsv_frame))
+    tsv_mono_menu.add_command(label="平行到单语", command=partial(on_menu, tsv2mono_frame))
+    tsv_mono_menu.add_command(label="单语到平行", command=partial(on_menu, mono2tsv_frame))
 
-    mainmenu.add_cascade(label="TSV-Mono", menu=tsv_mono_menu)
+    mainmenu.add_cascade(label="单语-平行", menu=tsv_mono_menu)
 
     tokenize_menu = Menu(mainmenu, tearoff=False)
-    tokenize_menu.add_command(label="Train SP", command=partial(on_menu, sp_train_frame))
-    tokenize_menu.add_command(label="Tokenize with SP", command=partial(on_menu, sp_tokenize_frame))
-    tokenize_menu.add_command(label="DeTokenize with SP", command=partial(on_menu, sp_detokenize_frame))
+    tokenize_menu.add_command(label="训练SP模型", command=partial(on_menu, sp_train_frame))
+    tokenize_menu.add_command(label="语料词条化", command=partial(on_menu, sp_tokenize_frame))
+    tokenize_menu.add_command(label="语料去词条化", command=partial(on_menu, sp_detokenize_frame))
     tokenize_menu.add_separator()
-    tokenize_menu.add_command(label="Tokenize File", command=partial(on_menu, tokenize_frame))
-    tokenize_menu.add_command(label="DeTokenize Chinese Text", command=partial(on_menu, detokenize_frame))
+    tokenize_menu.add_command(label="切分语料文件", command=partial(on_menu, tokenize_frame))
+    tokenize_menu.add_command(label="中文语料去词条化", command=partial(on_menu, detokenize_frame))
 
-    mainmenu.add_cascade(label="Tokenize", menu=tokenize_menu)
+    mainmenu.add_cascade(label="切分", menu=tokenize_menu)
 
     misc_menu = Menu(mainmenu, tearoff=False)
-    misc_menu.add_command(label="Count", command=partial(on_menu, count_frame))
-    misc_menu.add_command(label="Hant2Hans", command=partial(on_menu, han2Hans_frame))
-    misc_menu.add_command(label="Strip Scores", command=partial(on_menu, no_scores_frame))
+    misc_menu.add_command(label="语料统计", command=partial(on_menu, count_frame))
+    misc_menu.add_command(label="繁体到简体", command=partial(on_menu, han2Hans_frame))
+    misc_menu.add_command(label="剥离打分", command=partial(on_menu, no_scores_frame))
 
-    mainmenu.add_cascade(label="Misc", menu=misc_menu)
+    mainmenu.add_cascade(label="杂项", menu=misc_menu)
 
     win_main.config(menu=mainmenu)
 

@@ -31,7 +31,7 @@ def download_opus_moses(corpus_name, corpus_version, sl, tl, out_dir="./"):
     try:
         r = requests.get(moses_url, headers=headers, timeout=(30, 30), stream=True, allow_redirects=False)
         if r.status_code != 200:
-            logger_opus.info("{}: {}".format(moses_url, r.status_code))
+            logger_opus.warning("{}: {}".format(moses_url, r.status_code))
             return False
 
         if 'content-length' in r.headers:
@@ -45,7 +45,10 @@ def download_opus_moses(corpus_name, corpus_version, sl, tl, out_dir="./"):
                 logger_opus.info("{}: {:.4f} MB".format(moses_url, total/(1024*1024)))
         return True
     except Exception as e:
-        logger_opus.info("{}: {}".format(moses_url, e))
+        logger_opus.warning("{}: {}".format(moses_url, e))
+        if os.path.exists(local_moses_file):
+            logger_opus.warning("删除不完整下载文件: {}".format(local_moses_file))
+            os.remove(local_moses_file)
     finally:
         if r:
             r.close()

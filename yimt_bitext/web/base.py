@@ -1,11 +1,7 @@
 """Interface for core concepts"""
-import json
 import os
-import langid
-import sqlite3
 
 from yimt_bitext.utils.lang import detect_lang
-from yimt_bitext.web.web import URL
 
 
 class WetParser:

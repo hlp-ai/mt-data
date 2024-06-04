@@ -1,3 +1,4 @@
+az Arabic|Cyrillic|Latin
 mk Cyrillic
 lt Latin
 et Latin

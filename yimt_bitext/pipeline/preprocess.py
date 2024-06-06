@@ -7,7 +7,7 @@ from pathlib import Path
 
 from yimt_bitext.dedup.dedup import dedup_tsv_file
 from yimt_bitext.filter.filters import EmptyFilter, SameFilter, OverlapFilter, AlphabetRatioFilter, \
-    RepetitionFilter, LengthFilter, CharacterRatioFilter
+    RepetitionFilter, LengthFilter, CharacterRatio2Filter, LengthSubwordFilter
 from yimt_bitext.filter.filter import filter_file
 from yimt_bitext.normalize.normalizers import ToZhNormalizer, CleanerTSV, DeTokenizer
 from yimt_bitext.normalize.normalize import normalize_file
@@ -75,12 +75,15 @@ def preprocess_dir(in_dir,
         sl, tl = langs
         src_script = lang2script[sl]
         tgt_script = lang2script[tl]
-        char_filter = CharacterRatioFilter(scripts=(src_script, tgt_script), thresholds=(0.60, 0.60))
+        char_filter = CharacterRatio2Filter(src_script=src_script, tgt_script=tgt_script, src_threshold=0.80, tgt_threshold=0.80)
         filters.append(char_filter)
 
-        if target_lang == "en":
-            tgt_len = LengthFilter.space_sep_len_f
-            filters.append(LengthFilter(tgt_len_fn=tgt_len, tgt_lens=(1, 128)))
+        # if target_lang == "en":
+        #     tgt_len = LengthFilter.space_sep_len_f
+        #     filters.append(LengthFilter(tgt_len_fn=tgt_len, tgt_lens=(1, 128)))
+
+    length_sub_filter = LengthSubwordFilter(1, 256, 1, 256, 4)
+    filters.append(length_sub_filter)
 
     logger.info(filters)
 

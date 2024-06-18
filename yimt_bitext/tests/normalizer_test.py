@@ -1,4 +1,4 @@
-from yimt_bitext.utils.normalizers import Cleaner
+from yimt_bitext.normalize.normalizers import Cleaner
 
 cleaner = Cleaner()
 print(cleaner.normalize("a  bc\tthis is a test."))

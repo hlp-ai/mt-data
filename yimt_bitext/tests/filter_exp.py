@@ -1,4 +1,5 @@
-from yimt_bitext.utils.filters import get_lang2script, CharacterRatioFilter, AlphabetRatioFilter, load_filters
+from yimt_bitext.filter.filters import AlphabetRatioFilter, CharacterRatioFilter, load_filters
+from yimt_bitext.utils.chars import get_lang2script
 
 if __name__ == "__main__":
     lang2script = get_lang2script()

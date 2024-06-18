@@ -1,4 +1,4 @@
-from yimt_bitext.utils.normalizers import load_normalizers
+from yimt_bitext.normalize.normalizers import load_normalizers
 
 if __name__ == "__main__":
     cs = load_normalizers("../utils/normalizers.yml")

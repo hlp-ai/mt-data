@@ -1,6 +1,6 @@
 import time
 
-from yimt_bitext.opus.bitext_scorers import LaBSEScorer
+from yimt_bitext.score.bitext_scorers import LaBSEScorer
 
 if __name__ == "__main__":
     scorer = LaBSEScorer("D:/kidden/mt/open/mt-ex/mt/data/labse1", 72)

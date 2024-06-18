@@ -1,4 +1,4 @@
-from yimt_bitext.utils.normalizers import detok_zh_str
+from yimt_bitext.normalize.normalizers import detok_zh_str
 
 if __name__ == "__main__":
     print(detok_zh_str("AK 地区 需要 支付 额外 "))

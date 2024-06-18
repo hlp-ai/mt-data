@@ -211,7 +211,7 @@ class CleanerTSV(Normalizer):
 
 class HTMLEntityUnescape(Normalizer):
 
-    def __init__(self, src=False, tgt=True):
+    def __init__(self, src=True, tgt=True):
         self.src = src
         self.tgt = tgt
 

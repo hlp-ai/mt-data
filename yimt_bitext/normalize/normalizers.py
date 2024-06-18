@@ -237,7 +237,8 @@ class HTMLEntityUnescape(Normalizer):
 
 name2normalizer = {"CleanerTSV": CleanerTSV,
                    "DeTokenizer": DeTokenizer,
-                   "Hant2Hans": Hant2Hans}
+                   "Hant2Hans": Hant2Hans,
+                   "HTMLUnescape": HTMLEntityUnescape}
 
 
 def load_normalizers(yml_file):

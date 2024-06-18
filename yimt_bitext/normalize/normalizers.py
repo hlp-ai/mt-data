@@ -2,6 +2,7 @@ import re
 
 import yaml
 import zhconv
+import html
 from regex import regex
 
 from yimt_bitext.utils.chars import is_ascii_char, is_en_punct
@@ -204,6 +205,29 @@ class CleanerTSV(Normalizer):
 
         src = self.cleaner.normalize(src)
         tgt = self.cleaner.normalize(tgt)
+
+        return src + "\t" + tgt
+
+
+class HTMLEntityUnescape(Normalizer)
+
+    def __init__(self, src=False, tgt=True):
+        self.src = src
+        self.tgt = tgt
+
+    def normalize(self, s):
+        s = s.strip()
+        pair = s.split("\t")
+        if len(pair) != 2:
+            return ""
+
+        src = pair[0]
+        tgt = pair[1]
+
+        if self.src:
+            src = html.unescape(src)
+        if self.tgt:
+            tgt = html.unescape(tgt)
 
         return src + "\t" + tgt
 

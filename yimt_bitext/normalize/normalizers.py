@@ -209,7 +209,7 @@ class CleanerTSV(Normalizer):
         return src + "\t" + tgt
 
 
-class HTMLEntityUnescape(Normalizer)
+class HTMLEntityUnescape(Normalizer):
 
     def __init__(self, src=False, tgt=True):
         self.src = src

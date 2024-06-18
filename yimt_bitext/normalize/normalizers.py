@@ -225,9 +225,12 @@ class HTMLEntityUnescape(Normalizer):
         tgt = pair[1]
 
         if self.src:
-            src = html.unescape(src)
+            src = html.unescape(src).strip()
         if self.tgt:
-            tgt = html.unescape(tgt)
+            tgt = html.unescape(tgt).strip()
+
+        if len(src) == 0 or len(tgt) == 0:
+            return ""
 
         return src + "\t" + tgt
 

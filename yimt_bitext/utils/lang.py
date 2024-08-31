@@ -26,7 +26,7 @@ def detect_lang(text, k=1, lib="fasttext"):
         import pycld2 as cld2
         isReliable, textBytesFound, details, vectors = cld2.detect(text, returnVectors=True)
         langs = [d[1] for d in details]
-        langs = list(filter(lambda e: e!="un", langs))
+        # langs = list(filter(lambda e: e!="un", langs))
         if k > 1:
             return langs[:k]
         else:

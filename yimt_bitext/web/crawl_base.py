@@ -1,5 +1,6 @@
 import os
 import random
+from pprint import pprint
 from urllib.parse import urljoin
 import requests
 from bs4 import BeautifulSoup
@@ -311,7 +312,7 @@ if __name__ == "__main__":
                     lang2sentenes[lang].append(s)
                 else:
                     lang2sentenes[lang] = [s]
-            print(lang2sentenes)
+            pprint(lang2sentenes)
         else:
             print(r.status_code)
     except Exception as e:

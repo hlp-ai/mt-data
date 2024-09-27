@@ -23,9 +23,9 @@ filters:
   - LengthSubwordFilter:
       params:
         src_min_len: 1
-        src_max_len: 128
+        src_max_len: 256
         tgt_min_len: 1
-        tgt_max_len: 128
+        tgt_max_len: 256
         ratio: 3
 
   #- NonZeroNumeralsFilter:
@@ -39,8 +39,8 @@ filters:
           - Latin
         tgt_script:
           - Latin
-        src_threshold: 0.50
-        tgt_threshold: 0.50
+        src_threshold: 0.60
+        tgt_threshold: 0.60
 
   - AlphabetRatioFilter:
       params:
